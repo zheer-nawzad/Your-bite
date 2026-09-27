@@ -4,7 +4,7 @@ import {
   Check, X, TrendingUp, Settings as SettingsIcon, ChevronRight, ChevronLeft, ChevronDown,
   Sunrise, Sun, Moon, Cookie, Footprints, Waves, Bike, PersonStanding,
   Lock, Loader2, Pencil, ScanLine, RotateCcw, Dumbbell, Anchor, Zap, Music2,
-  RefreshCw, Target, ClipboardList, Image as ImageIcon, PlayCircle, MessageCircle, Send, Trash2
+  RefreshCw, Target, ClipboardList, Image as ImageIcon, PlayCircle, MessageCircle, Send, Trash2, LogOut
 } from "lucide-react";
 import {
   ResponsiveContainer, ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip
@@ -95,6 +95,7 @@ const DICT = {
     settings_editProfile: "Edit profile & targets", settings_about: "About YourBite",
     settings_about_body: "YourBite estimates calorie and macro targets using the Mifflin-St Jeor equation. Estimates are guidance, not medical advice.",
     settings_credit: "Developed by Dr. Zheer Nawzad",
+    settings_logout: "Log out",
     unit_kcal: "kcal",
     close: "Close",
     cache_frequent: "Your frequent meals", cache_suggestions: "You've logged this before",
@@ -212,6 +213,7 @@ const DICT = {
     settings_editProfile: "تعديل الملف والأهداف", settings_about: "عن يور بايت",
     settings_about_body: "يقدّر يور بايت السعرات والمغذيات الكبرى باستخدام معادلة Mifflin-St Jeor. التقديرات إرشادية وليست استشارة طبية.",
     settings_credit: "تطوير د. زير نوزاد",
+    settings_logout: "تسجيل الخروج",
     unit_kcal: "سعرة",
     close: "إغلاق",
     cache_frequent: "وجباتك المتكررة", cache_suggestions: "سبق أن سجّلت هذه",
@@ -329,6 +331,7 @@ const DICT = {
     settings_editProfile: "دەستکاریکردنی پرۆفایل و ئامانجەکان", settings_about: "دەربارەی یۆر بایت",
     settings_about_body: "یۆر بایت ئامانجی کالۆری و خۆراکە گەورەکان بە بەکارهێنانی یاسای Mifflin-St Jeor دەخەمڵێنێت. خەمڵاندنەکان ڕێنماییکەرن نەک ڕاوێژی پزیشکی.",
     settings_credit: "دروستکراوە لەلایەن د. ژیر نەوزادەوە",
+    settings_logout: "چوونە دەرەوە",
     unit_kcal: "کالۆری",
     close: "داخستن",
     cache_frequent: "خواردنە دووبارەبووەکانت", cache_suggestions: "پێشتر ئەمەت تۆمار کردووە",
@@ -2436,6 +2439,12 @@ function SettingsView({ lang, onLangChange, onEditProfile }) {
         <div style={{ fontWeight: 700, fontSize: 14, color: TOKENS.ink, marginBottom: 6 }}>{t.settings_about}</div>
         <div style={{ fontSize: 13, color: TOKENS.inkSoft, lineHeight: 1.6 }}>{t.settings_about_body}</div>
         <div style={{ fontSize: 12, color: TOKENS.inkSoft, marginTop: 10, paddingTop: 10, borderTop: `1px solid ${TOKENS.line}` }}>{t.settings_credit}</div>
+      </div>
+
+      <div style={{ marginTop: 16 }}>
+        <Button variant="subtle" full onClick={() => supabase.auth.signOut()} style={{ color: TOKENS.clay }}>
+          <LogOut size={15} /> {t.settings_logout}
+        </Button>
       </div>
     </Screen>
   );
