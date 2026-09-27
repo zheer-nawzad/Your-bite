@@ -143,7 +143,12 @@ export default function Auth() {
           )}
         </div>
       </div>
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } } .spin { animation: spin 1s linear infinite; }`}</style>
+      <style>{`
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .spin { animation: spin 1s linear infinite; }
+        html, body { margin: 0; padding: 0; width: 100%; overflow-x: hidden; }
+        input, select, textarea { font-size: 16px !important; }
+      `}</style>
     </div>
   );
 }

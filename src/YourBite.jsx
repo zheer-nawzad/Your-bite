@@ -3485,8 +3485,9 @@ export default function App() {
           .spin { animation: spin 1s linear infinite; }
           input:focus { border-color: ${TOKENS.herb} !important; }
           * { box-sizing: border-box; }
-          html, body { background: ${TOKENS.paper}; margin: 0; padding: 0; min-height: 100%; }
+          html, body { background: ${TOKENS.paper}; margin: 0; padding: 0; min-height: 100%; width: 100%; overflow-x: hidden; }
           button svg, a svg { pointer-events: none; }
+          input, select, textarea { font-size: 16px !important; }
         `}</style>
 
         <div style={{ padding: "18px 18px 0", maxWidth: 480, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
