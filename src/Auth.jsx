@@ -73,6 +73,35 @@ export default function Auth() {
     if (error) setError(error.message);
   }
 
+  async function handleForgotSubmit(e) {
+    e.preventDefault();
+    setLoading(true); setError("");
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim());
+    setLoading(false);
+    if (error) setError(error.message);
+    else { setCode(""); setPassword(""); setConfirmPassword(""); setMode("reset"); }
+  }
+
+  async function handleResetSubmit(e) {
+    e.preventDefault();
+    if (password !== confirmPassword) { setError("Passwords don't match."); return; }
+    if (password.length < 6) { setError("Password must be at least 6 characters."); return; }
+    setLoading(true); setError("");
+    const { error: verifyError } = await supabase.auth.verifyOtp({ email: email.trim(), token: code.trim(), type: "recovery" });
+    if (verifyError) { setLoading(false); setError(verifyError.message); return; }
+    const { error: updateError } = await supabase.auth.updateUser({ password });
+    setLoading(false);
+    if (updateError) setError(updateError.message);
+  }
+
+  async function handleResendReset() {
+    setLoading(true); setError(""); setResent(false);
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim());
+    setLoading(false);
+    if (error) setError(error.message);
+    else setResent(true);
+  }
+
   return (
     <div
       style={{
@@ -111,6 +140,63 @@ export default function Auth() {
               </button>
               <button
                 type="button" onClick={handleResend} disabled={loading}
+                style={{ marginTop: 12, width: "100%", background: "none", border: "none", color: TOKENS.herbDeep, fontSize: 13, cursor: "pointer", textDecoration: "underline" }}
+              >
+                Resend code
+              </button>
+            </form>
+          ) : mode === "forgot" ? (
+            <form onSubmit={handleForgotSubmit}>
+              <div style={{ fontWeight: 600, marginBottom: 4 }}>Reset your password</div>
+              <div style={{ fontSize: 13, color: TOKENS.inkSoft, marginBottom: 16, lineHeight: 1.5 }}>
+                Enter your email and we'll send you a code to reset your password.
+              </div>
+              <input
+                type="email" required placeholder="you@example.com" value={email}
+                onChange={(e) => setEmail(e.target.value)} style={inputStyle}
+              />
+              {error && <div style={{ fontSize: 12.5, color: TOKENS.clay, marginBottom: 12 }}>{error}</div>}
+              <button type="submit" disabled={loading} style={buttonStyle(loading)}>
+                {loading && <Loader2 size={15} className="spin" />}
+                Send reset code
+              </button>
+              <button
+                type="button"
+                onClick={() => { setMode("login"); setError(""); }}
+                style={{ marginTop: 12, width: "100%", background: "none", border: "none", color: TOKENS.herbDeep, fontSize: 13, cursor: "pointer", textDecoration: "underline" }}
+              >
+                Back to sign in
+              </button>
+            </form>
+          ) : mode === "reset" ? (
+            <form onSubmit={handleResetSubmit}>
+              <ShieldCheck size={26} color={TOKENS.herbDeep} style={{ marginBottom: 10 }} />
+              <div style={{ fontWeight: 600, marginBottom: 4 }}>Enter code & new password</div>
+              <div style={{ fontSize: 13, color: TOKENS.inkSoft, marginBottom: 16, lineHeight: 1.5 }}>
+                We sent a 6-digit code to <strong>{email}</strong>. Enter it below along with your new password.
+              </div>
+              <input
+                type="text" inputMode="numeric" required autoFocus
+                placeholder="123456" value={code}
+                onChange={(e) => setCode(e.target.value)}
+                style={{ ...inputStyle, textAlign: "center", letterSpacing: 4, fontSize: 18 }}
+              />
+              <input
+                type="password" required placeholder="New password" value={password}
+                onChange={(e) => setPassword(e.target.value)} style={inputStyle}
+              />
+              <input
+                type="password" required placeholder="Confirm new password" value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)} style={inputStyle}
+              />
+              {error && <div style={{ fontSize: 12.5, color: TOKENS.clay, marginBottom: 12 }}>{error}</div>}
+              {resent && <div style={{ fontSize: 12.5, color: TOKENS.herbDeep, marginBottom: 12 }}>New code sent.</div>}
+              <button type="submit" disabled={loading} style={buttonStyle(loading)}>
+                {loading && <Loader2 size={15} className="spin" />}
+                Reset password
+              </button>
+              <button
+                type="button" onClick={handleResendReset} disabled={loading}
                 style={{ marginTop: 12, width: "100%", background: "none", border: "none", color: TOKENS.herbDeep, fontSize: 13, cursor: "pointer", textDecoration: "underline" }}
               >
                 Resend code
@@ -172,6 +258,15 @@ export default function Auth() {
               >
                 {mode === "signup" ? "Already have an account? Log in" : "New here? Create an account"}
               </button>
+              {mode === "login" && (
+                <button
+                  type="button"
+                  onClick={() => { setMode("forgot"); setError(""); }}
+                  style={{ marginTop: 8, width: "100%", background: "none", border: "none", color: TOKENS.inkSoft, fontSize: 12.5, cursor: "pointer", textDecoration: "underline" }}
+                >
+                  Forgot password?
+                </button>
+              )}
             </form>
           )}
         </div>
