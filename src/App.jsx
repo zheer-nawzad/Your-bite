@@ -4,7 +4,7 @@ import Auth from "./Auth.jsx";
 import YourBite from "./YourBite.jsx";
 import Splash from "./Splash.jsx";
 
-const MIN_SPLASH_MS = 900;
+const MIN_SPLASH_MS = 3000;
 const FADE_MS = 400;
 
 export default function App() {
