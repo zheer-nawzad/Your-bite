@@ -2236,7 +2236,7 @@ function TodayView({ profile, log, foodCache, viewedISO, onChangeDate, logs, onA
   const protein = meals.reduce((s, m) => s + (m.protein || 0), 0);
   const carbs = meals.reduce((s, m) => s + (m.carbs || 0), 0);
   const fat = meals.reduce((s, m) => s + (m.fat || 0), 0);
-  const locked = !!log.closed;
+  const locked = !!log.closed || viewedISO < todayISO();
   const isToday = viewedISO === todayISO();
   const guessedMealType = (() => {
     const h = new Date().getHours();
@@ -3332,6 +3332,22 @@ export default function App() {
   const [viewedISO, setViewedISO] = useState(todayISO());
   const [trainingPlan, setTrainingPlan] = useState(null);
   const [langMenuOpen, setLangMenuOpen] = useState(false);
+  const [todayDate, setTodayDate] = useState(todayISO());
+
+  // Any day that's now in the past and was never explicitly closed gets
+  // auto-closed (both locally and in the DB) so a forgotten day doesn't
+  // stay editable forever. Reopening it (via the existing Reopen button)
+  // still works, but it auto-closes again the next time the date rolls over.
+  function autoCloseOverdueDays(logsSnapshot, currentToday) {
+    const overdue = Object.entries(logsSnapshot).filter(([date, day]) => date < currentToday && !day.closed);
+    if (!overdue.length) return;
+    overdue.forEach(([date]) => setDayClosed(date, true));
+    setLogs((prev) => {
+      const next = { ...prev };
+      overdue.forEach(([date]) => { next[date] = { ...(next[date] || emptyDay()), closed: true }; });
+      return next;
+    });
+  }
 
   useEffect(() => {
     injectFonts();
@@ -3345,11 +3361,27 @@ export default function App() {
       if (fc) setFoodCache(fc);
       if (tp) setTrainingPlan(tp);
       setReady(true);
+      if (l) autoCloseOverdueDays(l, todayISO());
     })();
   }, []);
 
+  // Detect the date rolling over past midnight while the app stays open,
+  // and auto-close whatever day just became "yesterday".
+  const logsRef = useRef(logs);
+  useEffect(() => { logsRef.current = logs; }, [logs]);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const nowISO = todayISO();
+      if (nowISO !== todayDate) {
+        setTodayDate(nowISO);
+        autoCloseOverdueDays(logsRef.current, nowISO);
+      }
+    }, 60000);
+    return () => clearInterval(interval);
+  }, [todayDate]);
+
   const t = DICT[lang];
-  const today = todayISO();
+  const today = todayDate;
   const log = logs[viewedISO] || { meals: [], exercises: [], closed: false };
 
   function cacheEntriesFor(meals) {
@@ -3586,7 +3618,7 @@ export default function App() {
         {showSummary && profile && (
           <DaySummaryModal
             onClose={() => setShowSummary(false)}
-            onReopen={log.closed ? handleReopenDay : null}
+            onReopen={(log.closed || viewedISO < today) ? handleReopenDay : null}
             target={profile.calorieTarget}
             consumed={(log.meals || []).reduce((s, m) => s + m.calories, 0)}
             burned={(log.exercises || []).reduce((s, e) => s + e.caloriesBurned, 0)}
