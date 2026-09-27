@@ -64,6 +64,15 @@ export default function Auth() {
     else setResent(true);
   }
 
+  async function handleGoogle() {
+    setError("");
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: window.location.origin },
+    });
+    if (error) setError(error.message);
+  }
+
   return (
     <div
       style={{
@@ -113,6 +122,30 @@ export default function Auth() {
               <div style={{ fontSize: 13, color: TOKENS.inkSoft, marginBottom: 16 }}>
                 {mode === "signup" ? "We'll email you a code to verify it's you." : "Enter your email and password."}
               </div>
+
+              <button
+                type="button" onClick={handleGoogle}
+                style={{
+                  width: "100%", padding: "10px 13px", borderRadius: 10, border: `1px solid ${TOKENS.line}`,
+                  background: "#fff", color: TOKENS.ink, fontSize: 14, fontWeight: 600, cursor: "pointer",
+                  display: "flex", alignItems: "center", justifyContent: "center", gap: 10, marginBottom: 16,
+                }}
+              >
+                <svg width="17" height="17" viewBox="0 0 48 48">
+                  <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.4 29.3 35 24 35c-6.1 0-11-4.9-11-11s4.9-11 11-11c2.8 0 5.3 1 7.3 2.7l6-6C33.9 6.5 29.2 4.5 24 4.5 13.2 4.5 4.5 13.2 4.5 24S13.2 43.5 24 43.5c10.2 0 19-7.4 19-19 0-1.3-.1-2.4-.4-4z"/>
+                  <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.9 18.9 13 24 13c2.8 0 5.3 1 7.3 2.7l6-6C33.9 6.5 29.2 4.5 24 4.5c-7.8 0-14.5 4.4-17.7 10.2z"/>
+                  <path fill="#4CAF50" d="M24 43.5c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 34.8 26.7 35.5 24 35.5c-5.3 0-9.7-3.4-11.3-8.1l-6.5 5C9.4 39 16.1 43.5 24 43.5z"/>
+                  <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.2-4.2 5.6l6.2 5.2C40.4 36.5 43.5 30.9 43.5 24c0-1.3-.1-2.4-.4-3.5z"/>
+                </svg>
+                Continue with Google
+              </button>
+
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+                <div style={{ flex: 1, height: 1, background: TOKENS.line }} />
+                <div style={{ fontSize: 12, color: TOKENS.inkSoft }}>or</div>
+                <div style={{ flex: 1, height: 1, background: TOKENS.line }} />
+              </div>
+
               <input
                 type="email" required placeholder="you@example.com" value={email}
                 onChange={(e) => setEmail(e.target.value)} style={inputStyle}
