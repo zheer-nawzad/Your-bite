@@ -2846,7 +2846,8 @@ function TrainingPlanDisplay({ plan, profile, onRegenerate, onUpdatePlan, todayL
     .map((d) => (plan.days || []).find((x) => x.weekday === d));
   const progressionNote = (plan.progression || []).find((p) => p.week === activeWeek);
 
-  const todayWorkout = (plan.days || []).find((d) => d.weekday === todayWeekdayKey());
+  const [selectedWeekday, setSelectedWeekday] = useState(todayWeekdayKey());
+  const todayWorkout = (plan.days || []).find((d) => d.weekday === selectedWeekday);
   const workoutAlreadyLogged = !!(todayWorkout && (todayLog?.exercises || []).some((e) => e.type === todayWorkout.title));
   function confirmCompleteWorkout() {
     const minutes = Math.max(5, Number(workoutMinutes) || 45);
@@ -2862,11 +2863,32 @@ function TrainingPlanDisplay({ plan, profile, onRegenerate, onUpdatePlan, todayL
 
   return (
     <div>
+      {orderedDays.length > 1 && (
+        <div style={{ display: "flex", gap: 6, marginBottom: 8, overflowX: "auto" }}>
+          {orderedDays.map((d) => (
+            <button
+              key={d.weekday} onClick={() => setSelectedWeekday(d.weekday)}
+              style={{
+                padding: "6px 11px", borderRadius: 8, fontSize: 12, fontWeight: 700, whiteSpace: "nowrap",
+                border: `1.5px solid ${selectedWeekday === d.weekday ? TOKENS.herb : TOKENS.line}`,
+                background: selectedWeekday === d.weekday ? TOKENS.herb : "transparent",
+                color: selectedWeekday === d.weekday ? TOKENS.cream : TOKENS.ink,
+                cursor: "pointer", fontFamily: "var(--font-body)", flexShrink: 0,
+              }}
+            >
+              {weekdayLabel[d.weekday]}{d.weekday === todayWeekdayKey() ? " •" : ""}
+            </button>
+          ))}
+        </div>
+      )}
+
       {todayWorkout && (
         <div style={{ background: `${TOKENS.herb}14`, border: `1px solid ${TOKENS.herb}44`, borderRadius: 14, padding: "13px 15px", marginBottom: 16 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, marginBottom: workoutAlreadyLogged || loggingWorkout ? 10 : 0 }}>
             <div>
-              <div style={{ fontSize: 12, fontWeight: 700, color: TOKENS.herbDeep, textTransform: "uppercase" }}>{t.train_today_workout}</div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: TOKENS.herbDeep, textTransform: "uppercase" }}>
+                {selectedWeekday === todayWeekdayKey() ? t.train_today_workout : weekdayLabel[selectedWeekday]}
+              </div>
               <div style={{ fontSize: 14.5, fontWeight: 700, color: TOKENS.ink, marginTop: 2 }}>{todayWorkout.title}</div>
             </div>
             {workoutAlreadyLogged ? (
