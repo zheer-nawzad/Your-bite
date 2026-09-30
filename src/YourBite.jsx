@@ -69,6 +69,7 @@ const DICT = {
     modal_addMeal: "Log a meal", tab_text: "Describe it", tab_photo: "Snap it",
     meal_type_label: "Which meal?", meal_name_ph: "e.g. grilled chicken with rice",
     meal_estimate: "Estimate calories", meal_estimating: "Estimating…",
+    meal_continue: "Continue", meal_adjust_portions: "Adjust the amounts, then estimate calories.",
     meal_photo_take: "Take or choose a photo", meal_photo_retake: "Choose a different photo",
     meal_photo_analyzing: "Looking at your photo…",
     meal_result_edit: "Adjust the numbers if needed, then save.",
@@ -187,6 +188,7 @@ const DICT = {
     modal_addMeal: "تسجيل وجبة", tab_text: "اكتب وصفها", tab_photo: "صوّرها",
     meal_type_label: "أي وجبة؟", meal_name_ph: "مثال: دجاج مشوي مع أرز",
     meal_estimate: "تقدير السعرات", meal_estimating: "جارٍ التقدير…",
+    meal_continue: "متابعة", meal_adjust_portions: "عدّل الكميات، ثم قدّر السعرات.",
     meal_photo_take: "التقط أو اختر صورة", meal_photo_retake: "اختر صورة أخرى",
     meal_photo_analyzing: "جارٍ تحليل صورتك…",
     meal_result_edit: "عدّل الأرقام إذا لزم، ثم احفظ.",
@@ -305,6 +307,7 @@ const DICT = {
     modal_addMeal: "تۆمارکردنی خواردن", tab_text: "وەسفی بکە", tab_photo: "وێنەی بگرە",
     meal_type_label: "کام خواردن؟", meal_name_ph: "بۆ نموونە: مریشکی برژاو لەگەڵ برنج",
     meal_estimate: "خەمڵاندنی کالۆری", meal_estimating: "خەمڵاندن…",
+    meal_continue: "بەردەوامبوون", meal_adjust_portions: "بڕەکان ڕێک بخە، پاشان کالۆری خەمڵێنە.",
     meal_photo_take: "وێنە بگرە یان هەڵبژێرە", meal_photo_retake: "وێنەیەکی تر هەڵبژێرە",
     meal_photo_analyzing: "سەیری وێنەکەت دەکرێت…",
     meal_result_edit: "ئەگەر پێویستە ژمارەکان بگۆڕە، پاشان پاشەکەوتی بکە.",
@@ -820,23 +823,35 @@ async function callClaude(content, maxTokens = 500, lang) {
   }
 }
 
-async function estimateMealCalories(foodName, mealType) {
-  const prompt = `You are a nutrition estimation engine. Estimate the nutrition for this food entry.
+// Two-step estimation: first split the description into components with a
+// default portion each (so the user can see and correct the assumed amounts
+// before any calorie math happens), then compute nutrition from the
+// (possibly user-edited) portions.
+async function parseMealPortions(foodName, mealType) {
+  const prompt = `Break this meal description into its distinct food components for a ${mealType}.
 Food: "${foodName}"
-Meal type: ${mealType}
 
-If the entry doesn't already state a portion size, assume a realistic average serving and make that portion explicit in the returned "name" so the user can see exactly what was assumed and correct it if needed. Use the unit that naturally fits the food:
-- Meat/protein (chicken, beef, fish, etc.): grams (e.g. "Grilled chicken (200g) with rice (1 plate)").
-- Rice, pasta, or similar starches: plates or cups (e.g. "1 plate", "1.5 cups").
-- Soup or stew: bowls/plates (e.g. "1 bowl of lentil soup").
-- Drinks (juice, energy drinks, soda, milk): can, bottle, glass, or liters, whichever is standard for that drink (e.g. "1 can (250ml) energy drink", "1 glass (250ml) juice").
-- Bread, eggs, fruit, and other countable items: count (e.g. "2 eggs", "1 banana").
-If the entry already specifies a portion (e.g. "300g chicken breast", "2 cans of Red Bull"), use that exact portion instead of assuming one, and keep it in the name as given.
+For each component, give a realistic default portion using the unit that naturally fits it:
+- Meat/protein (chicken, beef, fish, eggs used as a main, etc.): grams — unit "g".
+- Rice, pasta, bread-based mains, or similar starches: plates — unit "plate" (or "cup" if that fits better).
+- Soup or stew: bowls — unit "bowl".
+- Drinks (juice, energy drinks, soda, milk, tea): can, glass, or liters, whichever is standard for that drink — unit "can", "glass", or "l".
+- Countable items (eggs, bread slices, fruit): count — unit "piece".
+If the entry already states a portion or count (e.g. "300g chicken", "2 cans of Red Bull"), use that exact number instead of guessing.
 
+Respond with ONLY compact raw JSON, no markdown, no explanation, in this exact shape:
+{"items":[{"name":"short component name","unit":"g","amount":0}]}
+List at most 5 components, one per distinct food/drink in the description.`;
+  return callClaude(prompt, 500);
+}
+
+async function estimateFromPortions(items, mealType) {
+  const itemsDesc = items.map((it) => `${it.amount}${it.unit === "g" || it.unit === "l" || it.unit === "ml" ? it.unit : " " + it.unit} of ${it.name}`).join(", ");
+  const prompt = `Estimate the total nutrition for a ${mealType} made up of exactly these components and portions: ${itemsDesc}.
 Respond with ONLY a raw JSON object, no markdown, no explanation, in this exact shape:
-{"name": "cleaned-up food name including the portion size", "calories": number, "protein_g": number, "carbs_g": number, "fat_g": number}
-Base the calorie/macro numbers on the actual portion stated in the name — don't default to a generic single-serving estimate if the portion is larger or smaller than average.`;
-  return callClaude(prompt);
+{"name": "short combined meal name including these portions", "calories": number, "protein_g": number, "carbs_g": number, "fat_g": number}
+Base the numbers on these exact stated portions, not a generic average serving.`;
+  return callClaude(prompt, 400);
 }
 
 async function estimateCaloriesFromImage(base64Data, mimeType, mealType) {
@@ -1615,6 +1630,7 @@ function AddMealModal({ mealType, cache, onClose, onSave }) {
   const [loading, setLoading] = useState(false);
   const [errMsg, setErrMsg] = useState("");
   const [result, setResult] = useState(null);
+  const [portions, setPortions] = useState(null);
   const [matchedCache, setMatchedCache] = useState(false);
   const [matchedKurdish, setMatchedKurdish] = useState(false);
   const [photoData, setPhotoData] = useState(null);
@@ -1634,6 +1650,7 @@ function AddMealModal({ mealType, cache, onClose, onSave }) {
 
   function useCachedEntry(entry) {
     setName(entry.name);
+    setPortions(null);
     setResult({ name: entry.name, calories: entry.calories, protein: entry.protein, carbs: entry.carbs, fat: entry.fat });
     setMatchedCache(true);
     setMatchedKurdish(false);
@@ -1642,6 +1659,7 @@ function AddMealModal({ mealType, cache, onClose, onSave }) {
 
   function useKurdishDish(entry) {
     setName(entry.name);
+    setPortions(null);
     setResult({ name: entry.name, calories: entry.calories, protein: entry.protein, carbs: entry.carbs, fat: entry.fat });
     setMatchedKurdish(true);
     setMatchedCache(false);
@@ -1655,11 +1673,27 @@ function AddMealModal({ mealType, cache, onClose, onSave }) {
     { value: "snack", label: t.meal_snack },
   ];
 
-  async function handleTextEstimate() {
+  async function handleParsePortions() {
     if (!name.trim()) return;
-    setLoading(true); setErrMsg(""); setResult(null); setMatchedCache(false); setMatchedKurdish(false);
+    setLoading(true); setErrMsg(""); setResult(null); setPortions(null); setMatchedCache(false); setMatchedKurdish(false);
     try {
-      const r = await estimateMealCalories(name.trim(), type);
+      const r = await parseMealPortions(name.trim(), type);
+      const items = (r.items || []).map((it) => ({ name: it.name || "", unit: it.unit || "g", amount: Number(it.amount) || 0 }));
+      if (!items.length) throw new Error("no items parsed");
+      setPortions(items);
+    } catch (e) {
+      setErrMsg(t.meal_ai_fail);
+    } finally { setLoading(false); }
+  }
+
+  function updatePortionAmount(index, amount) {
+    setPortions((prev) => prev.map((p, i) => (i === index ? { ...p, amount } : p)));
+  }
+
+  async function handleEstimateFromPortions() {
+    setLoading(true); setErrMsg("");
+    try {
+      const r = await estimateFromPortions(portions, type);
       setResult({ name: r.name || name, calories: Math.round(r.calories) || 0, protein: Math.round(r.protein_g) || 0, carbs: Math.round(r.carbs_g) || 0, fat: Math.round(r.fat_g) || 0 });
     } catch (e) {
       setErrMsg(t.meal_ai_fail);
@@ -1720,23 +1754,51 @@ function AddMealModal({ mealType, cache, onClose, onSave }) {
       {mode === "text" && (
         <>
           <Field label=" ">
-            <input style={inputStyle} placeholder={t.meal_name_ph} value={name} onChange={(e) => { setName(e.target.value); setMatchedCache(false); setMatchedKurdish(false); }} />
+            <input
+              style={inputStyle} placeholder={t.meal_name_ph} value={name}
+              onChange={(e) => { setName(e.target.value); setPortions(null); setMatchedCache(false); setMatchedKurdish(false); }}
+            />
           </Field>
 
-          {!result && matchingEntries.length > 0 && (
+          {!result && !portions && matchingEntries.length > 0 && (
             <CacheChipList label={t.cache_suggestions} entries={matchingEntries} onPick={useCachedEntry} />
           )}
-          {!result && kurdishMatches.length > 0 && (
+          {!result && !portions && kurdishMatches.length > 0 && (
             <CacheChipList label={t.cache_library} entries={kurdishMatches} onPick={useKurdishDish} />
           )}
-          {!result && name.trim().length < 2 && frequentEntries.length > 0 && (
+          {!result && !portions && name.trim().length < 2 && frequentEntries.length > 0 && (
             <CacheChipList label={t.cache_frequent} entries={frequentEntries} onPick={useCachedEntry} />
           )}
 
-          {!result && (
-            <Button variant="saffron" full onClick={handleTextEstimate} disabled={!name.trim() || loading}>
-              {loading ? <><Loader2 size={16} className="spin" /> {t.meal_estimating}</> : t.meal_estimate}
+          {!result && !portions && (
+            <Button variant="saffron" full onClick={handleParsePortions} disabled={!name.trim() || loading}>
+              {loading ? <><Loader2 size={16} className="spin" /> {t.meal_estimating}</> : t.meal_continue}
             </Button>
+          )}
+
+          {!result && portions && (
+            <div>
+              <div style={{ fontSize: 13, color: TOKENS.inkSoft, marginBottom: 10 }}>{t.meal_adjust_portions}</div>
+              {portions.map((p, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                  <div style={{ flex: 1, fontSize: 13.5, color: TOKENS.ink }}>{p.name}</div>
+                  <input
+                    type="number" inputMode="decimal" value={p.amount}
+                    onChange={(e) => updatePortionAmount(i, e.target.value)}
+                    style={{ ...inputStyle, width: 66, padding: "8px 10px", fontSize: 13.5, marginBottom: 0, textAlign: "center" }}
+                  />
+                  <div style={{ fontSize: 12.5, color: TOKENS.inkSoft, width: 42, flexShrink: 0 }}>{p.unit}</div>
+                </div>
+              ))}
+              <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
+                <Button variant="ghost" style={{ padding: "10px 16px" }} onClick={() => setPortions(null)} disabled={loading}>
+                  {t.cancel}
+                </Button>
+                <Button variant="saffron" full onClick={handleEstimateFromPortions} disabled={loading}>
+                  {loading ? <><Loader2 size={16} className="spin" /> {t.meal_estimating}</> : t.meal_estimate}
+                </Button>
+              </div>
+            </div>
           )}
         </>
       )}
