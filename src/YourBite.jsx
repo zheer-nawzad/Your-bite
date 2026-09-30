@@ -761,12 +761,14 @@ function repairTruncatedItemsJson(text) {
   } catch (e) { return null; }
 }
 
-// Proxied through a Supabase Edge Function (supabase/functions/ai-proxy) so the
-// Anthropic API key never reaches the browser. The function forwards the body
-// as-is and returns Anthropic's response unchanged, so the parsing below is untouched.
-async function callAiProxy(body) {
+// Proxied through a Supabase Edge Function (supabase/functions/ai-proxy, or
+// supabase/functions/gemini-proxy for Kurdish content — Gemini handles Kurdish
+// Sorani noticeably better) so no API key reaches the browser. Both functions
+// return an Anthropic-shaped response, so the parsing below is untouched either way.
+async function callAiProxy(body, provider = "claude") {
   const { data: { session } } = await supabase.auth.getSession();
-  return fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-proxy`, {
+  const fnName = provider === "gemini" ? "gemini-proxy" : "ai-proxy";
+  return fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/${fnName}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -777,14 +779,16 @@ async function callAiProxy(body) {
   });
 }
 
-async function callClaude(content, maxTokens = 500) {
+// lang "ckb" (Kurdish Sorani) routes to Gemini; everything else stays on Claude.
+async function callClaude(content, maxTokens = 500, lang) {
+  const provider = lang === "ckb" ? "gemini" : "claude";
   let response;
   try {
     response = await callAiProxy({
       model: "claude-haiku-4-5-20251001",
       max_tokens: maxTokens,
       messages: [{ role: "user", content }],
-    });
+    }, provider);
   } catch (e) {
     throw new Error(`network: ${e.message || e}`);
   }
@@ -921,7 +925,7 @@ Design ONE workout for each of those training days (a sensible split like push/p
 Respond with ONLY compact raw JSON, no markdown, no explanation, in this exact shape:
 {"splitName":"short name for this split","days":[{"weekday":"monday","title":"short workout title","exercises":[{"name":"exercise name","sets":3,"reps":"8-12"}]}],"progression":[{"week":1,"note":"short note"},{"week":2,"note":"..."},{"week":3,"note":"..."},{"week":4,"note":"..."}],"summary":"1-2 sentence overview of the plan and how to approach it safely"}`;
 
-  return callClaude(promptText, 2200);
+  return callClaude(promptText, 2200, lang);
 }
 
 const KURDISH_MAIN_DISHES = [
@@ -1047,7 +1051,7 @@ ${langNote}${ckbVocabNote}
 Respond with ONLY compact raw JSON, no markdown, no explanation, in this exact shape:
 {"days":[{"style":"short cuisine/style tag only, e.g. American-Style — do NOT include any day number, the app adds that itself","meals":[{"type":"breakfast","idea":"short meal idea","calories":0,"protein_g":0}]}]}
 Each day's meals array must have exactly 4 entries with type one of: breakfast, lunch, dinner, snack.`;
-  return callClaude(prompt, 1900);
+  return callClaude(prompt, 1900, lang);
 }
 
 async function translatePlanText(plan, targetLang) {
@@ -1070,7 +1074,7 @@ ${JSON.stringify(payload)}
 
 Respond with ONLY compact JSON, no markdown, no explanation, in this exact shape:
 {"splitName":"...","dayTitles":["..."],"progression":["..."],"summary":"...","mealDayStyles":["..."],"mealIdeasFlat":["..."]}`;
-  return callClaude(prompt, 2200);
+  return callClaude(prompt, 2200, targetLang);
 }
 function applyTranslatedPlanText(plan, translated) {
   const days = (plan.days || []).map((d, i) => ({ ...d, title: (translated.dayTitles && translated.dayTitles[i]) ?? d.title }));
@@ -1153,7 +1157,7 @@ Answer conversationally and helpfully — about their training plan, specific ex
       max_tokens: 600,
       system: systemPrompt,
       messages: history.map((m) => ({ role: m.role, content: m.content })),
-    });
+    }, lang === "ckb" ? "gemini" : "claude");
   } catch (e) {
     throw new Error(`network: ${e.message || e}`);
   }
