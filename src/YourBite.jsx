@@ -777,17 +777,19 @@ async function callAiProxy(body) {
   });
 }
 
-// Kurdish Sorani (ckb) uses Claude Sonnet — much better Kurdish than Haiku,
-// and considerably cheaper than Opus while still reading naturally.
+// Kurdish Sorani (ckb) uses Claude Opus, the most capable current model —
+// Kurdish is a lower-resource language where the strongest model helps most.
 // Everything else stays on the cheaper/faster Haiku.
 async function callClaude(content, maxTokens = 500, lang) {
-  const isSonnet = lang === "ckb";
-  const model = isSonnet ? "claude-sonnet-5" : "claude-haiku-4-5-20251001";
+  const isOpus = lang === "ckb";
+  const model = isOpus ? "claude-opus-5" : "claude-haiku-4-5-20251001";
   let response;
   try {
     response = await callAiProxy({
       model,
-      max_tokens: maxTokens,
+      // Opus's thinking tokens count against max_tokens, so give it headroom.
+      max_tokens: isOpus ? maxTokens + 800 : maxTokens,
+      ...(isOpus ? { output_config: { effort: "low" } } : {}),
       messages: [{ role: "user", content }],
     });
   } catch (e) {
@@ -1151,12 +1153,13 @@ ${contextText}
 Respond in ${langName} by default, since that's the language this person has the app set to — unless they write to you in a different language, in which case switch to replying in that language instead. When writing in Kurdish Sorani or Arabic, spell out units as full words in that script (e.g. Kurdish "191 گرام" for grams, not "191g"; Arabic "191 غرام", not "191g") — mixing a Latin abbreviation into the middle of a right-to-left sentence renders as visually broken/reordered text, so always use the native word for the unit instead. Double-check that Kurdish Sorani grammar, word order, and izafe constructions are correct and natural, not a literal word-for-word rendering from English. When writing Kurdish Sorani, use the correct Central Kurdish Unicode letters, not their similar-looking Arabic counterparts: ک (Kurdish keheh) not ك (Arabic kaf), ی (Kurdish/Farsi yeh) not ي (Arabic yeh), ە for a word-final short e (not bare ه), and use the Kurdish-specific letters گ, ڕ, ڵ, ۆ, ڤ, چ, ژ, پ where the word calls for them rather than substituting the nearest Arabic letter.
 
 Answer conversationally and helpfully — about their training plan, specific exercises, form cues, nutrition, motivation, or general fitness questions. Reference their actual plan/numbers above when relevant instead of speaking generically. Keep answers concise — a few sentences to a short paragraph — unless they ask for more detail. When it helps organize a longer answer (like listing a few meal or exercise options), you can use **bold** for key terms/numbers and "- " bullet lines — the app renders these properly, so use them when they genuinely aid clarity, but don't over-format a short conversational reply. If a question needs a real medical diagnosis, injury assessment, or is outside general fitness coaching, say so plainly and suggest seeing a doctor or physiotherapist instead of guessing.`;
-  const isSonnet = lang === "ckb";
+  const isOpus = lang === "ckb";
   let response;
   try {
     response = await callAiProxy({
-      model: isSonnet ? "claude-sonnet-5" : "claude-haiku-4-5-20251001",
-      max_tokens: 600,
+      model: isOpus ? "claude-opus-5" : "claude-haiku-4-5-20251001",
+      max_tokens: isOpus ? 1400 : 600,
+      ...(isOpus ? { output_config: { effort: "low" } } : {}),
       system: systemPrompt,
       messages: history.map((m) => ({ role: m.role, content: m.content })),
     });
