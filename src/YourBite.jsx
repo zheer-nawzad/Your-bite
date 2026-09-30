@@ -833,7 +833,8 @@ Food: "${foodName}"
 
 For each component, give a realistic default portion using the unit that naturally fits it:
 - Meat/protein (chicken, beef, fish, eggs used as a main, etc.): grams — unit "g".
-- Rice, pasta, bread-based mains, or similar starches: plates — unit "plate" (or "cup" if that fits better).
+- Rice specifically: always use plates — unit "plate" (never "cup" for rice).
+- Pasta, bread-based mains, or other similar starches (not rice): plates — unit "plate" (or "cup" if that fits better).
 - Soup or stew: bowls — unit "bowl".
 - Drinks (juice, energy drinks, soda, milk, tea): can, glass, or liters, whichever is standard for that drink — unit "can", "glass", or "l".
 - Countable items (eggs, bread slices, fruit): count — unit "piece".
