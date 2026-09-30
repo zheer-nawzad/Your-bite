@@ -824,9 +824,18 @@ async function estimateMealCalories(foodName, mealType) {
   const prompt = `You are a nutrition estimation engine. Estimate the nutrition for this food entry.
 Food: "${foodName}"
 Meal type: ${mealType}
+
+If the entry doesn't already state a portion size, assume a realistic average serving and make that portion explicit in the returned "name" so the user can see exactly what was assumed and correct it if needed. Use the unit that naturally fits the food:
+- Meat/protein (chicken, beef, fish, etc.): grams (e.g. "Grilled chicken (200g) with rice (1 plate)").
+- Rice, pasta, or similar starches: plates or cups (e.g. "1 plate", "1.5 cups").
+- Soup or stew: bowls/plates (e.g. "1 bowl of lentil soup").
+- Drinks (juice, energy drinks, soda, milk): can, bottle, glass, or liters, whichever is standard for that drink (e.g. "1 can (250ml) energy drink", "1 glass (250ml) juice").
+- Bread, eggs, fruit, and other countable items: count (e.g. "2 eggs", "1 banana").
+If the entry already specifies a portion (e.g. "300g chicken breast", "2 cans of Red Bull"), use that exact portion instead of assuming one, and keep it in the name as given.
+
 Respond with ONLY a raw JSON object, no markdown, no explanation, in this exact shape:
-{"name": "short cleaned-up food name", "calories": number, "protein_g": number, "carbs_g": number, "fat_g": number}
-Use realistic whole numbers for an average portion.`;
+{"name": "cleaned-up food name including the portion size", "calories": number, "protein_g": number, "carbs_g": number, "fat_g": number}
+Base the calorie/macro numbers on the actual portion stated in the name — don't default to a generic single-serving estimate if the portion is larger or smaller than average.`;
   return callClaude(prompt);
 }
 
@@ -1612,7 +1621,8 @@ function AddMealModal({ mealType, cache, onClose, onSave }) {
   const fileRef = useRef(null);
 
   const cacheEntries = useMemo(() => Object.values(cache || {}).sort((a, b) => (b.count - a.count) || (b.lastAt - a.lastAt)), [cache]);
-  const frequentEntries = useMemo(() => cacheEntries.slice(0, 5), [cacheEntries]);
+  // Only surface something as a "frequent meal" once it's actually been logged 3+ times.
+  const frequentEntries = useMemo(() => cacheEntries.filter((e) => e.count >= 3).slice(0, 5), [cacheEntries]);
   const matchingEntries = useMemo(() => {
     if (foldForSearch(name).length < 2) return [];
     return cacheEntries.filter((e) => dishMatchesQuery(e.name, name)).slice(0, 5);
@@ -1621,9 +1631,6 @@ function AddMealModal({ mealType, cache, onClose, onSave }) {
     if (foldForSearch(name).length < 2) return [];
     return ALL_LOG_DISHES.filter((d) => dishMatchesQuery(d.name, name)).slice(0, 6);
   }, [name]);
-  const kurdishSuggested = useMemo(() => (
-    KURDISH_LOG_DISHES.filter((d) => (type === "breakfast" ? d.mealHint === "breakfast" : d.mealHint === "main")).slice(0, 6)
-  ), [type]);
 
   function useCachedEntry(entry) {
     setName(entry.name);
@@ -1724,9 +1731,6 @@ function AddMealModal({ mealType, cache, onClose, onSave }) {
           )}
           {!result && name.trim().length < 2 && frequentEntries.length > 0 && (
             <CacheChipList label={t.cache_frequent} entries={frequentEntries} onPick={useCachedEntry} />
-          )}
-          {!result && name.trim().length < 2 && kurdishSuggested.length > 0 && (
-            <CacheChipList label={t.cache_kurdish} entries={kurdishSuggested} onPick={useKurdishDish} />
           )}
 
           {!result && (
