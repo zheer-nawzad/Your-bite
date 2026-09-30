@@ -823,6 +823,24 @@ async function callClaude(content, maxTokens = 500, lang) {
   }
 }
 
+// Shared across every estimation path (text, photo, live scan) so the same
+// food and portion always produces the same numbers no matter how it was logged.
+const NUTRITION_REFERENCE = `Use these reference values as your baseline, scaling linearly to the exact stated portion — this keeps estimates consistent whether the same food is logged by text, photo, or live scan:
+- Chicken breast, grilled/cooked (skinless): 165 kcal, 31g protein, 0g carbs, 3.6g fat per 100g
+- Chicken thigh, grilled/cooked (skinless): 209 kcal, 26g protein, 0g carbs, 10.9g fat per 100g
+- Beef, lean, cooked: 250 kcal, 26g protein, 0g carbs, 15g fat per 100g
+- Lamb, cooked: 294 kcal, 25g protein, 0g carbs, 21g fat per 100g
+- Fish (white, grilled): 140 kcal, 26g protein, 0g carbs, 3g fat per 100g
+- Salmon, cooked: 208 kcal, 20g protein, 0g carbs, 13g fat per 100g
+- Shrimp, cooked: 99 kcal, 24g protein, 0.2g carbs, 0.3g fat per 100g
+- White rice, cooked: 130 kcal, 2.7g protein, 28g carbs, 0.3g fat per 100g (1 plate ≈ 200g cooked)
+- Bread/flatbread: 265 kcal, 9g protein, 49g carbs, 3.2g fat per 100g
+- Pasta, cooked: 131 kcal, 5g protein, 25g carbs, 1.1g fat per 100g
+- Potato, cooked: 87 kcal, 2g protein, 20g carbs, 0.1g fat per 100g
+- Egg, whole: 78 kcal, 6g protein, 0.6g carbs, 5g fat per large egg (~50g)
+- Soup/stew, general: 1 bowl ≈ 300-350ml
+For foods not listed here, use your best realistic estimate, but always scale it correctly to the stated portion.`;
+
 // Two-step estimation: first split the description into components with a
 // default portion each (so the user can see and correct the assumed amounts
 // before any calorie math happens), then compute nutrition from the
@@ -849,6 +867,7 @@ List at most 5 components, one per distinct food/drink in the description.`;
 async function estimateFromPortions(items, mealType) {
   const itemsDesc = items.map((it) => `${it.amount}${it.unit === "g" || it.unit === "l" || it.unit === "ml" ? it.unit : " " + it.unit} of ${it.name}`).join(", ");
   const prompt = `Estimate the total nutrition for a ${mealType} made up of exactly these components and portions: ${itemsDesc}.
+${NUTRITION_REFERENCE}
 Respond with ONLY a raw JSON object, no markdown, no explanation, in this exact shape:
 {"name": "short combined meal name including these portions", "calories": number, "protein_g": number, "carbs_g": number, "fat_g": number}
 Base the numbers on these exact stated portions, not a generic average serving.`;
@@ -860,7 +879,9 @@ async function estimateCaloriesFromImage(base64Data, mimeType, mealType) {
     { type: "image", source: { type: "base64", media_type: mimeType, data: base64Data } },
     {
       type: "text",
-      text: `Identify the food in this photo and estimate its nutrition for a ${mealType}. Respond with ONLY a raw JSON object, no markdown, no explanation, in this exact shape:
+      text: `Identify the food in this photo and estimate its nutrition for a ${mealType}.
+${NUTRITION_REFERENCE}
+Respond with ONLY a raw JSON object, no markdown, no explanation, in this exact shape:
 {"name": "short food name", "calories": number, "protein_g": number, "carbs_g": number, "fat_g": number}
 Use realistic whole numbers based on the visible portion size.`,
     },
@@ -881,7 +902,9 @@ For each item's position, this matters a lot — a marker will be drawn at exact
 - Before finalizing each item, double-check: "does this exact x,y sit on top of this food, or did I accidentally point at something else nearby?" Adjust if needed.
 - x/y are percentages 0-100 (0,0 = top-left of the photo), marking the center of a visible patch of that item.
 
-Also give a single representative emoji per item. Respond with ONLY compact raw JSON, no markdown, no explanation, no extra whitespace, in this exact shape:
+Also give a single representative emoji per item.
+${NUTRITION_REFERENCE}
+Respond with ONLY compact raw JSON, no markdown, no explanation, no extra whitespace, in this exact shape:
 {"items":[{"name":"short item name","calories":0,"protein_g":0,"carbs_g":0,"fat_g":0,"x":0,"y":0,"emoji":"🍗"}]}
 List at most 5 items, fewer if the plate is simple. Keep names to 1-3 words. Use realistic whole numbers.`,
     },
