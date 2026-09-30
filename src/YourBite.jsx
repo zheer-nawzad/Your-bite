@@ -779,9 +779,9 @@ async function callAiProxy(body, provider = "claude") {
   });
 }
 
-// lang "ckb" (Kurdish Sorani) routes to Gemini; everything else stays on Claude.
+// Temporary A/B test: everything routed to Gemini regardless of lang.
 async function callClaude(content, maxTokens = 500, lang) {
-  const provider = lang === "ckb" ? "gemini" : "claude";
+  const provider = "gemini";
   let response;
   try {
     response = await callAiProxy({
@@ -1157,7 +1157,7 @@ Answer conversationally and helpfully — about their training plan, specific ex
       max_tokens: 600,
       system: systemPrompt,
       messages: history.map((m) => ({ role: m.role, content: m.content })),
-    }, lang === "ckb" ? "gemini" : "claude");
+    }, "gemini");
   } catch (e) {
     throw new Error(`network: ${e.message || e}`);
   }
