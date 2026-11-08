@@ -106,6 +106,56 @@ const DICT = {
     weekdaysShort: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
     months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
     fab_meal: "Log a meal", fab_scan: "Live scan", fab_exercise: "Log exercise", quick_upload: "Upload",
+    plan_free: "Free",
+    plan_pro: "Pro",
+    plan_proplus: "Pro+",
+    up_title: "Upgrade YourBite",
+    up_reason_scan: "You've used your 2 free live scans today.",
+    up_reason_upload: "You've used your 2 free photo uploads today.",
+    up_reason_trial: "Your 14-day free training plan has ended.",
+    up_wait: "Or wait — your free scans come back in {t}.",
+    up_hm: "{h}h {m}m",
+    up_month: "IQD / month",
+    up_pro_f1: "Unlimited live scan",
+    up_pro_f2: "Unlimited photo upload",
+    up_pro_f3: "Smart kcal, protein, carbs & fat",
+    up_plus_f1: "Everything in Pro",
+    up_plus_f2: "Training plan + protein guide",
+    up_plus_f3: "AI personal trainer chat",
+    up_current: "Your plan",
+    up_pay_fib: "Pay {amount} IQD with FIB",
+    up_open_fib: "Open FIB app",
+    up_waiting: "Waiting for your payment… Pay in the FIB app, then come back here.",
+    up_code: "Payment code",
+    up_other_phone: "Paying from another phone? Scan this QR in the FIB app.",
+    up_success: "Payment received! {plan} is active until {date}.",
+    up_done: "Done",
+    up_declined: "The payment was declined or expired. Please try again.",
+    up_manual_title: "Send {amount} IQD with FIB",
+    up_manual_body: "Open your FIB app, tap Transfer, and send to this code (or scan the QR):",
+    up_copy: "Copy",
+    up_copied: "Copied",
+    up_manual_after: "After paying, send us the payment screenshot. We'll activate your plan quickly.",
+    up_whatsapp: "Send screenshot on WhatsApp",
+    up_err: "Something went wrong. Please try again.",
+    quota_left: "Free today: {s} scans · {u} uploads left",
+    quota_go_pro: "Go Pro",
+    plan_title: "My plan",
+    plan_active_until: "Active until {date}",
+    plan_free_desc: "2 live scans + 2 photo uploads per day. Training plan free for 14 days.",
+    plan_upgrade: "Upgrade",
+    plan_extend: "Extend or change plan",
+    trial_left: "Free training trial: {n} days left",
+    trial_locked_title: "Your free training trial has ended",
+    trial_locked_body: "Upgrade to Pro+ to keep using your training plan, protein guide and AI trainer. Your plan is saved and comes back exactly as it was.",
+    trial_get_plus: "Get Pro+",
+    trial_setup_note: "Training plans are free for 14 days, then part of Pro+.",
+    admin_title: "Admin — activate a plan",
+    admin_email: "User email",
+    admin_days: "Days",
+    admin_activate: "Activate",
+    admin_ok: "Done — {email} is now {plan}{until}",
+    admin_not_found: "No account with that email.",
     log_title: "Today's log", log_all: "All", log_meals: "Meals", log_exercise_tab: "Exercise",
     log_empty: "Nothing logged yet.", log_view_future: "You can't log a day that hasn't happened yet.",
     log_delete: "Remove",
@@ -228,6 +278,56 @@ const DICT = {
     weekdaysShort: ["إثنين", "ثلاثاء", "أربعاء", "خميس", "جمعة", "سبت", "أحد"],
     months: ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"],
     fab_meal: "تسجيل وجبة", fab_scan: "مسح مباشر", fab_exercise: "تسجيل تمرين", quick_upload: "رفع صورة",
+    plan_free: "مجاني",
+    plan_pro: "Pro",
+    plan_proplus: "⁦Pro+⁩",
+    up_title: "ترقية YourBite",
+    up_reason_scan: "لقد استخدمت المسحين المباشرين المجانيين لهذا اليوم.",
+    up_reason_upload: "لقد استخدمت رفع الصورتين المجانيتين لهذا اليوم.",
+    up_reason_trial: "انتهت خطة التدريب المجانية لمدة 14 يومًا.",
+    up_wait: "أو انتظر — تعود مسوحاتك المجانية بعد {t}.",
+    up_hm: "{h} س {m} د",
+    up_month: "دينار / شهر",
+    up_pro_f1: "مسح مباشر بلا حدود",
+    up_pro_f2: "رفع صور بلا حدود",
+    up_pro_f3: "حساب ذكي للسعرات والبروتين والكربوهيدرات والدهون",
+    up_plus_f1: "كل ما في Pro",
+    up_plus_f2: "خطة تدريب + دليل البروتين",
+    up_plus_f3: "محادثة مع مدرب شخصي ذكي",
+    up_current: "خطتك",
+    up_pay_fib: "ادفع {amount} دينار عبر FIB",
+    up_open_fib: "افتح تطبيق FIB",
+    up_waiting: "بانتظار الدفع… ادفع في تطبيق FIB ثم ارجع هنا.",
+    up_code: "رمز الدفع",
+    up_other_phone: "تدفع من هاتف آخر؟ امسح هذا الرمز في تطبيق FIB.",
+    up_success: "تم استلام الدفع! {plan} مفعّل حتى {date}.",
+    up_done: "تم",
+    up_declined: "تم رفض الدفع أو انتهت صلاحيته. حاول مرة أخرى.",
+    up_manual_title: "أرسل {amount} دينار عبر FIB",
+    up_manual_body: "افتح تطبيق FIB، اضغط تحويل، وأرسل إلى هذا الرمز (أو امسح الرمز):",
+    up_copy: "نسخ",
+    up_copied: "تم النسخ",
+    up_manual_after: "بعد الدفع أرسل لنا صورة الدفع وسنفعّل خطتك بسرعة.",
+    up_whatsapp: "أرسل الصورة عبر واتساب",
+    up_err: "حدث خطأ. حاول مرة أخرى.",
+    quota_left: "المتبقي مجانًا اليوم: {s} مسح · {u} رفع",
+    quota_go_pro: "اشترك Pro",
+    plan_title: "خطتي",
+    plan_active_until: "مفعّل حتى {date}",
+    plan_free_desc: "مسحان مباشران + رفع صورتين يوميًا. خطة التدريب مجانية لمدة 14 يومًا.",
+    plan_upgrade: "ترقية",
+    plan_extend: "تمديد أو تغيير الخطة",
+    trial_left: "تجربة التدريب المجانية: بقي {n} يوم",
+    trial_locked_title: "انتهت تجربة التدريب المجانية",
+    trial_locked_body: "اشترك في ⁦Pro+⁩ لتواصل استخدام خطة التدريب ودليل البروتين والمدرب الذكي. خطتك محفوظة وستعود كما كانت تمامًا.",
+    trial_get_plus: "اشترك ⁦Pro+⁩",
+    trial_setup_note: "خطط التدريب مجانية لمدة 14 يومًا، ثم ضمن ⁦Pro+⁩.",
+    admin_title: "المشرف — تفعيل خطة",
+    admin_email: "بريد المستخدم",
+    admin_days: "أيام",
+    admin_activate: "تفعيل",
+    admin_ok: "تم — {email} الآن على {plan}{until}",
+    admin_not_found: "لا يوجد حساب بهذا البريد.",
     log_title: "سجلّ اليوم", log_all: "الكل", log_meals: "الوجبات", log_exercise_tab: "التمارين",
     log_empty: "لم يُسجَّل أي شيء بعد.", log_view_future: "لا يمكنك تسجيل يوم لم يأتِ بعد.",
     log_delete: "إزالة",
@@ -350,6 +450,56 @@ const DICT = {
     weekdaysShort: ["٢شەمە", "٣شەمە", "٤شەمە", "٥شەمە", "هەینی", "شەمە", "١شەمە"],
     months: ["ژانویە", "فێبروایە", "مارس", "ئەپریل", "مایس", "حوزەیران", "تەمووز", "ئاب", "ئەیلوول", "تشرینی یەکەم", "تشرینی دووەم", "کانونی یەکەم"],
     fab_meal: "تۆمارکردنی خواردن", fab_scan: "سکانی ڕاستەوخۆ", fab_exercise: "تۆمارکردنی ڕاهێنان", quick_upload: "بارکردنی وێنە",
+    plan_free: "بەخۆڕایی",
+    plan_pro: "Pro",
+    plan_proplus: "⁦Pro+⁩",
+    up_title: "بەرزکردنەوەی YourBite",
+    up_reason_scan: "هەردوو سکانی ڕاستەوخۆی بەخۆڕایی ئەمڕۆت بەکارهێنا.",
+    up_reason_upload: "هەردوو بارکردنی وێنەی بەخۆڕایی ئەمڕۆت بەکارهێنا.",
+    up_reason_trial: "ماوەی 14 ڕۆژی بەخۆڕایی پلانی ڕاهێنان کۆتایی هات.",
+    up_wait: "یان چاوەڕێ بکە — سکانە بەخۆڕاییەکانت دوای {t} دەگەڕێنەوە.",
+    up_hm: "{h} کاتژمێر و {m} خولەک",
+    up_month: "دینار / مانگ",
+    up_pro_f1: "سکانی ڕاستەوخۆی بێسنوور",
+    up_pro_f2: "بارکردنی وێنەی بێسنوور",
+    up_pro_f3: "ژماردنی زیرەکی کالۆری، پرۆتین، کاربۆهیدرات و چەوری",
+    up_plus_f1: "هەموو شتەکانی Pro",
+    up_plus_f2: "پلانی ڕاهێنان + ڕێنمایی پرۆتین",
+    up_plus_f3: "گفتوگۆ لەگەڵ ڕاهێنەری تایبەتی زیرەک",
+    up_current: "پلانەکەت",
+    up_pay_fib: "پارەدانی {amount} دینار بە FIB",
+    up_open_fib: "کردنەوەی ئەپی FIB",
+    up_waiting: "چاوەڕێی پارەدانەکەتین… لە ئەپی FIB پارە بدە، پاشان بگەڕێوە ئێرە.",
+    up_code: "کۆدی پارەدان",
+    up_other_phone: "لە مۆبایلێکی ترەوە پارە دەدەیت؟ ئەم QR ـە لە ئەپی FIB سکان بکە.",
+    up_success: "پارەکە گەیشت! {plan} چالاکە تا {date}.",
+    up_done: "تەواو",
+    up_declined: "پارەدانەکە ڕەتکرایەوە یان کاتی بەسەرچوو. تکایە دووبارە هەوڵ بدەوە.",
+    up_manual_title: "{amount} دینار بە FIB بنێرە",
+    up_manual_body: "ئەپی FIB بکەرەوە، گواستنەوە دابگرە و بنێرە بۆ ئەم کۆدە (یان QR ـەکە سکان بکە):",
+    up_copy: "کۆپی",
+    up_copied: "کۆپی کرا",
+    up_manual_after: "دوای پارەدان، وێنەی پارەدانەکەمان بۆ بنێرە. بەزوویی پلانەکەت چالاک دەکەین.",
+    up_whatsapp: "ناردنی وێنە لە واتسئاپ",
+    up_err: "هەڵەیەک ڕوویدا. تکایە دووبارە هەوڵ بدەوە.",
+    quota_left: "بەخۆڕایی ئەمڕۆ ماوە: {s} سکان · {u} بارکردن",
+    quota_go_pro: "Pro وەربگرە",
+    plan_title: "پلانەکەم",
+    plan_active_until: "چالاکە تا {date}",
+    plan_free_desc: "ڕۆژانە 2 سکانی ڕاستەوخۆ + 2 بارکردنی وێنە. پلانی ڕاهێنان بۆ 14 ڕۆژ بەخۆڕاییە.",
+    plan_upgrade: "بەرزکردنەوە",
+    plan_extend: "درێژکردنەوە یان گۆڕینی پلان",
+    trial_left: "تاقیکردنەوەی بەخۆڕایی ڕاهێنان: {n} ڕۆژ ماوە",
+    trial_locked_title: "تاقیکردنەوەی بەخۆڕایی ڕاهێنانەکەت کۆتایی هات",
+    trial_locked_body: "بۆ بەردەوامبوون لە پلانی ڕاهێنان، ڕێنمایی پرۆتین و ڕاهێنەری زیرەک، ⁦Pro+⁩ وەربگرە. پلانەکەت پاشەکەوت کراوە و وەک خۆی دەگەڕێتەوە.",
+    trial_get_plus: "⁦Pro+⁩ وەربگرە",
+    trial_setup_note: "پلانی ڕاهێنان بۆ 14 ڕۆژ بەخۆڕاییە، پاشان بەشێکە لە ⁦Pro+⁩.",
+    admin_title: "بەڕێوەبەر — چالاککردنی پلان",
+    admin_email: "ئیمەیڵی بەکارهێنەر",
+    admin_days: "ڕۆژ",
+    admin_activate: "چالاککردن",
+    admin_ok: "تەواو — {email} ئێستا {plan} ـە{until}",
+    admin_not_found: "هیچ هەژمارێک بەم ئیمەیڵە نییە.",
     log_title: "تۆماری ئەمڕۆ", log_all: "هەموو", log_meals: "خواردنەکان", log_exercise_tab: "ڕاهێنانەکان",
     log_empty: "هێشتا هیچ شتێک تۆمار نەکراوە.", log_view_future: "ناتوانیت ڕۆژێک تۆمار بکەیت کە هێشتا نەهاتووە.",
     log_delete: "لابردن",
@@ -815,9 +965,12 @@ function repairTruncatedItemsJson(text) {
 // Proxied through a Supabase Edge Function (supabase/functions/ai-proxy) so the
 // Anthropic API key never reaches the browser. The function forwards the body
 // as-is and returns Anthropic's response unchanged, so the parsing below is untouched.
-async function callAiProxy(body) {
+async function callAiProxy(payload) {
+  // The feature (text/scan/upload/training/chat) travels in the URL, not the body,
+  // so the body stays exactly what Anthropic expects.
+  const { feature = "text", ...body } = payload;
   const { data: { session } } = await supabase.auth.getSession();
-  return fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-proxy`, {
+  const resp = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-proxy?feature=${encodeURIComponent(feature)}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -826,7 +979,63 @@ async function callAiProxy(body) {
     },
     body: JSON.stringify(body),
   });
+  // 402 = a Free-plan limit was reached. Tell the app to open the upgrade
+  // screen, and throw an error the caller can recognise and stay quiet about.
+  if (resp.status === 402) {
+    let info = {};
+    try { info = (await resp.json()).error || {}; } catch (e) {}
+    const reason = info.type === "trial_ended" ? "trial" : (info.feature || "scan");
+    window.dispatchEvent(new CustomEvent("yb-upgrade", { detail: { reason } }));
+    const err = new Error("plan limit reached");
+    err.quota = true;
+    throw err;
+  }
+  if (resp.ok && feature !== "text") window.dispatchEvent(new Event("yb-plan-refresh"));
+  return resp;
 }
+
+/* ---- plans & payments (supabase/functions/billing) ---- */
+// Your personal FIB code, used when FIB online payments aren't set up yet.
+const FIB_MANUAL_CODE = "PPPJ-OAR8-15JM";
+// WhatsApp number for payment screenshots, international format without "+" (e.g. "9647501234567").
+const WHATSAPP_NUMBER = "";
+const PlanContext = createContext(null);
+function usePlan() { return useContext(PlanContext); }
+
+async function billingCall(action, payload = {}) {
+  const { data: { session } } = await supabase.auth.getSession();
+  const resp = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/billing`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${session?.access_token || import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+      apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
+    },
+    body: JSON.stringify({ action, ...payload }),
+  });
+  let data = null;
+  try { data = await resp.json(); } catch (e) {}
+  if (!resp.ok) {
+    const err = new Error((data && (data.message || data.error)) || `HTTP ${resp.status}`);
+    err.code = data && data.error;
+    throw err;
+  }
+  return data;
+}
+
+function isPaidTier(tier) { return tier === "pro" || tier === "pro_plus"; }
+function photosLeft(planInfo, kind) {
+  if (!planInfo || isPaidTier(planInfo.tier)) return Infinity;
+  const limit = (planInfo.limits && planInfo.limits[kind]) ?? 2;
+  return Math.max(limit - ((planInfo.usage && planInfo.usage[kind]) || 0), 0);
+}
+function tierLabel(t, tier) { return tier === "pro_plus" ? t.plan_proplus : tier === "pro" ? t.plan_pro : t.plan_free; }
+function fill(str, vars) { return Object.entries(vars).reduce((s, [k, v]) => s.split(`{${k}}`).join(String(v)), str); }
+function fmtDate(iso, lang) {
+  try { return new Date(iso).toLocaleDateString(lang === "ckb" ? "ckb-IQ" : lang === "ar" ? "ar-IQ" : "en-GB", { day: "numeric", month: "short", year: "numeric", numberingSystem: "latn" }); }
+  catch (e) { return String(iso).slice(0, 10); }
+}
+function fmtIQD(n) { return Number(n || 0).toLocaleString("en-US"); }
 
 // Kurdish Sorani (ckb) uses Claude Opus, the most capable current model —
 // Kurdish is a lower-resource language where the strongest model helps most.
@@ -838,12 +1047,14 @@ async function callClaude(content, maxTokens = 500, lang, opts = {}) {
   let response;
   try {
     response = await callAiProxy({
+      feature: opts.feature || "text",
       model,
       max_tokens: thinks ? maxTokens + 800 : maxTokens,
       ...(thinks ? { output_config: { effort: "low" } } : {}),
       messages: [{ role: "user", content }],
     });
   } catch (e) {
+    if (e && e.quota) throw e;
     throw new Error(`network: ${e.message || e}`);
   }
   let data;
@@ -1009,7 +1220,7 @@ Write each "name" in the same language the user wrote in.
 Respond with ONLY compact raw JSON, no markdown, no explanation:
 {"items":[${FOOD_ITEM_SHAPE}]}
 At most 6 items.`;
-  const r = await callClaude(prompt, 1000);
+  const r = await callClaude(prompt, 1000, undefined, { feature: "text" });
   return (r.items || []).map(normalizeFoodItem);
 }
 
@@ -1029,11 +1240,11 @@ Respond with ONLY compact raw JSON, no markdown, no explanation:
 At most 6 items. If there is no food in the photo, return {"items":[]}.`,
     },
   ];
-  const r = await callClaude(content, 1400, undefined, { model: "claude-sonnet-5" });
+  const r = await callClaude(content, 1400, undefined, { model: "claude-sonnet-5", feature: "upload" });
   return (r.items || []).map(normalizeFoodItem);
 }
 
-async function estimateItemsFromImage(base64Data, mimeType) {
+async function estimateItemsFromImage(base64Data, mimeType, feature = "scan") {
   const content = [
     { type: "image", source: { type: "base64", media_type: mimeType, data: base64Data } },
     {
@@ -1053,7 +1264,7 @@ Respond with ONLY compact raw JSON, no markdown, no explanation, in this exact s
 At most 6 items, fewer if the plate is simple. If there is no food in the photo, return {"items":[]}.`,
     },
   ];
-  const r = await callClaude(content, 1800, undefined, { model: "claude-sonnet-5" });
+  const r = await callClaude(content, 1800, undefined, { model: "claude-sonnet-5", feature });
   return (r.items || []).map((raw) => ({ ...normalizeFoodItem(raw), x: raw.x, y: raw.y, emoji: raw.emoji }));
 }
 
@@ -1136,7 +1347,7 @@ Design ONE workout for each of those training days (a sensible split like push/p
 Respond with ONLY compact raw JSON, no markdown, no explanation, in this exact shape:
 {"splitName":"short name for this split","days":[{"weekday":"monday","title":"short workout title","exercises":[{"name":"exercise name","sets":3,"reps":"8-12"}]}],"progression":[{"week":1,"note":"short note"},{"week":2,"note":"..."},{"week":3,"note":"..."},{"week":4,"note":"..."}],"summary":"1-2 sentence overview of the plan and how to approach it safely"}`;
 
-  return callClaude(promptText, 2200, lang);
+  return callClaude(promptText, 2200, lang, { feature: "training" });
 }
 
 const KURDISH_MAIN_DISHES = [
@@ -1250,7 +1461,7 @@ ${JSON.stringify(payload)}
 
 Respond with ONLY compact JSON, no markdown, no explanation, in this exact shape:
 {"splitName":"...","dayTitles":["..."],"progression":["..."],"summary":"...","mealDayStyles":["..."],"mealIdeasFlat":["..."]}`;
-  return callClaude(prompt, 2200, targetLang);
+  return callClaude(prompt, 2200, targetLang, { feature: "training" });
 }
 function applyTranslatedPlanText(plan, translated) {
   const days = (plan.days || []).map((d, i) => ({ ...d, title: (translated.dayTitles && translated.dayTitles[i]) ?? d.title }));
@@ -1278,7 +1489,7 @@ async function generateExerciseAlternatives({ exerciseName, equipment }) {
 
 Respond with ONLY compact raw JSON, no markdown, no explanation, in this exact shape:
 {"alternatives":[{"name":"exercise name","sets":3,"reps":"8-12"}]}`;
-  return callClaude(prompt, 700);
+  return callClaude(prompt, 700, undefined, { feature: "training" });
 }
 
 function buildTrainerContext(profile, plan) {
@@ -1322,6 +1533,7 @@ Answer conversationally and helpfully — about their training plan, specific ex
   let response;
   try {
     response = await callAiProxy({
+      feature: "chat",
       model: isOpus ? "claude-opus-5" : "claude-haiku-4-5-20251001",
       max_tokens: isOpus ? 1400 : 600,
       ...(isOpus ? { output_config: { effort: "low" } } : {}),
@@ -1329,6 +1541,7 @@ Answer conversationally and helpfully — about their training plan, specific ex
       messages: history.map((m) => ({ role: m.role, content: m.content })),
     });
   } catch (e) {
+    if (e && e.quota) throw e;
     throw new Error(`network: ${e.message || e}`);
   }
   let data;
@@ -1822,6 +2035,7 @@ function AddMealModal({ mealType, cache, onClose, onSave, initialName = "", auto
       if (!items.length) throw new Error("no items parsed");
       setPortions(items);
     } catch (e) {
+      if (e && e.quota) { onClose(); return; }
       setErrMsg(t.meal_ai_fail);
     } finally { setLoading(false); }
   }
@@ -1860,6 +2074,7 @@ function AddMealModal({ mealType, cache, onClose, onSave, initialName = "", auto
         if (!items.length) throw new Error("no food found");
         setPortions(items);
       } catch (err) {
+        if (err && err.quota) { onClose(); return; }
         setErrMsg(t.meal_ai_fail);
       } finally { setLoading(false); }
     };
@@ -2271,7 +2486,7 @@ function LiveScanModal({ mealType, onClose, onSaveItems, initialFile = null }) {
       const match = dataUrl.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.*)$/);
       const mimeType = match ? match[1] : "image/jpeg";
       const base64 = match ? match[2] : dataUrl.split(",")[1];
-      const found = await estimateItemsFromImage(base64, mimeType);
+      const found = await estimateItemsFromImage(base64, mimeType, uploadMode ? "upload" : "scan");
       const list = found.map((it) => ({
         ...it,
         id: uid(),
@@ -2283,6 +2498,7 @@ function LiveScanModal({ mealType, onClose, onSaveItems, initialFile = null }) {
       setItems(list);
       if (list.length) { setPhase("result"); } else { setErrMsg(t.scan_fail); setPhase("error"); }
     } catch (e) {
+      if (e && e.quota) { onClose(); return; }
       setErrMsg(`${t.scan_fail} (${e.message || e})`);
       setPhase("error");
     }
@@ -2458,7 +2674,7 @@ function LiveScanModal({ mealType, onClose, onSaveItems, initialFile = null }) {
 }
 
 /* ============================== TODAY VIEW ============================== */
-function QuickMealCard({ defaultType, onManualAdd, onSmartLog, onLiveScan, onUpload, onLogExercise }) {
+function QuickMealCard({ defaultType, onManualAdd, onSmartLog, onLiveScan, onUpload, onLogExercise, canUpload = true, onUploadBlocked, quotaNote, onGoPro }) {
   const t = useT();
   const [type, setType] = useState(defaultType);
   const [name, setName] = useState("");
@@ -2541,13 +2757,21 @@ function QuickMealCard({ defaultType, onManualAdd, onSmartLog, onLiveScan, onUpl
         <button style={dashedBtn} onClick={() => onLiveScan(type)}>
           <ScanLine size={15} color={TOKENS.herb} style={{ pointerEvents: "none" }} /> {t.fab_scan}
         </button>
-        <button style={dashedBtn} onClick={() => fileRef.current && fileRef.current.click()}>
+        <button style={dashedBtn} onClick={() => { if (!canUpload) { onUploadBlocked && onUploadBlocked(); return; } if (fileRef.current) fileRef.current.click(); }}>
           <ImageIcon size={15} color={TOKENS.herb} style={{ pointerEvents: "none" }} /> {t.quick_upload}
         </button>
         <button style={dashedBtn} onClick={onLogExercise}>
           <Activity size={15} color={TOKENS.herb} style={{ pointerEvents: "none" }} /> {t.fab_exercise}
         </button>
       </div>
+      {quotaNote && (
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, marginTop: 9, fontSize: 11.5, color: TOKENS.inkSoft }}>
+          <span>{quotaNote}</span>
+          <button onClick={onGoPro} style={{ background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-body)", fontSize: 11.5, fontWeight: 700, color: TOKENS.saffronDeep, display: "flex", alignItems: "center", gap: 3 }}>
+            <Sparkles size={12} /> {t.quota_go_pro}
+          </button>
+        </div>
+      )}
       <input
         ref={fileRef} type="file" accept="image/*" style={{ display: "none" }}
         onChange={(e) => { const f = e.target.files && e.target.files[0]; e.target.value = ""; if (f) onUpload(f, type); }}
@@ -2562,6 +2786,12 @@ function TodayView({ profile, log, foodCache, viewedISO, onChangeDate, logs, onA
   const [exModal, setExModal] = useState(false);
   const [scanModal, setScanModal] = useState(false);
   const [weekOffset, setWeekOffset] = useState(0);
+  const planCtx = usePlan();
+  const planInfo = planCtx && planCtx.planInfo;
+  const scanLeft = photosLeft(planInfo, "scan");
+  const uploadLeft = photosLeft(planInfo, "upload");
+  const openUpgrade = (r) => planCtx && planCtx.openUpgrade(r);
+  const quotaNote = planInfo && !isPaidTier(planInfo.tier) ? fill(t.quota_left, { s: scanLeft, u: uploadLeft }) : "";
 
   const meals = log.meals || [];
   const exercises = log.exercises || [];
@@ -2622,8 +2852,10 @@ function TodayView({ profile, log, foodCache, viewedISO, onChangeDate, logs, onA
           defaultType={guessedMealType}
           onManualAdd={onAddMeal}
           onSmartLog={(name, type) => setMealModal({ type, name, autoParse: true })}
-          onLiveScan={(type) => setScanModal({ type })}
+          onLiveScan={(type) => (scanLeft > 0 ? setScanModal({ type }) : openUpgrade("scan"))}
           onUpload={(file, type) => setScanModal({ type, file })}
+          canUpload={uploadLeft > 0} onUploadBlocked={() => openUpgrade("upload")}
+          quotaNote={quotaNote} onGoPro={() => openUpgrade("general")}
           onLogExercise={() => setExModal(true)}
         />
       )}
@@ -2762,6 +2994,8 @@ function SettingsView({ lang, onLangChange, onEditProfile }) {
         </Button>
       </div>
 
+      <PlanSettingsCard />
+
       <div style={{ marginTop: 24, padding: "14px 15px", background: TOKENS.paperRaised, border: `1px solid ${TOKENS.line}`, borderRadius: 14 }}>
         <div style={{ fontWeight: 700, fontSize: 14, color: TOKENS.ink, marginBottom: 6 }}>{t.settings_about}</div>
         <div style={{ fontSize: 13, color: TOKENS.inkSoft, lineHeight: 1.6 }}>{t.settings_about_body}</div>
@@ -2896,6 +3130,7 @@ function TrainingSetup({ profile, onGenerate, onUpdateWaist, lang }) {
         supplementProtein: Math.round(supp.protein), supplementCalories: Math.round(supp.calories),
       });
     } catch (e) {
+      if (e && e.quota) return;
       setError(`${t.train_err_generic} (${e.message || e})`);
     } finally {
       setGenerating(false);
@@ -3030,6 +3265,7 @@ function SwapExerciseModal({ exerciseName, equipment, onClose, onPick }) {
         setAlts(list);
         if (!list.length) setErrMsg(t.train_swap_fail);
       } catch (e) {
+        if (e && e.quota) { onClose(); return; }
         if (!cancelled) setErrMsg(`${t.train_swap_fail} (${e.message || e})`);
       }
     })();
@@ -3422,6 +3658,7 @@ function TrainerChatModal({ profile, plan, lang, onClose }) {
       setMessages([...nextMessages, assistantMsg]);
       insertTrainerMessage(assistantMsg);
     } catch (e) {
+      if (e && e.quota) { onClose(); return; }
       setError(`${t.train_chat_error} (${e.message || e})`);
     } finally {
       setSending(false);
@@ -3479,10 +3716,15 @@ function TrainingView({ profile, plan, onSavePlan, onUpdateWaist, lang, todayLog
   const [regenerating, setRegenerating] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
   const [translating, setTranslating] = useState(false);
-  const showSetup = !plan || regenerating;
+  const planCtx = usePlan();
+  const planInfo = planCtx && planCtx.planInfo;
+  const trainingLocked = !!planInfo && !planInfo.trainingAllowed;
+  const onTrial = !!planInfo && planInfo.tier !== "pro_plus" && !trainingLocked;
+  const trialDaysLeft = onTrial && planInfo.trialEnds ? Math.max(Math.ceil((new Date(planInfo.trialEnds).getTime() - Date.now()) / 86400000), 0) : null;
+  const showSetup = !trainingLocked && (!plan || regenerating);
 
   useEffect(() => {
-    if (!plan) return;
+    if (!plan || trainingLocked) return;
     const planLang = plan.contentLang || "en";
     if (planLang === lang || translating) return;
     let cancelled = false;
@@ -3500,10 +3742,30 @@ function TrainingView({ profile, plan, onSavePlan, onUpdateWaist, lang, todayLog
     })();
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [plan?.contentLang, lang, plan]);
+  }, [plan?.contentLang, lang, plan, trainingLocked]);
+
+  if (trainingLocked) {
+    return (
+      <Screen>
+        <TrainingLockedCard onUpgrade={() => planCtx.openUpgrade("trial")} />
+      </Screen>
+    );
+  }
 
   return (
     <Screen>
+      {onTrial && (trialDaysLeft !== null || showSetup) && (
+        <button onClick={() => planCtx.openUpgrade("general")} style={{
+          width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, cursor: "pointer",
+          background: `${TOKENS.saffron}1c`, border: `1px solid ${TOKENS.saffron}55`, borderRadius: 12, padding: "9px 13px", marginBottom: 14,
+          fontFamily: "var(--font-body)", fontSize: 12.5, color: TOKENS.ink, textAlign: "start",
+        }}>
+          <span>{trialDaysLeft !== null ? fill(t.trial_left, { n: trialDaysLeft }) : t.trial_setup_note}</span>
+          <span style={{ fontWeight: 700, color: TOKENS.saffronDeep, flexShrink: 0, display: "flex", alignItems: "center", gap: 3 }}>
+            <Sparkles size={12} /> {t.plan_proplus}
+          </span>
+        </button>
+      )}
       {showSetup ? (
         <TrainingSetup profile={profile} onGenerate={(p) => { onSavePlan(p); setRegenerating(false); }} onUpdateWaist={onUpdateWaist} lang={lang} />
       ) : (
@@ -3537,6 +3799,313 @@ function TrainingView({ profile, plan, onSavePlan, onUpdateWaist, lang, todayLog
 
       {chatOpen && <TrainerChatModal profile={profile} plan={plan} lang={lang} onClose={() => setChatOpen(false)} />}
     </Screen>
+  );
+}
+
+/* ============================== PLANS & UPGRADE ============================== */
+const FIB_COLOR = "#1E9F86";
+const PENDING_PAYMENT_KEY = "yb_pending_payment";
+function setPendingPayment(id) { try { if (id) localStorage.setItem(PENDING_PAYMENT_KEY, id); else localStorage.removeItem(PENDING_PAYMENT_KEY); } catch (e) {} }
+function getPendingPayment() { try { return localStorage.getItem(PENDING_PAYMENT_KEY); } catch (e) { return null; } }
+
+function timeUntil(t, iso, now) {
+  const ms = Math.max(new Date(iso).getTime() - now, 0);
+  const h = Math.floor(ms / 3600000);
+  const m = Math.floor((ms % 3600000) / 60000);
+  return fill(t.up_hm, { h, m });
+}
+
+function PlanOption({ selected, current, onClick, name, price, features }) {
+  const t = useT();
+  return (
+    <button onClick={onClick} style={{
+      width: "100%", textAlign: "start", cursor: "pointer", padding: "13px 14px", borderRadius: 14, marginBottom: 10,
+      background: selected ? `${TOKENS.herb}10` : TOKENS.paperRaised,
+      border: `2px solid ${selected ? TOKENS.herb : TOKENS.line}`, fontFamily: "var(--font-body)", color: TOKENS.ink,
+    }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, marginBottom: 8, pointerEvents: "none" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{
+            width: 18, height: 18, borderRadius: 999, flexShrink: 0, border: `2px solid ${selected ? TOKENS.herb : TOKENS.line}`,
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}>
+            {selected && <span style={{ width: 8, height: 8, borderRadius: 999, background: TOKENS.herb }} />}
+          </span>
+          <span style={{ fontFamily: "var(--font-display)", fontSize: 18, fontWeight: 700, color: TOKENS.herbDeep }}>{name}</span>
+          {current && (
+            <span style={{ fontSize: 10.5, fontWeight: 700, color: TOKENS.saffronDeep, background: `${TOKENS.saffron}26`, borderRadius: 999, padding: "2px 8px" }}>{t.up_current}</span>
+          )}
+        </div>
+        <div style={{ textAlign: "end", flexShrink: 0 }}>
+          <span style={{ fontSize: 17, fontWeight: 800, color: TOKENS.ink }}>{fmtIQD(price)}</span>
+          <span style={{ fontSize: 11, color: TOKENS.inkSoft, marginInlineStart: 4 }}>{t.up_month}</span>
+        </div>
+      </div>
+      {features.map((f) => (
+        <div key={f} style={{ display: "flex", alignItems: "center", gap: 7, fontSize: 13, color: TOKENS.ink, marginTop: 4, pointerEvents: "none" }}>
+          <Check size={14} color={TOKENS.herb} style={{ flexShrink: 0 }} /> {f}
+        </div>
+      ))}
+    </button>
+  );
+}
+
+function UpgradeModal({ reason, onClose }) {
+  const t = useT();
+  const { planInfo, refreshPlan, lang } = usePlan();
+  const [tier, setTier] = useState(reason === "trial" || planInfo?.tier === "pro" ? "pro_plus" : "pro");
+  const [step, setStep] = useState(reason === "paid" ? "success" : "choose"); // choose | creating | waiting | manual | success | error
+  const [payment, setPayment] = useState(null);
+  const [copied, setCopied] = useState("");
+  const [now, setNow] = useState(Date.now());
+  const prices = (planInfo && planInfo.prices) || { pro: 5000, pro_plus: 10000 };
+  const amount = prices[tier];
+
+  useEffect(() => { const i = setInterval(() => setNow(Date.now()), 30000); return () => clearInterval(i); }, []);
+
+  // While waiting, ask the server every few seconds whether FIB says it's paid.
+  useEffect(() => {
+    if (step !== "waiting" || !payment) return undefined;
+    let stopped = false;
+    let timer;
+    const tick = async () => {
+      try {
+        const r = await billingCall("check_payment", { paymentId: payment.paymentId });
+        if (stopped) return;
+        if (r.status === "PAID") { setPendingPayment(null); await refreshPlan(); setStep("success"); return; }
+        if (["DECLINED", "CANCELED", "REFUNDED"].includes(r.status)) { setPendingPayment(null); setStep("error"); return; }
+      } catch (e) {}
+      if (payment.validUntil && new Date(payment.validUntil).getTime() < Date.now()) { setPendingPayment(null); setStep("error"); return; }
+      if (!stopped) timer = setTimeout(tick, 4000);
+    };
+    timer = setTimeout(tick, 4000);
+    return () => { stopped = true; clearTimeout(timer); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step, payment]);
+
+  async function pay() {
+    setStep("creating");
+    try {
+      const p = await billingCall("create_payment", { tier, returnUrl: window.location.origin });
+      setPayment(p);
+      setPendingPayment(p.paymentId);
+      setStep("waiting");
+      if (p.personalAppLink && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) window.location.href = p.personalAppLink;
+    } catch (e) {
+      // FIB online payments not set up (or unavailable): pay by hand to the personal FIB code.
+      setStep("manual");
+    }
+  }
+
+  function copy(text) {
+    try { navigator.clipboard.writeText(text); } catch (e) {}
+    setCopied(text);
+    setTimeout(() => setCopied(""), 1800);
+  }
+
+  const reasonText = reason === "scan" ? t.up_reason_scan : reason === "upload" ? t.up_reason_upload : reason === "trial" ? t.up_reason_trial : "";
+  const showWait = (reason === "scan" || reason === "upload") && planInfo && planInfo.resetAt;
+  const name = tier === "pro_plus" ? t.plan_proplus : t.plan_pro;
+  const paidUntil = planInfo && planInfo.paidUntil;
+
+  const fibButton = (label, onClick, disabled) => (
+    <button onClick={onClick} disabled={disabled} style={{
+      width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "14px 16px",
+      background: FIB_COLOR, color: "#fff", border: "none", borderRadius: 12, cursor: disabled ? "default" : "pointer",
+      fontFamily: "var(--font-body)", fontSize: 15, fontWeight: 700, opacity: disabled ? 0.7 : 1,
+    }}>{label}</button>
+  );
+  const codeBox = (code) => (
+    <div style={{ display: "flex", alignItems: "center", gap: 8, background: TOKENS.paperRaised, border: `1.5px dashed ${TOKENS.line}`, borderRadius: 12, padding: "10px 12px", marginBottom: 12 }}>
+      <span dir="ltr" style={{ flex: 1, fontSize: 19, fontWeight: 800, letterSpacing: 1.5, color: TOKENS.ink, textAlign: "center" }}>{code}</span>
+      <button onClick={() => copy(code)} style={{
+        flexShrink: 0, border: `1px solid ${TOKENS.line}`, background: TOKENS.paper, borderRadius: 9, padding: "7px 11px", cursor: "pointer",
+        fontFamily: "var(--font-body)", fontSize: 12.5, fontWeight: 700, color: TOKENS.herbDeep,
+      }}>{copied === code ? t.up_copied : t.up_copy}</button>
+    </div>
+  );
+
+  return (
+    <Modal title={t.up_title} onClose={onClose}>
+      {step === "success" ? (
+        <div style={{ textAlign: "center", padding: "10px 0 4px" }}>
+          <div style={{ width: 58, height: 58, borderRadius: 999, background: `${TOKENS.herb}1f`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px" }}>
+            <Check size={30} color={TOKENS.herb} />
+          </div>
+          <div style={{ fontSize: 15, fontWeight: 600, color: TOKENS.ink, lineHeight: 1.6, marginBottom: 18 }}>
+            {fill(t.up_success, { plan: tierLabel(t, planInfo ? planInfo.tier : tier), date: paidUntil ? fmtDate(paidUntil, lang) : "" })}
+          </div>
+          <Button full onClick={onClose}>{t.up_done}</Button>
+        </div>
+      ) : step === "waiting" && payment ? (
+        <div>
+          <div style={{ display: "flex", alignItems: "center", gap: 9, fontSize: 13.5, color: TOKENS.ink, lineHeight: 1.5, marginBottom: 14 }}>
+            <Loader2 size={18} className="spin" color={FIB_COLOR} style={{ flexShrink: 0 }} /> {t.up_waiting}
+          </div>
+          {payment.personalAppLink && (
+            <a href={payment.personalAppLink} style={{ textDecoration: "none", display: "block", marginBottom: 14 }}>
+              {fibButton(t.up_open_fib)}
+            </a>
+          )}
+          {payment.readableCode && (<>
+            <div style={{ fontSize: 12.5, fontWeight: 600, color: TOKENS.inkSoft, marginBottom: 6 }}>{t.up_code}</div>
+            {codeBox(payment.readableCode)}
+          </>)}
+          {payment.qrCode && (
+            <div style={{ textAlign: "center" }}>
+              <img src={payment.qrCode} alt="FIB QR" style={{ width: 180, height: 180, borderRadius: 12, background: "#fff", padding: 6 }} />
+              <div style={{ fontSize: 12, color: TOKENS.inkSoft, marginTop: 6 }}>{t.up_other_phone}</div>
+            </div>
+          )}
+        </div>
+      ) : step === "manual" ? (
+        <div>
+          <div style={{ fontFamily: "var(--font-display)", fontSize: 18, fontWeight: 700, color: TOKENS.herbDeep, marginBottom: 6 }}>
+            {fill(t.up_manual_title, { amount: fmtIQD(amount) })} · {name}
+          </div>
+          <div style={{ fontSize: 13, color: TOKENS.inkSoft, lineHeight: 1.55, marginBottom: 10 }}>{t.up_manual_body}</div>
+          {codeBox(FIB_MANUAL_CODE)}
+          <div style={{ textAlign: "center", marginBottom: 14 }}>
+            <img src="/fib-qr.png" alt="FIB QR" style={{ width: 170, height: 170, borderRadius: 12 }} />
+          </div>
+          <div style={{ fontSize: 13, color: TOKENS.ink, lineHeight: 1.55, marginBottom: 12 }}>{t.up_manual_after}</div>
+          {WHATSAPP_NUMBER && (
+            <a
+              href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`YourBite ${name} — ${fmtIQD(amount)} IQD — ${(planInfo && planInfo.email) || ""}`)}`}
+              target="_blank" rel="noopener noreferrer"
+              style={{
+                display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "13px 16px", borderRadius: 12,
+                background: "#25D366", color: "#fff", textDecoration: "none", fontWeight: 700, fontSize: 14.5,
+              }}
+            >
+              <MessageCircle size={17} color="#fff" /> {t.up_whatsapp}
+            </a>
+          )}
+        </div>
+      ) : (
+        <div>
+          {reasonText && (
+            <div style={{ background: `${TOKENS.saffron}1c`, border: `1px solid ${TOKENS.saffron}55`, borderRadius: 12, padding: "11px 13px", marginBottom: 14 }}>
+              <div style={{ fontSize: 13.5, fontWeight: 700, color: TOKENS.ink }}>{reasonText}</div>
+              {showWait && <div style={{ fontSize: 12.5, color: TOKENS.inkSoft, marginTop: 3 }}>{fill(t.up_wait, { t: timeUntil(t, planInfo.resetAt, now) })}</div>}
+            </div>
+          )}
+          {step === "error" && (
+            <div style={{ fontSize: 13, color: TOKENS.clay, marginBottom: 12 }}>{t.up_declined}</div>
+          )}
+          <PlanOption
+            selected={tier === "pro"} current={planInfo && planInfo.tier === "pro"} onClick={() => setTier("pro")}
+            name={t.plan_pro} price={prices.pro} features={[t.up_pro_f1, t.up_pro_f2, t.up_pro_f3]}
+          />
+          <PlanOption
+            selected={tier === "pro_plus"} current={planInfo && planInfo.tier === "pro_plus"} onClick={() => setTier("pro_plus")}
+            name={t.plan_proplus} price={prices.pro_plus} features={[t.up_plus_f1, t.up_plus_f2, t.up_plus_f3]}
+          />
+          <div style={{ marginTop: 6 }}>
+            {fibButton(
+              step === "creating" ? <Loader2 size={18} className="spin" /> : fill(t.up_pay_fib, { amount: fmtIQD(amount) }),
+              pay, step === "creating",
+            )}
+          </div>
+        </div>
+      )}
+    </Modal>
+  );
+}
+
+function AdminPlanPanel() {
+  const t = useT();
+  const { lang } = usePlan();
+  const [email, setEmail] = useState("");
+  const [tier, setTier] = useState("pro");
+  const [days, setDays] = useState("30");
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState(null);
+
+  async function activate() {
+    if (!email.trim()) return;
+    setBusy(true); setMsg(null);
+    try {
+      const r = await billingCall("admin_activate", { email: email.trim(), tier, days: Number(days) || 30 });
+      const p = r.plan || {};
+      setMsg({ ok: true, text: fill(t.admin_ok, { email: email.trim(), plan: tierLabel(t, p.tier), until: p.paidUntil ? ` · ${fmtDate(p.paidUntil, lang)}` : "" }) });
+    } catch (e) {
+      setMsg({ ok: false, text: e.code === "user_not_found" ? t.admin_not_found : `${t.up_err} (${e.message})` });
+    } finally { setBusy(false); }
+  }
+
+  return (
+    <div style={{ marginTop: 16, padding: "14px 15px", background: TOKENS.paperRaised, border: `1px dashed ${TOKENS.saffron}`, borderRadius: 14 }}>
+      <div style={{ fontWeight: 700, fontSize: 14, color: TOKENS.ink, marginBottom: 10 }}>{t.admin_title}</div>
+      <input
+        type="email" dir="ltr" placeholder={t.admin_email} value={email} onChange={(e) => setEmail(e.target.value)}
+        style={{ ...inputStyle, marginBottom: 8 }}
+      />
+      <div style={{ marginBottom: 8 }}>
+        <SegmentGroup columns={3} value={tier} onChange={setTier} options={[
+          { value: "pro", label: t.plan_pro }, { value: "pro_plus", label: t.plan_proplus }, { value: "free", label: t.plan_free },
+        ]} />
+      </div>
+      <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+        <input
+          type="number" inputMode="numeric" value={days} onChange={(e) => setDays(e.target.value)} disabled={tier === "free"}
+          style={{ ...inputStyle, width: 90, textAlign: "center" }}
+        />
+        <span style={{ fontSize: 13, color: TOKENS.inkSoft }}>{t.admin_days}</span>
+        <Button onClick={activate} disabled={busy || !email.trim()} style={{ marginInlineStart: "auto" }}>
+          {busy ? <Loader2 size={16} className="spin" /> : t.admin_activate}
+        </Button>
+      </div>
+      {msg && <div style={{ fontSize: 12.5, marginTop: 10, color: msg.ok ? TOKENS.herbDeep : TOKENS.clay }}>{msg.text}</div>}
+    </div>
+  );
+}
+
+function PlanSettingsCard() {
+  const t = useT();
+  const plan = usePlan();
+  if (!plan || !plan.planInfo) return null;
+  const { planInfo, openUpgrade, lang } = plan;
+  const paid = isPaidTier(planInfo.tier);
+  return (
+    <>
+      <div style={{ marginTop: 16, padding: "14px 15px", background: TOKENS.paperRaised, border: `1px solid ${TOKENS.line}`, borderRadius: 14 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
+          <div style={{ fontWeight: 700, fontSize: 14, color: TOKENS.ink }}>{t.plan_title}</div>
+          <span style={{
+            fontSize: 12, fontWeight: 800, borderRadius: 999, padding: "3px 10px",
+            background: paid ? TOKENS.herb : `${TOKENS.ink}12`, color: paid ? TOKENS.cream : TOKENS.inkSoft,
+          }}>{tierLabel(t, planInfo.tier)}</span>
+        </div>
+        <div style={{ fontSize: 13, color: TOKENS.inkSoft, lineHeight: 1.6, marginBottom: 12 }}>
+          {paid ? fill(t.plan_active_until, { date: fmtDate(planInfo.paidUntil, lang) }) : t.plan_free_desc}
+        </div>
+        <button onClick={() => openUpgrade("general")} style={{
+          width: "100%", padding: "12px 14px", borderRadius: 12, border: "none", cursor: "pointer",
+          background: paid ? TOKENS.paper : TOKENS.saffron, color: TOKENS.herbDeep,
+          outline: paid ? `1.5px solid ${TOKENS.line}` : "none",
+          fontFamily: "var(--font-body)", fontSize: 14.5, fontWeight: 700,
+          display: "flex", alignItems: "center", justifyContent: "center", gap: 7,
+        }}>
+          <Sparkles size={16} /> {paid ? t.plan_extend : t.plan_upgrade}
+        </button>
+      </div>
+      {planInfo.isAdmin && <AdminPlanPanel />}
+    </>
+  );
+}
+
+function TrainingLockedCard({ onUpgrade }) {
+  const t = useT();
+  return (
+    <div style={{ textAlign: "center", background: TOKENS.paperRaised, border: `1px solid ${TOKENS.line}`, borderRadius: 18, padding: "26px 20px", marginTop: 10 }}>
+      <div style={{ width: 56, height: 56, borderRadius: 999, background: `${TOKENS.saffron}26`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 14px" }}>
+        <Lock size={24} color={TOKENS.saffronDeep} />
+      </div>
+      <div style={{ fontFamily: "var(--font-display)", fontSize: 20, fontWeight: 700, color: TOKENS.herbDeep, marginBottom: 8 }}>{t.trial_locked_title}</div>
+      <div style={{ fontSize: 13.5, color: TOKENS.inkSoft, lineHeight: 1.6, marginBottom: 18 }}>{t.trial_locked_body}</div>
+      <Button variant="saffron" full onClick={onUpgrade}><Sparkles size={16} /> {t.trial_get_plus}</Button>
+    </div>
   );
 }
 
@@ -3587,6 +4156,23 @@ export default function App() {
   const [trainingPlan, setTrainingPlan] = useState(null);
   const [langMenuOpen, setLangMenuOpen] = useState(false);
   const [todayDate, setTodayDate] = useState(todayISO());
+  const [planInfo, setPlanInfo] = useState(null);
+  const [upgradeReason, setUpgradeReason] = useState(null);
+
+  const refreshPlan = useCallback(async (opts = {}) => {
+    try { const s = await billingCall("status", opts); setPlanInfo(s); return s; } catch (e) { return null; }
+  }, []);
+  const planCtx = useMemo(() => ({
+    planInfo, refreshPlan, lang, openUpgrade: (reason) => setUpgradeReason(reason || "general"),
+  }), [planInfo, refreshPlan, lang]);
+
+  useEffect(() => {
+    const onUpgrade = (e) => { setUpgradeReason((e.detail && e.detail.reason) || "general"); refreshPlan(); };
+    const onRefresh = () => refreshPlan();
+    window.addEventListener("yb-upgrade", onUpgrade);
+    window.addEventListener("yb-plan-refresh", onRefresh);
+    return () => { window.removeEventListener("yb-upgrade", onUpgrade); window.removeEventListener("yb-plan-refresh", onRefresh); };
+  }, [refreshPlan]);
 
   // Any day that's now in the past and was never explicitly closed gets
   // auto-closed (both locally and in the DB) so a forgotten day doesn't
@@ -3617,6 +4203,16 @@ export default function App() {
       if (fc) setFoodCache(fc);
       if (tp) setTrainingPlan(tp);
       setReady(true);
+      // Existing training plans start their 14-day trial now.
+      refreshPlan({ startTrial: !!tp });
+      // Coming back from the FIB app: check the payment we were waiting for.
+      const pending = getPendingPayment();
+      if (pending) {
+        billingCall("check_payment", { paymentId: pending }).then(async (r) => {
+          if (r.status === "PAID") { setPendingPayment(null); await refreshPlan(); setUpgradeReason("paid"); }
+          else if (["DECLINED", "CANCELED", "REFUNDED"].includes(r.status)) setPendingPayment(null);
+        }).catch(() => {});
+      }
       if (l) autoCloseOverdueDays(l, todayISO());
     })();
   }, []);
@@ -3762,6 +4358,7 @@ export default function App() {
 
   return (
     <I18nContext.Provider value={t}>
+     <PlanContext.Provider value={planCtx}>
       <div dir={dir} style={{
         "--font-body": t.fontBody, "--font-display": t.fontDisplay,
         background: TOKENS.paper, color: TOKENS.ink, minHeight: "100vh",
@@ -3872,7 +4469,10 @@ export default function App() {
             exCount={(log.exercises || []).length}
           />
         )}
+
+        {upgradeReason && <UpgradeModal reason={upgradeReason} onClose={() => setUpgradeReason(null)} />}
       </div>
+     </PlanContext.Provider>
     </I18nContext.Provider>
   );
 }
