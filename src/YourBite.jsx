@@ -4,7 +4,7 @@ import {
   Check, X, TrendingUp, Settings as SettingsIcon, ChevronRight, ChevronLeft, ChevronDown,
   Sunrise, Sun, Moon, Cookie, Footprints, Waves, Bike, PersonStanding,
   Lock, Loader2, Pencil, ScanLine, RotateCcw, Dumbbell, Anchor, Zap, Music2,
-  RefreshCw, Target, ClipboardList, Image as ImageIcon, PlayCircle, MessageCircle, Send, Trash2, LogOut
+  RefreshCw, Target, ClipboardList, Image as ImageIcon, PlayCircle, MessageCircle, Send, Trash2, LogOut, Sparkles
 } from "lucide-react";
 import {
   ResponsiveContainer, ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip
@@ -105,7 +105,7 @@ const DICT = {
     cache_library: "Dishes", cache_library_matched: "From the dish library",
     weekdaysShort: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
     months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-    fab_meal: "Log a meal", fab_scan: "Live scan", fab_exercise: "Log exercise",
+    fab_meal: "Log a meal", fab_scan: "Live scan", fab_exercise: "Log exercise", quick_upload: "Upload",
     log_title: "Today's log", log_all: "All", log_meals: "Meals", log_exercise_tab: "Exercise",
     log_empty: "Nothing logged yet.", log_view_future: "You can't log a day that hasn't happened yet.",
     log_delete: "Remove",
@@ -224,7 +224,7 @@ const DICT = {
     cache_library: "أطباق", cache_library_matched: "من مكتبة الأطباق",
     weekdaysShort: ["إثنين", "ثلاثاء", "أربعاء", "خميس", "جمعة", "سبت", "أحد"],
     months: ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"],
-    fab_meal: "تسجيل وجبة", fab_scan: "مسح مباشر", fab_exercise: "تسجيل تمرين",
+    fab_meal: "تسجيل وجبة", fab_scan: "مسح مباشر", fab_exercise: "تسجيل تمرين", quick_upload: "رفع صورة",
     log_title: "سجلّ اليوم", log_all: "الكل", log_meals: "الوجبات", log_exercise_tab: "التمارين",
     log_empty: "لم يُسجَّل أي شيء بعد.", log_view_future: "لا يمكنك تسجيل يوم لم يأتِ بعد.",
     log_delete: "إزالة",
@@ -343,7 +343,7 @@ const DICT = {
     cache_library: "خواردنەکان", cache_library_matched: "لە کتێبخانەی خواردنەکانەوە",
     weekdaysShort: ["٢شەمە", "٣شەمە", "٤شەمە", "٥شەمە", "هەینی", "شەمە", "١شەمە"],
     months: ["ژانویە", "فێبروایە", "مارس", "ئەپریل", "مایس", "حوزەیران", "تەمووز", "ئاب", "ئەیلوول", "تشرینی یەکەم", "تشرینی دووەم", "کانونی یەکەم"],
-    fab_meal: "تۆمارکردنی خواردن", fab_scan: "سکانی ڕاستەوخۆ", fab_exercise: "تۆمارکردنی ڕاهێنان",
+    fab_meal: "تۆمارکردنی خواردن", fab_scan: "سکانی ڕاستەوخۆ", fab_exercise: "تۆمارکردنی ڕاهێنان", quick_upload: "بارکردنی وێنە",
     log_title: "تۆماری ئەمڕۆ", log_all: "هەموو", log_meals: "خواردنەکان", log_exercise_tab: "ڕاهێنانەکان",
     log_empty: "هێشتا هیچ شتێک تۆمار نەکراوە.", log_view_future: "ناتوانیت ڕۆژێک تۆمار بکەیت کە هێشتا نەهاتووە.",
     log_delete: "لابردن",
@@ -1646,11 +1646,11 @@ function LogList({ meals, exercises, locked, onDeleteMeal, onDeleteExercise }) {
 }
 
 /* ============================== ADD MEAL MODAL ============================== */
-function AddMealModal({ mealType, cache, onClose, onSave }) {
+function AddMealModal({ mealType, cache, onClose, onSave, initialName = "", autoParse = false, initialFile = null }) {
   const t = useT();
-  const [mode, setMode] = useState("text");
+  const [mode, setMode] = useState(initialFile ? "photo" : "text");
   const [type, setType] = useState(mealType);
-  const [name, setName] = useState("");
+  const [name, setName] = useState(initialName);
   const [loading, setLoading] = useState(false);
   const [errMsg, setErrMsg] = useState("");
   const [result, setResult] = useState(null);
@@ -1697,11 +1697,11 @@ function AddMealModal({ mealType, cache, onClose, onSave }) {
     { value: "snack", label: t.meal_snack },
   ];
 
-  async function handleParsePortions() {
-    if (!name.trim()) return;
+  async function handleParsePortions(text = name) {
+    if (!text.trim()) return;
     setLoading(true); setErrMsg(""); setResult(null); setPortions(null); setMatchedCache(false); setMatchedKurdish(false);
     try {
-      const r = await parseMealPortions(name.trim(), type);
+      const r = await parseMealPortions(text.trim(), type);
       const items = (r.items || []).map((it) => ({ name: it.name || "", unit: it.unit || "g", amount: Number(it.amount) || 0 }));
       if (!items.length) throw new Error("no items parsed");
       setPortions(items);
@@ -1725,9 +1725,17 @@ function AddMealModal({ mealType, cache, onClose, onSave }) {
     } finally { setLoading(false); }
   }
 
+  useEffect(() => {
+    if (initialFile) processFile(initialFile);
+    else if (autoParse && initialName.trim()) handleParsePortions(initialName);
+  }, []);
+
   function handleFile(e) {
     const file = e.target.files && e.target.files[0];
-    if (!file) return;
+    if (file) processFile(file);
+  }
+
+  function processFile(file) {
     const reader = new FileReader();
     reader.onload = async () => {
       const dataUrl = reader.result;
@@ -1795,7 +1803,7 @@ function AddMealModal({ mealType, cache, onClose, onSave }) {
           )}
 
           {!result && !portions && (
-            <Button variant="saffron" full onClick={handleParsePortions} disabled={!name.trim() || loading}>
+            <Button variant="saffron" full onClick={() => handleParsePortions()} disabled={!name.trim() || loading}>
               {loading ? <><Loader2 size={16} className="spin" /> {t.meal_estimating}</> : t.meal_continue}
             </Button>
           )}
@@ -2319,6 +2327,104 @@ function LiveScanModal({ mealType, cache, onClose, onSaveItems }) {
 }
 
 /* ============================== TODAY VIEW ============================== */
+function QuickMealCard({ defaultType, onManualAdd, onSmartLog, onLiveScan, onUpload, onLogExercise }) {
+  const t = useT();
+  const [type, setType] = useState(defaultType);
+  const [name, setName] = useState("");
+  const [kcal, setKcal] = useState("");
+  const fileRef = useRef(null);
+  const types = [
+    { value: "breakfast", label: t.meal_breakfast, icon: Sunrise },
+    { value: "lunch", label: t.meal_lunch, icon: Sun },
+    { value: "dinner", label: t.meal_dinner, icon: Moon },
+    { value: "snack", label: t.meal_snack, icon: Cookie },
+  ];
+
+  // With a kcal number the meal is added as typed; without one, "+" falls
+  // back to the AI estimate so it's never added as 0 kcal by accident.
+  function add() {
+    if (!name.trim()) return;
+    const k = Number(kcal);
+    if (k > 0) {
+      onManualAdd({ id: uid(), type, name: name.trim(), calories: Math.round(k), protein: 0, carbs: 0, fat: 0, at: Date.now() });
+    } else {
+      onSmartLog(name.trim(), type);
+    }
+    setName(""); setKcal("");
+  }
+
+  const squareBtn = {
+    width: 46, height: 46, flexShrink: 0, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
+  };
+  const dashedBtn = {
+    flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "11px 6px",
+    background: "transparent", border: `1.5px dashed ${TOKENS.line}`, borderRadius: 12, cursor: "pointer",
+    fontFamily: "var(--font-body)", fontSize: 12.5, fontWeight: 600, color: TOKENS.ink,
+  };
+
+  return (
+    <div style={{ background: TOKENS.paperRaised, border: `1px solid ${TOKENS.line}`, borderRadius: 14, padding: 12, marginBottom: 16 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 6, marginBottom: 12 }}>
+        {types.map((m) => {
+          const active = type === m.value;
+          return (
+            <button key={m.value} onClick={() => setType(m.value)} style={{
+              display: "flex", flexDirection: "column", alignItems: "center", gap: 4, padding: "9px 4px", borderRadius: 12, cursor: "pointer",
+              fontFamily: "var(--font-body)", fontSize: 12, fontWeight: 700,
+              background: active ? `${TOKENS.saffron}1f` : "transparent",
+              border: `1.5px solid ${active ? TOKENS.saffron : "transparent"}`,
+              color: active ? TOKENS.saffronDeep : TOKENS.inkSoft,
+            }}>
+              <m.icon size={17} style={{ pointerEvents: "none" }} />
+              {m.label}
+            </button>
+          );
+        })}
+      </div>
+
+      <div style={{ display: "flex", gap: 6, marginBottom: 10 }}>
+        <input
+          style={{ ...inputStyle, flex: 1, minWidth: 0, padding: "11px 12px" }}
+          placeholder={t.meal_name_ph} value={name}
+          onChange={(e) => setName(e.target.value)}
+          onKeyDown={(e) => { if (e.key === "Enter") add(); }}
+        />
+        <button
+          title={t.meal_estimate} onClick={() => onSmartLog(name.trim(), type)}
+          style={{ ...squareBtn, background: TOKENS.paperRaised, border: `1.5px solid ${TOKENS.line}` }}
+        >
+          <Sparkles size={17} color={TOKENS.herb} style={{ pointerEvents: "none" }} />
+        </button>
+        <input
+          type="number" inputMode="numeric" placeholder={t.unit_kcal} value={kcal}
+          onChange={(e) => setKcal(e.target.value)}
+          onKeyDown={(e) => { if (e.key === "Enter") add(); }}
+          style={{ ...inputStyle, width: 74, flexShrink: 0, padding: "11px 8px", textAlign: "center" }}
+        />
+        <button onClick={add} disabled={!name.trim()} style={{ ...squareBtn, background: TOKENS.herb, border: "none", opacity: name.trim() ? 1 : 0.55 }}>
+          <Plus size={19} color={TOKENS.cream} style={{ pointerEvents: "none" }} />
+        </button>
+      </div>
+
+      <div style={{ display: "flex", gap: 6 }}>
+        <button style={dashedBtn} onClick={() => onLiveScan(type)}>
+          <ScanLine size={15} color={TOKENS.herb} style={{ pointerEvents: "none" }} /> {t.fab_scan}
+        </button>
+        <button style={dashedBtn} onClick={() => fileRef.current && fileRef.current.click()}>
+          <ImageIcon size={15} color={TOKENS.herb} style={{ pointerEvents: "none" }} /> {t.quick_upload}
+        </button>
+        <button style={dashedBtn} onClick={onLogExercise}>
+          <Activity size={15} color={TOKENS.herb} style={{ pointerEvents: "none" }} /> {t.fab_exercise}
+        </button>
+      </div>
+      <input
+        ref={fileRef} type="file" accept="image/*" style={{ display: "none" }}
+        onChange={(e) => { const f = e.target.files && e.target.files[0]; e.target.value = ""; if (f) onUpload(f, type); }}
+      />
+    </div>
+  );
+}
+
 function TodayView({ profile, log, foodCache, viewedISO, onChangeDate, logs, onAddMeal, onAddMeals, onAddExercise, onDeleteMeal, onDeleteExercise, onCloseDay, onOpenSummary }) {
   const t = useT();
   const [mealModal, setMealModal] = useState(null);
@@ -2381,24 +2487,14 @@ function TodayView({ profile, log, foodCache, viewedISO, onChangeDate, logs, onA
       )}
 
       {!locked && (
-        <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
-          {[
-            { key: "scan", label: t.fab_scan, icon: ScanLine, onClick: () => setScanModal(true) },
-            { key: "exercise", label: t.fab_exercise, icon: Activity, onClick: () => setExModal(true) },
-            { key: "meal", label: t.fab_meal, icon: UtensilsCrossed, onClick: () => setMealModal(guessedMealType) },
-          ].map((a) => (
-            <button key={a.key} onClick={a.onClick} style={{
-              flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 6,
-              background: TOKENS.paperRaised, border: `1px solid ${TOKENS.line}`, borderRadius: 14,
-              padding: "12px 8px", cursor: "pointer", fontFamily: "var(--font-body)",
-            }}>
-              <span style={{ width: 34, height: 34, borderRadius: 999, background: TOKENS.herb, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <a.icon size={16} color={TOKENS.cream} style={{ pointerEvents: "none" }} />
-              </span>
-              <span style={{ fontSize: 11.5, fontWeight: 600, color: TOKENS.ink, textAlign: "center" }}>{a.label}</span>
-            </button>
-          ))}
-        </div>
+        <QuickMealCard
+          defaultType={guessedMealType}
+          onManualAdd={onAddMeal}
+          onSmartLog={(name, type) => setMealModal({ type, name, autoParse: true })}
+          onLiveScan={(type) => setScanModal(type)}
+          onUpload={(file, type) => setMealModal({ type, file })}
+          onLogExercise={() => setExModal(true)}
+        />
       )}
 
       <LogList meals={meals} exercises={exercises} locked={locked} onDeleteMeal={onDeleteMeal} onDeleteExercise={onDeleteExercise} />
@@ -2415,7 +2511,8 @@ function TodayView({ profile, log, foodCache, viewedISO, onChangeDate, logs, onA
 
       {mealModal && (
         <AddMealModal
-          mealType={mealModal} cache={foodCache}
+          mealType={mealModal.type} cache={foodCache}
+          initialName={mealModal.name || ""} autoParse={!!mealModal.autoParse} initialFile={mealModal.file || null}
           onClose={() => setMealModal(null)}
           onSave={(m) => { onAddMeal(m); setMealModal(null); }}
         />
@@ -2429,7 +2526,7 @@ function TodayView({ profile, log, foodCache, viewedISO, onChangeDate, logs, onA
       )}
       {scanModal && (
         <LiveScanModal
-          mealType={guessedMealType} cache={foodCache}
+          mealType={scanModal} cache={foodCache}
           onClose={() => setScanModal(false)}
           onSaveItems={(items) => { onAddMeals(items); setScanModal(false); }}
         />
@@ -3751,3 +3848,4 @@ export default function App() {
     </I18nContext.Provider>
   );
 }
+
