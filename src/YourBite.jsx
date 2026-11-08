@@ -2727,7 +2727,7 @@ function TrainingSetup({ profile, onGenerate, onUpdateWaist, lang }) {
   const t = useT();
   const [experience, setExperience] = useState("beginner");
   const [equipment, setEquipment] = useState("home");
-  const [weekdays, setWeekdays] = useState(["monday", "wednesday", "friday"]);
+  const [weekdays, setWeekdays] = useState(["monday", "wednesday", "thursday", "saturday", "sunday"]);
   const [focusAreas, setFocusAreas] = useState([]);
   const [mealStyle, setMealStyle] = useState("mix");
   const [supplement, setSupplement] = useState("none");
