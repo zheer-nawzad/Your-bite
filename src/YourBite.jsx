@@ -831,16 +831,16 @@ async function callAiProxy(body) {
 // Kurdish Sorani (ckb) uses Claude Opus, the most capable current model —
 // Kurdish is a lower-resource language where the strongest model helps most.
 // Everything else stays on the cheaper/faster Haiku.
-async function callClaude(content, maxTokens = 500, lang) {
-  const isOpus = lang === "ckb";
-  const model = isOpus ? "claude-opus-5" : "claude-haiku-4-5-20251001";
+async function callClaude(content, maxTokens = 500, lang, opts = {}) {
+  const model = opts.model || (lang === "ckb" ? "claude-opus-5" : "claude-haiku-4-5-20251001");
+  // Opus 5 / Sonnet 5 think adaptively and those tokens count against max_tokens.
+  const thinks = model === "claude-opus-5" || model === "claude-sonnet-5";
   let response;
   try {
     response = await callAiProxy({
       model,
-      // Opus's thinking tokens count against max_tokens, so give it headroom.
-      max_tokens: isOpus ? maxTokens + 800 : maxTokens,
-      ...(isOpus ? { output_config: { effort: "low" } } : {}),
+      max_tokens: thinks ? maxTokens + 800 : maxTokens,
+      ...(thinks ? { output_config: { effort: "low" } } : {}),
       messages: [{ role: "user", content }],
     });
   } catch (e) {
@@ -871,70 +871,166 @@ async function callClaude(content, maxTokens = 500, lang) {
   }
 }
 
-// Shared across every estimation path (text, photo, live scan) so the same
-// food and portion always produces the same numbers no matter how it was logged.
-const NUTRITION_REFERENCE = `Use these reference values as your baseline, scaling linearly to the exact stated portion — this keeps estimates consistent whether the same food is logged by text, photo, or live scan:
-- Chicken breast, grilled/cooked (skinless): 165 kcal, 31g protein, 0g carbs, 3.6g fat per 100g
-- Chicken thigh, grilled/cooked (skinless): 209 kcal, 26g protein, 0g carbs, 10.9g fat per 100g
-- Beef, lean, cooked: 250 kcal, 26g protein, 0g carbs, 15g fat per 100g
-- Lamb, cooked: 294 kcal, 25g protein, 0g carbs, 21g fat per 100g
-- Fish (white, grilled): 140 kcal, 26g protein, 0g carbs, 3g fat per 100g
-- Salmon, cooked: 208 kcal, 20g protein, 0g carbs, 13g fat per 100g
-- Shrimp, cooked: 99 kcal, 24g protein, 0.2g carbs, 0.3g fat per 100g
-- White rice, cooked: 130 kcal, 2.7g protein, 28g carbs, 0.3g fat per 100g (1 plate ≈ 200g cooked)
-- Bread/flatbread: 265 kcal, 9g protein, 49g carbs, 3.2g fat per 100g
-- Pasta, cooked: 131 kcal, 5g protein, 25g carbs, 1.1g fat per 100g
-- Potato, cooked: 87 kcal, 2g protein, 20g carbs, 0.1g fat per 100g
-- Egg, whole: 78 kcal, 6g protein, 0.6g carbs, 5g fat per large egg (~50g)
-- Soup/stew, general: 1 bowl ≈ 300-350ml
-For foods not listed here, use your best realistic estimate, but always scale it correctly to the stated portion.`;
+// ---------------------------------------------------------------------------
+// Nutrition engine. The AI only identifies foods, portions and per-100g values;
+// every number shown to the user is calculated here, so the arithmetic is exact
+// and the same food + portion always gives the same result on every path
+// (text, photo, live scan, upload).
+// ---------------------------------------------------------------------------
 
-// Two-step estimation: first split the description into components with a
-// default portion each (so the user can see and correct the assumed amounts
-// before any calorie math happens), then compute nutrition from the
-// (possibly user-edited) portions.
+// Standard values per 100 g as eaten (drinks per 100 ml), mostly USDA. For a
+// matching food these override the AI's values. `units` = grams per one unit.
+const FOOD_DB = {
+  chicken_breast: { label: "Chicken breast, grilled/cooked, skinless", kcal: 165, p: 31, c: 0, f: 3.6 },
+  chicken_thigh: { label: "Chicken thigh, cooked, skinless", kcal: 209, p: 26, c: 0, f: 10.9 },
+  chicken_wings: { label: "Chicken wings, cooked, with skin", kcal: 254, p: 23.8, c: 0, f: 16.9 },
+  chicken_whole: { label: "Roast/grilled chicken, meat and skin", kcal: 239, p: 27.3, c: 0, f: 13.6 },
+  beef_ground: { label: "Beef, ground/minced (85% lean), cooked", kcal: 250, p: 25.9, c: 0, f: 15.4 },
+  lamb: { label: "Lamb meat, cooked", kcal: 294, p: 24.5, c: 0, f: 20.9 },
+  lamb_ground: { label: "Lamb, ground/minced, cooked (kebab/kofta meat)", kcal: 283, p: 24.8, c: 0, f: 19.7 },
+  carp: { label: "Carp, grilled (e.g. masgouf)", kcal: 162, p: 22.9, c: 0, f: 7.2 },
+  white_fish: { label: "White fish (tilapia/cod), cooked", kcal: 128, p: 26.2, c: 0, f: 2.7 },
+  salmon: { label: "Salmon, cooked", kcal: 206, p: 22.1, c: 0, f: 12.4 },
+  tuna_canned: { label: "Tuna, canned in water, drained", kcal: 116, p: 25.5, c: 0, f: 0.8 },
+  shrimp: { label: "Shrimp, cooked", kcal: 99, p: 24, c: 0.2, f: 0.3 },
+  egg: { label: "Egg, whole, boiled or plain", kcal: 155, p: 12.6, c: 1.1, f: 10.6, units: { piece: 50 } },
+  white_rice: { label: "White rice, plain boiled", kcal: 130, p: 2.7, c: 28.2, f: 0.3, units: { plate: 250, cup: 158 } },
+  rice_with_oil: { label: "Rice cooked with oil/butter (Kurdish/Middle Eastern style)", kcal: 155, p: 2.7, c: 28.2, f: 3.1, units: { plate: 250, cup: 158 } },
+  bulgur: { label: "Bulgur (savar), cooked", kcal: 83, p: 3.1, c: 18.6, f: 0.2, units: { plate: 250, cup: 182 } },
+  pasta: { label: "Pasta, cooked", kcal: 158, p: 5.8, c: 30.9, f: 0.9, units: { plate: 250, cup: 140 } },
+  flatbread: { label: "Flatbread / pita / naan / samoon, white", kcal: 275, p: 9.1, c: 55.7, f: 1.2, units: { piece: 100 } },
+  bread_slice: { label: "Sliced bread / toast, white", kcal: 265, p: 9, c: 49, f: 3.2, units: { slice: 30, piece: 30 } },
+  potato: { label: "Potato, boiled", kcal: 87, p: 1.9, c: 20.1, f: 0.1 },
+  french_fries: { label: "French fries", kcal: 312, p: 3.4, c: 41.4, f: 14.7 },
+  lentils: { label: "Lentils, cooked", kcal: 116, p: 9, c: 20.1, f: 0.4 },
+  chickpeas: { label: "Chickpeas, cooked", kcal: 164, p: 8.9, c: 27.4, f: 2.6 },
+  hummus: { label: "Hummus", kcal: 166, p: 7.9, c: 14.3, f: 9.6 },
+  feta: { label: "White cheese / feta", kcal: 264, p: 14.2, c: 4.1, f: 21.3 },
+  yogurt: { label: "Plain yogurt (mast), whole milk", kcal: 61, p: 3.5, c: 4.7, f: 3.3 },
+  greek_yogurt: { label: "Greek yogurt, plain, nonfat", kcal: 59, p: 10.2, c: 3.6, f: 0.4 },
+  milk: { label: "Milk, whole", kcal: 61, p: 3.2, c: 4.8, f: 3.3, units: { glass: 250, cup: 240 } },
+  olive_oil: { label: "Olive oil / vegetable oil", kcal: 884, p: 0, c: 0, f: 100, units: { tbsp: 14, tsp: 5 } },
+  butter: { label: "Butter", kcal: 717, p: 0.9, c: 0.1, f: 81.1, units: { tbsp: 14, tsp: 5 } },
+  dates: { label: "Dates", kcal: 282, p: 2.5, c: 75, f: 0.4, units: { piece: 9 } },
+  banana: { label: "Banana", kcal: 89, p: 1.1, c: 22.8, f: 0.3, units: { piece: 118 } },
+  apple: { label: "Apple", kcal: 52, p: 0.3, c: 13.8, f: 0.2, units: { piece: 180 } },
+  orange: { label: "Orange", kcal: 47, p: 0.9, c: 11.8, f: 0.1, units: { piece: 140 } },
+  almonds: { label: "Almonds", kcal: 579, p: 21.2, c: 21.6, f: 49.9 },
+  walnuts: { label: "Walnuts", kcal: 654, p: 15.2, c: 13.7, f: 65.2 },
+  sugar: { label: "Sugar", kcal: 387, p: 0, c: 100, f: 0, units: { tsp: 4, tbsp: 12.5 } },
+  honey: { label: "Honey", kcal: 304, p: 0.3, c: 82.4, f: 0, units: { tsp: 7, tbsp: 21 } },
+  cola: { label: "Cola / regular soda", kcal: 42, p: 0, c: 10.6, f: 0, units: { can: 330, glass: 250 } },
+  energy_drink: { label: "Energy drink, regular (e.g. Red Bull)", kcal: 45, p: 0, c: 11, f: 0, units: { can: 250 } },
+  orange_juice: { label: "Orange juice", kcal: 45, p: 0.7, c: 10.4, f: 0.2, units: { glass: 250 } },
+  whey: { label: "Whey protein powder", kcal: 400, p: 80, c: 8, f: 6, units: { scoop: 30 } },
+  salad: { label: "Green salad / raw vegetables, no dressing", kcal: 20, p: 1, c: 3.8, f: 0.2 },
+  tomato: { label: "Tomato", kcal: 18, p: 0.9, c: 3.9, f: 0.2, units: { piece: 120 } },
+  cucumber: { label: "Cucumber", kcal: 15, p: 0.7, c: 3.6, f: 0.1, units: { piece: 200 } },
+};
+
+// Grams (or ml) per unit when neither the food table nor the AI gives one.
+const UNIT_GRAMS = { g: 1, ml: 1, l: 1000, kg: 1000, plate: 250, bowl: 300, cup: 200, glass: 250, can: 330, slice: 30, tbsp: 14, tsp: 5, scoop: 30 };
+const FIXED_UNITS = { g: 1, ml: 1, l: 1000, kg: 1000 };
+
+const toNum = (v) => { const n = Number(v); return Number.isFinite(n) ? n : 0; };
+
+// Clean up AI per-100g values: no negatives, macros can't exceed 100 g per
+// 100 g, and kcal must agree with the macros (4/4/9 kcal per g) within 20%.
+function sanePer100({ kcal, p, c, f }) {
+  p = Math.max(p, 0); c = Math.max(c, 0); f = Math.max(f, 0);
+  const sum = p + c + f;
+  if (sum > 100) { p = (p * 100) / sum; c = (c * 100) / sum; f = (f * 100) / sum; }
+  const macroKcal = 4 * p + 4 * c + 9 * f;
+  if (macroKcal > 0 && (!(kcal > 0) || Math.abs(kcal - macroKcal) / macroKcal > 0.2)) kcal = macroKcal;
+  return { kcal: Math.min(Math.max(kcal, 0), 900), p, c, f };
+}
+
+function normalizeFoodItem(raw) {
+  const unit = String(raw.unit || "g").toLowerCase().trim();
+  const ref = FOOD_DB[raw.ref] ? raw.ref : null;
+  const db = ref ? FOOD_DB[ref] : null;
+  const ai = raw.per_100g || {};
+  const per100 = db
+    ? { kcal: db.kcal, p: db.p, c: db.c, f: db.f }
+    : sanePer100({ kcal: toNum(ai.kcal), p: toNum(ai.protein_g), c: toNum(ai.carbs_g), f: toNum(ai.fat_g) });
+  const gramsPerUnit = FIXED_UNITS[unit]
+    || (db && db.units && db.units[unit])
+    || (toNum(raw.grams_per_unit) > 0 ? toNum(raw.grams_per_unit) : 0)
+    || UNIT_GRAMS[unit] || 100;
+  return { name: raw.name || "Food", unit, amount: toNum(raw.amount), gramsPerUnit, per100, ref };
+}
+
+function itemNutrition(item) {
+  const factor = (toNum(item.amount) * item.gramsPerUnit) / 100;
+  return {
+    calories: Math.round(item.per100.kcal * factor),
+    protein: Math.round(item.per100.p * factor),
+    carbs: Math.round(item.per100.c * factor),
+    fat: Math.round(item.per100.f * factor),
+  };
+}
+
+// Sum of the per-item (rounded) values, so the total always equals what the
+// rows show and what gets saved.
+function sumNutrition(items) {
+  return items.map(itemNutrition).reduce(
+    (s, n) => ({ calories: s.calories + n.calories, protein: s.protein + n.protein, carbs: s.carbs + n.carbs, fat: s.fat + n.fat }),
+    { calories: 0, protein: 0, carbs: 0, fat: 0 },
+  );
+}
+
+function portionLabel(item) {
+  return item.unit === "g" || item.unit === "ml" ? `${toNum(item.amount)}${item.unit}` : `${toNum(item.amount)} ${item.unit}`;
+}
+
+function describeItems(items) {
+  return items.map((it) => `${it.name} (${portionLabel(it)})`).join(", ");
+}
+
+const FOOD_ITEM_INSTRUCTIONS = `For every food or drink give:
+- "name": short name, 1-4 words.
+- "ref": the key from this list if the item is clearly that food with that preparation, otherwise null:
+${Object.entries(FOOD_DB).map(([k, v]) => `${k}: ${v.label}`).join("\n")}
+In Kurdish/Middle Eastern home cooking rice is normally cooked with oil, so use rice_with_oil for rice unless it's described or looks plain/boiled. "Bread" means flatbread (naan/samoon) unless it's called a slice or toast.
+- "unit" and "amount": the portion. Use "g" for meat, fish and most solid food; "plate" for rice, savar and pasta (never "cup" for rice); "bowl" for soup or stew; "can", "glass", "ml" or "l" for drinks; "piece" for countable items (eggs, bread, fruit, dates); "tbsp"/"tsp" for oil, butter, sugar, honey; "scoop" for protein powder. If the user stated a portion or count, use exactly that.
+- "grams_per_unit": grams (ml for drinks) in ONE unit of this specific food, e.g. 1 plate of rice 250, 1 bowl of soup 300, 1 egg 50, 1 Kurdish naan 100, 1 can of Red Bull 250. Use 1 when the unit is "g".
+- "per_100g": {"kcal","protein_g","carbs_g","fat_g"} per 100 g (per 100 ml for drinks) of the food as eaten, from standard food composition data (USDA-style). Include the cooking oil and sauce that are part of the dish. For a mixed dish (stew, dolma, kubba, biryani, shawarma, pizza, burger) give values for the dish as a whole.
+Split a meal into separate items when they are separate foods (chicken + rice + salad); keep one mixed dish as one item.`;
+
+const FOOD_ITEM_SHAPE = `{"name":"...","ref":null,"unit":"g","amount":0,"grams_per_unit":1,"per_100g":{"kcal":0,"protein_g":0,"carbs_g":0,"fat_g":0}}`;
+
 async function parseMealPortions(foodName, mealType) {
-  const prompt = `Break this meal description into its distinct food components for a ${mealType}.
+  const prompt = `List the foods in this ${mealType} the user described, with a realistic portion for each.
 Food: "${foodName}"
 
-For each component, give a realistic default portion using the unit that naturally fits it:
-- Meat/protein (chicken, beef, fish, eggs used as a main, etc.): grams — unit "g".
-- Rice specifically: always use plates — unit "plate" (never "cup" for rice).
-- Pasta, bread-based mains, or other similar starches (not rice): plates — unit "plate" (or "cup" if that fits better).
-- Soup or stew: bowls — unit "bowl".
-- Drinks (juice, energy drinks, soda, milk, tea): can, glass, or liters, whichever is standard for that drink — unit "can", "glass", or "l".
-- Countable items (eggs, bread slices, fruit): count — unit "piece".
-If the entry already states a portion or count (e.g. "300g chicken", "2 cans of Red Bull"), use that exact number instead of guessing.
+${FOOD_ITEM_INSTRUCTIONS}
+Write each "name" in the same language the user wrote in.
 
-Respond with ONLY compact raw JSON, no markdown, no explanation, in this exact shape:
-{"items":[{"name":"short component name","unit":"g","amount":0}]}
-List at most 5 components, one per distinct food/drink in the description.`;
-  return callClaude(prompt, 500);
+Respond with ONLY compact raw JSON, no markdown, no explanation:
+{"items":[${FOOD_ITEM_SHAPE}]}
+At most 6 items.`;
+  const r = await callClaude(prompt, 1000);
+  return (r.items || []).map(normalizeFoodItem);
 }
 
-async function estimateFromPortions(items, mealType) {
-  const itemsDesc = items.map((it) => `${it.amount}${it.unit === "g" || it.unit === "l" || it.unit === "ml" ? it.unit : " " + it.unit} of ${it.name}`).join(", ");
-  const prompt = `Estimate the total nutrition for a ${mealType} made up of exactly these components and portions: ${itemsDesc}.
-${NUTRITION_REFERENCE}
-Respond with ONLY a raw JSON object, no markdown, no explanation, in this exact shape:
-{"name": "short combined meal name including these portions", "calories": number, "protein_g": number, "carbs_g": number, "fat_g": number}
-Base the numbers on these exact stated portions, not a generic average serving.`;
-  return callClaude(prompt, 400);
-}
-
-async function estimateCaloriesFromImage(base64Data, mimeType, mealType) {
+// Photos use Sonnet: recognising food and judging portion size from a picture
+// is where a stronger model makes the biggest difference.
+async function parsePhotoPortions(base64Data, mimeType, mealType) {
   const content = [
     { type: "image", source: { type: "base64", media_type: mimeType, data: base64Data } },
     {
       type: "text",
-      text: `Identify the food in this photo and estimate its nutrition for a ${mealType}.
-${NUTRITION_REFERENCE}
-Respond with ONLY a raw JSON object, no markdown, no explanation, in this exact shape:
-{"name": "short food name", "calories": number, "protein_g": number, "carbs_g": number, "fat_g": number}
-Use realistic whole numbers based on the visible portion size.`,
+      text: `Identify the foods in this photo of a ${mealType} and estimate each portion from what is visible. Judge size against the plate, cutlery, glass or hand in the photo; a standard dinner plate is about 26 cm across.
+
+${FOOD_ITEM_INSTRUCTIONS}
+
+Respond with ONLY compact raw JSON, no markdown, no explanation:
+{"items":[${FOOD_ITEM_SHAPE}]}
+At most 6 items. If there is no food in the photo, return {"items":[]}.`,
     },
   ];
-  return callClaude(content);
+  const r = await callClaude(content, 1400, undefined, { model: "claude-sonnet-5" });
+  return (r.items || []).map(normalizeFoodItem);
 }
 
 async function estimateItemsFromImage(base64Data, mimeType) {
@@ -942,22 +1038,23 @@ async function estimateItemsFromImage(base64Data, mimeType) {
     { type: "image", source: { type: "base64", media_type: mimeType, data: base64Data } },
     {
       type: "text",
-      text: `Look carefully at this plate of food and identify every distinct food item on it separately (e.g. if it's chicken with vegetables, list "chicken", "tomatoes", "corn" as separate items, not one combined item).
+      text: `Look carefully at this plate of food and identify every distinct food item on it separately (e.g. if it's chicken with vegetables, list "chicken", "tomatoes", "corn" as separate items, not one combined item). Estimate each portion from what is visible, judging size against the plate, cutlery or hand; a standard dinner plate is about 26 cm across.
 
 For each item's position, this matters a lot — a marker will be drawn at exactly the x,y you give, directly on top of the photo, so it must land ON that specific item and not on a neighboring one:
 - Look at where THAT item's own pixels actually are, not where a similar or nearby item is.
 - Small or scattered items (corn kernels, herbs, seeds, diced pieces) are easy to mix up with whatever is next to them — find a spot that is clearly and only that item before deciding on x,y.
-- Before finalizing each item, double-check: "does this exact x,y sit on top of this food, or did I accidentally point at something else nearby?" Adjust if needed.
 - x/y are percentages 0-100 (0,0 = top-left of the photo), marking the center of a visible patch of that item.
 
-Also give a single representative emoji per item.
-${NUTRITION_REFERENCE}
-Respond with ONLY compact raw JSON, no markdown, no explanation, no extra whitespace, in this exact shape:
-{"items":[{"name":"short item name","calories":0,"protein_g":0,"carbs_g":0,"fat_g":0,"x":0,"y":0,"emoji":"🍗"}]}
-List at most 5 items, fewer if the plate is simple. Keep names to 1-3 words. Use realistic whole numbers.`,
+${FOOD_ITEM_INSTRUCTIONS}
+Also give one representative "emoji" per item.
+
+Respond with ONLY compact raw JSON, no markdown, no explanation, in this exact shape:
+{"items":[{"name":"...","ref":null,"unit":"g","amount":0,"grams_per_unit":1,"per_100g":{"kcal":0,"protein_g":0,"carbs_g":0,"fat_g":0},"x":0,"y":0,"emoji":"🍗"}]}
+At most 6 items, fewer if the plate is simple. If there is no food in the photo, return {"items":[]}.`,
     },
   ];
-  return callClaude(content, 1200);
+  const r = await callClaude(content, 1800, undefined, { model: "claude-sonnet-5" });
+  return (r.items || []).map((raw) => ({ ...normalizeFoodItem(raw), x: raw.x, y: raw.y, emoji: raw.emoji }));
 }
 
 const WEEKDAY_KEYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
@@ -1721,8 +1818,7 @@ function AddMealModal({ mealType, cache, onClose, onSave, initialName = "", auto
     if (!text.trim()) return;
     setLoading(true); setErrMsg(""); setResult(null); setPortions(null); setMatchedCache(false); setMatchedKurdish(false);
     try {
-      const r = await parseMealPortions(text.trim(), type);
-      const items = (r.items || []).map((it) => ({ name: it.name || "", unit: it.unit || "g", amount: Number(it.amount) || 0 }));
+      const items = await parseMealPortions(text.trim(), type);
       if (!items.length) throw new Error("no items parsed");
       setPortions(items);
     } catch (e) {
@@ -1734,15 +1830,12 @@ function AddMealModal({ mealType, cache, onClose, onSave, initialName = "", auto
     setPortions((prev) => prev.map((p, i) => (i === index ? { ...p, amount } : p)));
   }
 
-  async function handleEstimateFromPortions() {
-    setLoading(true); setErrMsg("");
-    try {
-      const r = await estimateFromPortions(portions, type);
-      setResult({ name: r.name || name, calories: Math.round(r.calories) || 0, protein: Math.round(r.protein_g) || 0, carbs: Math.round(r.carbs_g) || 0, fat: Math.round(r.fat_g) || 0 });
-    } catch (e) {
-      setErrMsg(t.meal_ai_fail);
-      setResult({ name: name, calories: 0, protein: 0, carbs: 0, fat: 0 });
-    } finally { setLoading(false); }
+  // Pure calculation from the (possibly edited) portions — no second AI call.
+  function handleEstimateFromPortions() {
+    const kept = portions.filter((p) => toNum(p.amount) > 0);
+    if (!kept.length) return;
+    setErrMsg("");
+    setResult({ name: describeItems(kept), ...sumNutrition(kept) });
   }
 
   useEffect(() => {
@@ -1761,20 +1854,13 @@ function AddMealModal({ mealType, cache, onClose, onSave, initialName = "", auto
       const base64 = dataUrl.split(",")[1];
       const mimeType = file.type || "image/jpeg";
       setPhotoData(dataUrl);
-      setLoading(true); setErrMsg(""); setResult(null); setMatchedCache(false); setMatchedKurdish(false);
+      setLoading(true); setErrMsg(""); setResult(null); setPortions(null); setMatchedCache(false); setMatchedKurdish(false);
       try {
-        const r = await estimateCaloriesFromImage(base64, mimeType, type);
-        const guessedName = r.name || "Meal";
-        const cached = (cache || {})[normalizeFoodName(guessedName)];
-        if (cached) {
-          setResult({ name: cached.name, calories: cached.calories, protein: cached.protein, carbs: cached.carbs, fat: cached.fat });
-          setMatchedCache(true);
-        } else {
-          setResult({ name: guessedName, calories: Math.round(r.calories) || 0, protein: Math.round(r.protein_g) || 0, carbs: Math.round(r.carbs_g) || 0, fat: Math.round(r.fat_g) || 0 });
-        }
+        const items = await parsePhotoPortions(base64, mimeType, type);
+        if (!items.length) throw new Error("no food found");
+        setPortions(items);
       } catch (err) {
         setErrMsg(t.meal_ai_fail);
-        setResult({ name: "Meal", calories: 0, protein: 0, carbs: 0, fat: 0 });
       } finally { setLoading(false); }
     };
     reader.readAsDataURL(file);
@@ -1794,10 +1880,10 @@ function AddMealModal({ mealType, cache, onClose, onSave, initialName = "", auto
       </Field>
 
       <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
-        <button onClick={() => setMode("text")} style={tabBtnStyle(mode === "text")}>
+        <button onClick={() => { setMode("text"); setPortions(null); setResult(null); setErrMsg(""); }} style={tabBtnStyle(mode === "text")}>
           <TypeIcon size={15} /> {t.tab_text}
         </button>
-        <button onClick={() => setMode("photo")} style={tabBtnStyle(mode === "photo")}>
+        <button onClick={() => { setMode("photo"); setPortions(null); setResult(null); setErrMsg(""); }} style={tabBtnStyle(mode === "photo")}>
           <Camera size={15} /> {t.tab_photo}
         </button>
       </div>
@@ -1827,30 +1913,6 @@ function AddMealModal({ mealType, cache, onClose, onSave, initialName = "", auto
             </Button>
           )}
 
-          {!result && portions && (
-            <div>
-              <div style={{ fontSize: 13, color: TOKENS.inkSoft, marginBottom: 10 }}>{t.meal_adjust_portions}</div>
-              {portions.map((p, i) => (
-                <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-                  <div style={{ flex: 1, fontSize: 13.5, color: TOKENS.ink }}>{p.name}</div>
-                  <input
-                    type="number" inputMode="decimal" value={p.amount}
-                    onChange={(e) => updatePortionAmount(i, e.target.value)}
-                    style={{ ...inputStyle, width: 66, padding: "8px 10px", fontSize: 13.5, marginBottom: 0, textAlign: "center" }}
-                  />
-                  <div style={{ fontSize: 12.5, color: TOKENS.inkSoft, width: 42, flexShrink: 0 }}>{p.unit}</div>
-                </div>
-              ))}
-              <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
-                <Button variant="ghost" style={{ padding: "10px 16px" }} onClick={() => setPortions(null)} disabled={loading}>
-                  {t.cancel}
-                </Button>
-                <Button variant="saffron" full onClick={handleEstimateFromPortions} disabled={loading}>
-                  {loading ? <><Loader2 size={16} className="spin" /> {t.meal_estimating}</> : t.meal_estimate}
-                </Button>
-              </div>
-            </div>
-          )}
         </>
       )}
 
@@ -1870,13 +1932,45 @@ function AddMealModal({ mealType, cache, onClose, onSave, initialName = "", auto
                 </div>
               )}
               {!loading && (
-                <Button variant="ghost" full style={{ marginTop: 10 }} onClick={() => { setPhotoData(null); setResult(null); }}>
+                <Button variant="ghost" full style={{ marginTop: 10 }} onClick={() => { setPhotoData(null); setResult(null); setPortions(null); }}>
                   {t.meal_photo_retake}
                 </Button>
               )}
             </div>
           )}
         </>
+      )}
+
+      {!result && portions && (
+        <div style={{ marginTop: 4 }}>
+          <div style={{ fontSize: 13, color: TOKENS.inkSoft, marginBottom: 10 }}>{t.meal_adjust_portions}</div>
+          {portions.map((p, i) => (
+            <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+              <div style={{ flex: 1, minWidth: 0, fontSize: 13.5, color: TOKENS.ink }}>{p.name}</div>
+              <input
+                type="number" inputMode="decimal" min="0" value={p.amount}
+                onChange={(e) => updatePortionAmount(i, e.target.value)}
+                style={{ ...inputStyle, width: 66, padding: "8px 6px", marginBottom: 0, textAlign: "center" }}
+              />
+              <div style={{ fontSize: 12.5, color: TOKENS.inkSoft, width: 38, flexShrink: 0 }}>{p.unit}</div>
+              <div style={{ fontSize: 12.5, fontWeight: 700, color: TOKENS.inkSoft, flexShrink: 0, minWidth: 54, textAlign: "end", whiteSpace: "nowrap" }}>
+                {itemNutrition(p).calories} {t.unit_kcal}
+              </div>
+            </div>
+          ))}
+          <div style={{ display: "flex", justifyContent: "space-between", padding: "8px 0 10px", borderTop: `1px solid ${TOKENS.line}`, fontSize: 13.5, fontWeight: 700, color: TOKENS.herbDeep }}>
+            <span>{t.prot_total}</span>
+            <span>{sumNutrition(portions).calories} {t.unit_kcal} · {sumNutrition(portions).protein}g {t.macro_protein}</span>
+          </div>
+          <div style={{ display: "flex", gap: 8 }}>
+            <Button variant="ghost" style={{ padding: "10px 16px" }} onClick={() => setPortions(null)}>
+              {t.cancel}
+            </Button>
+            <Button variant="saffron" full onClick={handleEstimateFromPortions} disabled={!portions.some((p) => toNum(p.amount) > 0)}>
+              <Check size={16} /> {t.meal_estimate}
+            </Button>
+          </div>
+        </div>
       )}
 
       {errMsg && <div style={{ color: TOKENS.clay, fontSize: 13, margin: "10px 0" }}>{errMsg}</div>}
@@ -2115,7 +2209,7 @@ function ScanFrameOverlay() {
 
 // Live scan (no initialFile) is camera-only. Upload passes the chosen gallery
 // photo as initialFile and gets the same per-item analysis.
-function LiveScanModal({ mealType, cache, onClose, onSaveItems, initialFile = null }) {
+function LiveScanModal({ mealType, onClose, onSaveItems, initialFile = null }) {
   const t = useT();
   const uploadMode = !!initialFile;
   const [phase, setPhase] = useState(uploadMode ? "analyzing" : "camera");
@@ -2177,23 +2271,15 @@ function LiveScanModal({ mealType, cache, onClose, onSaveItems, initialFile = nu
       const match = dataUrl.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.*)$/);
       const mimeType = match ? match[1] : "image/jpeg";
       const base64 = match ? match[2] : dataUrl.split(",")[1];
-      const r = await estimateItemsFromImage(base64, mimeType);
-      const list = (r.items || []).map((it) => {
-        const cached = (cache || {})[normalizeFoodName(it.name || "")];
-        return {
-          id: uid(),
-          name: cached ? cached.name : (it.name || "Item"),
-          calories: cached ? cached.calories : (Math.round(it.calories) || 0),
-          protein: cached ? cached.protein : (Math.round(it.protein_g) || 0),
-          carbs: cached ? cached.carbs : (Math.round(it.carbs_g) || 0),
-          fat: cached ? cached.fat : (Math.round(it.fat_g) || 0),
-          x: clamp(Number(it.x) || 50, 10, 90),
-          y: clamp(Number(it.y) || 50, 10, 90),
-          emoji: it.emoji || "🍽️",
-          included: true,
-          matched: !!cached,
-        };
-      });
+      const found = await estimateItemsFromImage(base64, mimeType);
+      const list = found.map((it) => ({
+        ...it,
+        id: uid(),
+        x: clamp(Number(it.x) || 50, 10, 90),
+        y: clamp(Number(it.y) || 50, 10, 90),
+        emoji: it.emoji || "🍽️",
+        included: true,
+      }));
       setItems(list);
       if (list.length) { setPhase("result"); } else { setErrMsg(t.scan_fail); setPhase("error"); }
     } catch (e) {
@@ -2234,14 +2320,17 @@ function LiveScanModal({ mealType, cache, onClose, onSaveItems, initialFile = nu
     setItems((list) => list.map((it) => (it.id === id ? { ...it, included: !it.included } : it)));
   }
 
-  const selected = items.filter((it) => it.included);
-  const total = selected.reduce((s, it) => s + it.calories, 0);
+  function updateItemAmount(id, amount) {
+    setItems((list) => list.map((it) => (it.id === id ? { ...it, amount } : it)));
+  }
+
+  const selected = items.filter((it) => it.included && toNum(it.amount) > 0);
+  const totals = sumNutrition(selected);
 
   function confirm() {
     if (!selected.length) return;
     onSaveItems(selected.map((it) => ({
-      id: uid(), type: mealTypeSel, name: it.name, calories: it.calories,
-      protein: it.protein, carbs: it.carbs, fat: it.fat, at: Date.now(),
+      id: uid(), type: mealTypeSel, name: `${it.name} (${portionLabel(it)})`, ...itemNutrition(it), at: Date.now(),
     })));
   }
 
@@ -2305,22 +2394,31 @@ function LiveScanModal({ mealType, cache, onClose, onSaveItems, initialFile = nu
 
           <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 4 }}>
             {items.map((it, i) => (
-              <button key={it.id} onClick={() => toggleItem(it.id)} style={{
-                display: "flex", alignItems: "center", gap: 10, padding: "9px 12px", borderRadius: 12,
-                background: TOKENS.paperRaised, border: `1px solid ${TOKENS.line}`, cursor: "pointer", textAlign: "start",
-                opacity: it.included ? 1 : 0.5, fontFamily: "var(--font-body)",
+              <div key={it.id} style={{
+                display: "flex", alignItems: "center", gap: 8, padding: "7px 10px", borderRadius: 12,
+                background: TOKENS.paperRaised, border: `1px solid ${TOKENS.line}`, opacity: it.included ? 1 : 0.5,
               }}>
-                <span style={{
-                  width: 22, height: 22, borderRadius: 999, flexShrink: 0, background: MARKER_COLORS[i % MARKER_COLORS.length],
-                  color: "#fff", fontSize: 11, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center",
-                }}>{i + 1}</span>
-                <span style={{ fontSize: 15 }}>{it.emoji}</span>
-                <span style={{ flex: 1, fontSize: 13.5, fontWeight: 600, color: TOKENS.ink, textDecoration: it.included ? "none" : "line-through", display: "flex", alignItems: "center", gap: 5 }}>
-                  {it.name}
-                  {it.matched && <Check size={12} color={TOKENS.herbDeep} />}
+                <button onClick={() => toggleItem(it.id)} style={{
+                  flex: 1, minWidth: 0, display: "flex", alignItems: "center", gap: 8, background: "none", border: "none",
+                  padding: "2px 0", cursor: "pointer", textAlign: "start", fontFamily: "var(--font-body)",
+                }}>
+                  <span style={{
+                    width: 22, height: 22, borderRadius: 999, flexShrink: 0, background: MARKER_COLORS[i % MARKER_COLORS.length],
+                    color: "#fff", fontSize: 11, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center",
+                  }}>{i + 1}</span>
+                  <span style={{ fontSize: 15, flexShrink: 0 }}>{it.emoji}</span>
+                  <span style={{ fontSize: 13.5, fontWeight: 600, color: TOKENS.ink, textDecoration: it.included ? "none" : "line-through" }}>{it.name}</span>
+                </button>
+                <input
+                  type="number" inputMode="decimal" min="0" value={it.amount} disabled={!it.included}
+                  onChange={(e) => updateItemAmount(it.id, e.target.value)}
+                  style={{ ...inputStyle, width: 60, padding: "6px 4px", textAlign: "center", flexShrink: 0 }}
+                />
+                <span style={{ fontSize: 11.5, color: TOKENS.inkSoft, width: 30, flexShrink: 0 }}>{it.unit}</span>
+                <span style={{ fontSize: 12.5, fontWeight: 700, color: TOKENS.inkSoft, flexShrink: 0, minWidth: 52, textAlign: "end", whiteSpace: "nowrap" }}>
+                  {itemNutrition(it).calories} {t.unit_kcal}
                 </span>
-                <span style={{ fontSize: 13, fontWeight: 700, color: TOKENS.inkSoft, flexShrink: 0 }}>{it.calories} {t.unit_kcal}</span>
-              </button>
+              </div>
             ))}
           </div>
 
@@ -2332,7 +2430,12 @@ function LiveScanModal({ mealType, cache, onClose, onSaveItems, initialFile = nu
 
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 4px", borderTop: `1px solid ${TOKENS.line}`, marginBottom: 12 }}>
             <span style={{ fontSize: 13, color: TOKENS.inkSoft, fontWeight: 600 }}>{t.scan_total}</span>
-            <span style={{ fontFamily: "var(--font-display)", fontSize: 20, fontWeight: 600, color: TOKENS.herbDeep }}>{total} {t.unit_kcal}</span>
+            <span style={{ textAlign: "end" }}>
+              <span style={{ fontFamily: "var(--font-display)", fontSize: 20, fontWeight: 600, color: TOKENS.herbDeep }}>{totals.calories} {t.unit_kcal}</span>
+              <span style={{ display: "block", fontSize: 11.5, color: TOKENS.inkSoft }}>
+                {totals.protein}g {t.macro_protein} · {totals.carbs}g {t.macro_carbs} · {totals.fat}g {t.macro_fat}
+              </span>
+            </span>
           </div>
 
           <div style={{ display: "flex", gap: 10 }}>
@@ -2554,7 +2657,7 @@ function TodayView({ profile, log, foodCache, viewedISO, onChangeDate, logs, onA
       )}
       {scanModal && (
         <LiveScanModal
-          mealType={scanModal.type} initialFile={scanModal.file || null} cache={foodCache}
+          mealType={scanModal.type} initialFile={scanModal.file || null}
           onClose={() => setScanModal(false)}
           onSaveItems={(items) => { onAddMeals(items); setScanModal(false); }}
         />
@@ -3773,6 +3876,7 @@ export default function App() {
     </I18nContext.Provider>
   );
 }
+
 
 
 
