@@ -129,6 +129,8 @@ const DICT = {
     prot_why_leanGain: "Extra protein so your calorie surplus goes to muscle, not fat.",
     prot_why_recomp: "Very high protein lets you build muscle while losing fat.",
     train_sets: "sets", train_reps: "reps", 
+    train_rest_today: "Rest today — move this workout to tomorrow", train_rest_undo: "Undo",
+    train_rest_note: "Rest day. Your schedule moves one day later, so today's workout is tomorrow.",
     train_today_workout: "Today's workout", train_mark_complete: "Mark complete", train_workout_completed: "Completed today",
     train_workout_duration_label: "How long was your session? (minutes)", 
     train_regenerate: "Generate a new plan", train_regenerate_confirm: "This replaces your current plan — continue?",
@@ -249,6 +251,8 @@ const DICT = {
     prot_why_leanGain: "بروتين إضافي ليذهب فائض السعرات إلى العضلات لا إلى الدهون.",
     prot_why_recomp: "بروتين عالٍ جدًا يتيح لك بناء العضلات مع خسارة الدهون.",
     train_sets: "مجموعات", train_reps: "تكرارات", 
+    train_rest_today: "راحة اليوم — انقل هذا التمرين إلى الغد", train_rest_undo: "تراجع",
+    train_rest_note: "يوم راحة. يتأخر جدولك يومًا واحدًا، لذا يصبح تمرين اليوم غدًا.",
     train_today_workout: "تمرين اليوم", train_mark_complete: "وضع علامة مكتمل", train_workout_completed: "أُنجز اليوم",
     train_workout_duration_label: "كم استغرقت الحصة؟ (دقائق)", 
     train_regenerate: "إنشاء خطة جديدة", train_regenerate_confirm: "سيستبدل هذا خطتك الحالية — متابعة؟",
@@ -369,6 +373,8 @@ const DICT = {
     prot_why_leanGain: "پرۆتینی زیادە بۆ ئەوەی کالۆریی زیادەکەت بچێتە ماسولکە نەک چەوری.",
     prot_why_recomp: "پرۆتینی زۆر بەرز ڕێگەت پێدەدات ماسولکە دروست بکەیت و چەوری کەم بکەیتەوە.",
     train_sets: "سێت", train_reps: "دووبارەبوونەوە", 
+    train_rest_today: "ئەمڕۆ پشوو — ئەم ڕاهێنانە بگوازەرەوە بۆ سبەی", train_rest_undo: "گەڕاندنەوە",
+    train_rest_note: "ڕۆژی پشوو. خشتەکەت یەک ڕۆژ دوا دەکەوێت، بۆیە ڕاهێنانی ئەمڕۆ دەبێتە سبەی.",
     train_today_workout: "ڕاهێنانی ئەمڕۆ", train_mark_complete: "تەواو بکە", train_workout_completed: "ئەمڕۆ تەواو کرا",
     train_workout_duration_label: "ڕاهێنانەکەت چەند خولەک خایاند؟", 
     train_regenerate: "پلانێکی نوێ دروست بکە", train_regenerate_confirm: "ئەمە جێگۆڕکێی پلانی ئێستات دەکات — بەردەوام بیت؟",
@@ -709,7 +715,14 @@ function planRowToClient(row) {
     supplementCaloriesPerServing: row.supplement_calories_per_serving,
     supplementProtein: Math.round((row.supplement_servings || 0) * (row.supplement_protein_per_serving || 0)),
     supplementCalories: Math.round((row.supplement_servings || 0) * (row.supplement_calories_per_serving || 0)),
+    offDays: row.off_days || [],
   };
+}
+// Saved on its own (not via planClientToRow) so a missing off_days column
+// can only break rest days, never the rest of the plan's saves.
+async function saveOffDays(planId, offDays) {
+  if (!planId) return;
+  try { await supabase.from("training_plans").update({ off_days: offDays }).eq("id", planId); } catch (e) {}
 }
 function planClientToRow(p) {
   return {
@@ -950,6 +963,21 @@ List at most 5 items, fewer if the plate is simple. Keep names to 1-3 words. Use
 const WEEKDAY_KEYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
 function todayWeekdayKey() {
   return WEEKDAY_KEYS[(new Date().getDay() + 6) % 7];
+}
+function addDaysISO(iso, n) {
+  const [y, m, d] = iso.split("-").map(Number);
+  return todayISO(new Date(y, m - 1, d + n));
+}
+function weekdayKeyOf(iso) {
+  const [y, m, d] = iso.split("-").map(Number);
+  return WEEKDAY_KEYS[(new Date(y, m - 1, d).getDay() + 6) % 7];
+}
+// Each day off pushes the whole weekly schedule (rest days included) one day
+// later: a date runs the workout originally scheduled `shift` days earlier,
+// where shift = days off taken before that date.
+function shiftedSchedule(offDays, dateISO = todayISO()) {
+  const shift = (offDays || []).filter((d) => d < dateISO).length;
+  return { shift, restingToday: (offDays || []).includes(dateISO), weekdayKey: weekdayKeyOf(addDaysISO(dateISO, -shift)) };
 }
 
 const FOCUS_AREAS = ["whole", "shoulders", "arms", "chest", "back", "core", "legs"];
@@ -2981,7 +3009,14 @@ function TrainingPlanDisplay({ plan, profile, onRegenerate, onUpdatePlan, todayL
   const [swapTarget, setSwapTarget] = useState(null);
   const [loggingWorkout, setLoggingWorkout] = useState(false);
   const [workoutMinutes, setWorkoutMinutes] = useState(45);
-  const week = currentTrainingWeek(plan.startDate);
+  const offDays = plan.offDays || [];
+  const today = todayISO();
+  const schedule = shiftedSchedule(offDays, today);
+  // Resting today already pushes today's workout to tomorrow, so labels move one further.
+  const displayShift = schedule.shift + (schedule.restingToday ? 1 : 0);
+  const shiftKey = (k) => WEEKDAY_KEYS[(WEEKDAY_KEYS.indexOf(k) + displayShift) % 7];
+  // Days off also extend the 4-week plan rather than eating into it.
+  const week = currentTrainingWeek(plan.startDate ? addDaysISO(plan.startDate, displayShift) : plan.startDate);
   const done = week > 4;
   const [activeWeek, setActiveWeek] = useState(Math.min(week, 4));
   const exLabel = {
@@ -2994,11 +3029,12 @@ function TrainingPlanDisplay({ plan, profile, onRegenerate, onUpdatePlan, todayL
     shoulders: t.train_focus_shoulders, arms: t.train_focus_arms, chest: t.train_focus_chest,
     back: t.train_focus_back, core: t.train_focus_core, legs: t.train_focus_legs,
   };
-  const orderedDays = WEEKDAY_KEYS.filter((d) => (plan.days || []).some((x) => x.weekday === d))
-    .map((d) => (plan.days || []).find((x) => x.weekday === d));
+  const orderedDays = (plan.days || []).filter((d) => WEEKDAY_KEYS.includes(d.weekday))
+    .slice().sort((a, b) => WEEKDAY_KEYS.indexOf(shiftKey(a.weekday)) - WEEKDAY_KEYS.indexOf(shiftKey(b.weekday)));
   const progressionNote = (plan.progression || []).find((p) => p.week === activeWeek);
 
-  const [selectedWeekday, setSelectedWeekday] = useState(todayWeekdayKey());
+  // Weekday keys below are the plan's original keys; shiftKey() gives the day they now fall on.
+  const [selectedWeekday, setSelectedWeekday] = useState(schedule.weekdayKey);
   const todayWorkout = (plan.days || []).find((d) => d.weekday === selectedWeekday);
   const workoutAlreadyLogged = !!(todayWorkout && (todayLog?.exercises || []).some((e) => e.type === todayWorkout.title));
   function confirmCompleteWorkout() {
@@ -3007,6 +3043,12 @@ function TrainingPlanDisplay({ plan, profile, onRegenerate, onUpdatePlan, todayL
     onCompleteWorkout({ id: uid(), type: todayWorkout.title, minutes, caloriesBurned, at: Date.now() });
     setLoggingWorkout(false);
   }
+  function setRestingToday(resting) {
+    const next = resting ? [...offDays.filter((d) => d !== today), today] : offDays.filter((d) => d !== today);
+    onUpdatePlan({ ...plan, offDays: next });
+    saveOffDays(plan._id, next);
+  }
+  const isTodaysWorkout = !schedule.restingToday && selectedWeekday === schedule.weekdayKey;
 
   return (
     <div>
@@ -3023,9 +3065,18 @@ function TrainingPlanDisplay({ plan, profile, onRegenerate, onUpdatePlan, todayL
                 cursor: "pointer", fontFamily: "var(--font-body)", flexShrink: 0,
               }}
             >
-              {weekdayLabel[d.weekday]}{d.weekday === todayWeekdayKey() ? " •" : ""}
+              {weekdayLabel[shiftKey(d.weekday)]}{!schedule.restingToday && shiftKey(d.weekday) === todayWeekdayKey() ? " •" : ""}
             </button>
           ))}
+        </div>
+      )}
+
+      {schedule.restingToday && (
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, background: `${TOKENS.saffron}1f`, border: `1px solid ${TOKENS.saffron}55`, borderRadius: 14, padding: "11px 15px", marginBottom: 10 }}>
+          <span style={{ fontSize: 13, color: TOKENS.ink, lineHeight: 1.45 }}>{t.train_rest_note}</span>
+          <Button variant="ghost" style={{ padding: "7px 14px", fontSize: 12.5, flexShrink: 0 }} onClick={() => setRestingToday(false)}>
+            <RotateCcw size={14} /> {t.train_rest_undo}
+          </Button>
         </div>
       )}
 
@@ -3034,7 +3085,7 @@ function TrainingPlanDisplay({ plan, profile, onRegenerate, onUpdatePlan, todayL
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, marginBottom: workoutAlreadyLogged || loggingWorkout ? 10 : 0 }}>
             <div>
               <div style={{ fontSize: 12, fontWeight: 700, color: TOKENS.herbDeep, textTransform: "uppercase" }}>
-                {selectedWeekday === todayWeekdayKey() ? t.train_today_workout : weekdayLabel[selectedWeekday]}
+                {isTodaysWorkout ? t.train_today_workout : weekdayLabel[shiftKey(selectedWeekday)]}
               </div>
               <div style={{ fontSize: 14.5, fontWeight: 700, color: TOKENS.ink, marginTop: 2 }}>{todayWorkout.title}</div>
             </div>
@@ -3060,6 +3111,14 @@ function TrainingPlanDisplay({ plan, profile, onRegenerate, onUpdatePlan, todayL
                 <Button variant="primary" style={{ padding: "8px 16px", fontSize: 13 }} onClick={confirmCompleteWorkout}>{t.ex_logOneClick}</Button>
               </div>
             </div>
+          )}
+          {isTodaysWorkout && !workoutAlreadyLogged && !loggingWorkout && (
+            <button
+              onClick={() => setRestingToday(true)}
+              style={{ marginTop: 10, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-body)", fontSize: 12.5, fontWeight: 600, color: TOKENS.inkSoft, textDecoration: "underline" }}
+            >
+              {t.train_rest_today}
+            </button>
           )}
         </div>
       )}
@@ -3113,7 +3172,7 @@ function TrainingPlanDisplay({ plan, profile, onRegenerate, onUpdatePlan, todayL
         {orderedDays.map((d) => (
           <div key={d.weekday} style={{ background: TOKENS.paperRaised, border: `1px solid ${TOKENS.line}`, borderRadius: 14, padding: "13px 15px" }}>
             <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 8 }}>
-              <span style={{ fontSize: 12, fontWeight: 700, color: TOKENS.saffronDeep, textTransform: "uppercase" }}>{weekdayLabel[d.weekday]}</span>
+              <span style={{ fontSize: 12, fontWeight: 700, color: TOKENS.saffronDeep, textTransform: "uppercase" }}>{weekdayLabel[shiftKey(d.weekday)]}</span>
               <span style={{ fontWeight: 700, fontSize: 14.5, color: TOKENS.ink }}>{d.title}</span>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -3714,6 +3773,7 @@ export default function App() {
     </I18nContext.Provider>
   );
 }
+
 
 
 
