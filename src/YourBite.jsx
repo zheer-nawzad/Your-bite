@@ -111,7 +111,7 @@ const DICT = {
     log_delete: "Remove",
     scan_title: "Live scan", scan_point: "Point your camera at your plate and capture",
     scan_capture: "Capture", scan_analyzing: "Identifying what's on your plate…",
-    scan_choose: "Take or choose a photo", scan_retake: "Retake",
+    scan_take: "Take a photo", scan_retake: "Retake",
     scan_add: "Add to log", scan_total: "Selected total", scan_tapHint: "Tap an item to leave it out",
     scan_noSelection: "Select at least one item first.", scan_fail: "Couldn't read that photo — try again.",
     scan_which_meal: "Log these as",
@@ -230,7 +230,7 @@ const DICT = {
     log_delete: "إزالة",
     scan_title: "مسح مباشر", scan_point: "وجّه الكاميرا إلى طبقك ثم التقط",
     scan_capture: "التقاط", scan_analyzing: "جارٍ التعرّف على طبقك…",
-    scan_choose: "التقط أو اختر صورة", scan_retake: "إعادة الالتقاط",
+    scan_take: "التقط صورة", scan_retake: "إعادة الالتقاط",
     scan_add: "إضافة إلى السجل", scan_total: "مجموع المحدَّد", scan_tapHint: "اضغط على عنصر لاستبعاده",
     scan_noSelection: "اختر عنصرًا واحدًا على الأقل.", scan_fail: "تعذّرت قراءة الصورة — حاول مجددًا.",
     scan_which_meal: "سجّلها كـ",
@@ -349,7 +349,7 @@ const DICT = {
     log_delete: "لابردن",
     scan_title: "سکانی ڕاستەوخۆ", scan_point: "کامێرا ڕوو لە پلێتەکەت بگرە و وێنە بگرە",
     scan_capture: "وێنەگرتن", scan_analyzing: "ناسینەوەی ئەوەی لەسەر پلێتەکەتە…",
-    scan_choose: "وێنە بگرە یان هەڵبژێرە", scan_retake: "دووبارە وێنەگرتن",
+    scan_take: "وێنە بگرە", scan_retake: "دووبارە وێنەگرتن",
     scan_add: "زیادکردن بۆ تۆمار", scan_total: "کۆی هەڵبژێردراوەکان", scan_tapHint: "دەست لەسەر بکە بۆ لابردنی",
     scan_noSelection: "لانیکەم یەک بەرهەم هەڵبژێرە.", scan_fail: "نەمانتوانی وێنەکە بخوێنینەوە — دووبارە هەوڵ بدە.",
     scan_which_meal: "بیانتۆمارکە وەک",
@@ -1646,9 +1646,9 @@ function LogList({ meals, exercises, locked, onDeleteMeal, onDeleteExercise }) {
 }
 
 /* ============================== ADD MEAL MODAL ============================== */
-function AddMealModal({ mealType, cache, onClose, onSave, initialName = "", autoParse = false, initialFile = null }) {
+function AddMealModal({ mealType, cache, onClose, onSave, initialName = "", autoParse = false }) {
   const t = useT();
-  const [mode, setMode] = useState(initialFile ? "photo" : "text");
+  const [mode, setMode] = useState("text");
   const [type, setType] = useState(mealType);
   const [name, setName] = useState(initialName);
   const [loading, setLoading] = useState(false);
@@ -1726,8 +1726,7 @@ function AddMealModal({ mealType, cache, onClose, onSave, initialName = "", auto
   }
 
   useEffect(() => {
-    if (initialFile) processFile(initialFile);
-    else if (autoParse && initialName.trim()) handleParsePortions(initialName);
+    if (autoParse && initialName.trim()) handleParsePortions(initialName);
   }, []);
 
   function handleFile(e) {
@@ -2094,9 +2093,12 @@ function ScanFrameOverlay() {
   );
 }
 
-function LiveScanModal({ mealType, cache, onClose, onSaveItems }) {
+// Live scan (no initialFile) is camera-only. Upload passes the chosen gallery
+// photo as initialFile and gets the same per-item analysis.
+function LiveScanModal({ mealType, cache, onClose, onSaveItems, initialFile = null }) {
   const t = useT();
-  const [phase, setPhase] = useState("camera");
+  const uploadMode = !!initialFile;
+  const [phase, setPhase] = useState(uploadMode ? "analyzing" : "camera");
   const [hasLiveCamera, setHasLiveCamera] = useState(false);
   const [cameraFailed, setCameraFailed] = useState(false);
   const [photoData, setPhotoData] = useState(null);
@@ -2137,6 +2139,7 @@ function LiveScanModal({ mealType, cache, onClose, onSaveItems }) {
   }
 
   useEffect(() => {
+    if (uploadMode) { readFile(initialFile); return undefined; }
     startStream();
     return () => { if (streamRef.current) streamRef.current.getTracks().forEach((tr) => tr.stop()); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -2189,17 +2192,21 @@ function LiveScanModal({ mealType, cache, onClose, onSaveItems }) {
     analyze(canvas.toDataURL("image/jpeg", 0.85));
   }
 
-  function handleFile(e) {
-    const file = e.target.files && e.target.files[0];
-    if (!file) return;
+  function readFile(file) {
     const reader = new FileReader();
     reader.onload = () => analyze(reader.result);
     reader.readAsDataURL(file);
   }
 
+  function handleFile(e) {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = "";
+    if (file) readFile(file);
+  }
+
   function retake() {
     setPhotoData(null); setItems([]); setErrMsg("");
-    if (hasLiveCamera) { setPhase("camera"); startStream(); }
+    if (!uploadMode && hasLiveCamera) { setPhase("camera"); startStream(); }
     else if (fileRef.current) { fileRef.current.click(); }
   }
 
@@ -2220,6 +2227,11 @@ function LiveScanModal({ mealType, cache, onClose, onSaveItems }) {
 
   return (
     <Modal title={t.scan_title} onClose={() => { stopStream(); onClose(); }}>
+      <input
+        ref={fileRef} type="file" accept="image/*" style={{ display: "none" }} onChange={handleFile}
+        {...(uploadMode ? {} : { capture: "environment" })}
+      />
+
       {phase === "camera" && (
         <div>
           {!cameraFailed ? (
@@ -2230,27 +2242,23 @@ function LiveScanModal({ mealType, cache, onClose, onSaveItems }) {
           ) : (
             <div style={{ padding: "34px 10px", textAlign: "center", color: TOKENS.inkSoft, fontSize: 13.5, background: TOKENS.paperRaised, borderRadius: 14, border: `1px dashed ${TOKENS.line}` }}>
               <Camera size={22} color={TOKENS.inkSoft} style={{ marginBottom: 8 }} />
-              <div>{t.scan_choose}</div>
+              <div>{t.scan_take}</div>
             </div>
           )}
-          <input ref={fileRef} type="file" accept="image/*" capture="environment" style={{ display: "none" }} onChange={handleFile} />
           <div style={{ marginTop: 12, fontSize: 12.5, color: TOKENS.inkSoft, textAlign: "center" }}>{t.scan_point}</div>
           <Button variant="saffron" full style={{ marginTop: 12 }} onClick={() => (cameraFailed ? fileRef.current.click() : captureFromVideo())}>
-            <ScanLine size={16} /> {cameraFailed ? t.scan_choose : t.scan_capture}
+            <ScanLine size={16} /> {cameraFailed ? t.scan_take : t.scan_capture}
           </Button>
-          {!cameraFailed && (
-            <Button variant="ghost" full style={{ marginTop: 8 }} onClick={() => fileRef.current.click()}>
-              {t.scan_choose}
-            </Button>
-          )}
         </div>
       )}
 
       {phase === "analyzing" && (
         <div>
-          <div style={{ borderRadius: 16, overflow: "hidden" }}>
-            <img src={photoData} alt="" style={{ width: "100%", display: "block", maxHeight: 340, objectFit: "cover" }} />
-          </div>
+          {photoData && (
+            <div style={{ borderRadius: 16, overflow: "hidden" }}>
+              <img src={photoData} alt="" style={{ width: "100%", display: "block", maxHeight: 340, objectFit: "cover" }} />
+            </div>
+          )}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginTop: 14, color: TOKENS.inkSoft, fontSize: 13.5 }}>
             <Loader2 size={16} className="spin" /> {t.scan_analyzing}
           </div>
@@ -2308,7 +2316,7 @@ function LiveScanModal({ mealType, cache, onClose, onSaveItems }) {
           </div>
 
           <div style={{ display: "flex", gap: 10 }}>
-            <Button variant="ghost" onClick={retake}><RotateCcw size={15} /> {t.scan_retake}</Button>
+            <Button variant="ghost" onClick={retake}><RotateCcw size={15} /> {uploadMode ? t.meal_photo_retake : t.scan_retake}</Button>
             <Button variant="primary" full onClick={confirm} disabled={!selected.length}>
               <Check size={16} /> {t.scan_add}
             </Button>
@@ -2319,7 +2327,7 @@ function LiveScanModal({ mealType, cache, onClose, onSaveItems }) {
       {phase === "error" && (
         <div style={{ textAlign: "center", padding: "10px 0" }}>
           <div style={{ color: TOKENS.clay, fontSize: 13.5, marginBottom: 14 }}>{errMsg}</div>
-          <Button variant="ghost" full onClick={retake}><RotateCcw size={15} /> {t.scan_retake}</Button>
+          <Button variant="ghost" full onClick={retake}><RotateCcw size={15} /> {uploadMode ? t.meal_photo_retake : t.scan_retake}</Button>
         </div>
       )}
     </Modal>
@@ -2491,8 +2499,8 @@ function TodayView({ profile, log, foodCache, viewedISO, onChangeDate, logs, onA
           defaultType={guessedMealType}
           onManualAdd={onAddMeal}
           onSmartLog={(name, type) => setMealModal({ type, name, autoParse: true })}
-          onLiveScan={(type) => setScanModal(type)}
-          onUpload={(file, type) => setMealModal({ type, file })}
+          onLiveScan={(type) => setScanModal({ type })}
+          onUpload={(file, type) => setScanModal({ type, file })}
           onLogExercise={() => setExModal(true)}
         />
       )}
@@ -2512,7 +2520,7 @@ function TodayView({ profile, log, foodCache, viewedISO, onChangeDate, logs, onA
       {mealModal && (
         <AddMealModal
           mealType={mealModal.type} cache={foodCache}
-          initialName={mealModal.name || ""} autoParse={!!mealModal.autoParse} initialFile={mealModal.file || null}
+          initialName={mealModal.name || ""} autoParse={!!mealModal.autoParse}
           onClose={() => setMealModal(null)}
           onSave={(m) => { onAddMeal(m); setMealModal(null); }}
         />
@@ -2526,7 +2534,7 @@ function TodayView({ profile, log, foodCache, viewedISO, onChangeDate, logs, onA
       )}
       {scanModal && (
         <LiveScanModal
-          mealType={scanModal} cache={foodCache}
+          mealType={scanModal.type} initialFile={scanModal.file || null} cache={foodCache}
           onClose={() => setScanModal(false)}
           onSaveItems={(items) => { onAddMeals(items); setScanModal(false); }}
         />
@@ -3848,4 +3856,5 @@ export default function App() {
     </I18nContext.Provider>
   );
 }
+
 
