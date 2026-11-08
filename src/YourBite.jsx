@@ -122,10 +122,15 @@ const DICT = {
     train_generate: "Generate my plan", train_generating: "Building your program…",
     train_err_days: "Pick at least one training day first.", train_err_generic: "Couldn't generate a plan — try again.",
     train_week: "Week", train_your_split: "Your split", train_progression: "This week's focus",
-    train_sets: "sets", train_reps: "reps", train_meal_ideas: "Meal ideas", train_meal_ideas_sub: "Rotate between these to hit your targets",
-    train_meal_day: "Day",
+    prot_title: "Daily protein", prot_total: "Total", prot_per_kg: "{gkg} g per kg of body weight per day",
+    prot_why_lose: "Higher protein protects your muscle while you lose fat.",
+    prot_why_maintain: "Enough to keep your muscle and recover from training.",
+    prot_why_gain: "Gives your muscles what they need to grow with your extra calories.",
+    prot_why_leanGain: "Extra protein so your calorie surplus goes to muscle, not fat.",
+    prot_why_recomp: "Very high protein lets you build muscle while losing fat.",
+    train_sets: "sets", train_reps: "reps", 
     train_today_workout: "Today's workout", train_mark_complete: "Mark complete", train_workout_completed: "Completed today",
-    train_workout_duration_label: "How long was your session? (minutes)", train_meal_add: "Add to today",
+    train_workout_duration_label: "How long was your session? (minutes)", 
     train_regenerate: "Generate a new plan", train_regenerate_confirm: "This replaces your current plan — continue?",
     train_plan_done: "You've completed this 4-week plan — nice work. Ready for the next one?",
     train_started: "Started", train_safety_note: "Guidance only, not a substitute for a trainer or doctor — stop if anything hurts.",
@@ -138,12 +143,9 @@ const DICT = {
     train_focus_chest: "Chest", train_focus_back: "Back", train_focus_core: "Core / Abs", train_focus_legs: "Legs & Glutes",
     train_focus_badge: "Extra focus",
     train_watch_how: "Watch how it's done",
-    train_meal_sized_to: "Sized to", train_per_day: "day",
     train_swap_action: "Swap this exercise", train_swap_title: "Swap exercise",
     train_swap_sub: "Alternatives for", train_swap_loading: "Finding alternatives…",
     train_swap_fail: "Couldn't load alternatives — try again.",
-    train_swap_meal_action: "Swap this meal", train_swap_meal_title: "Swap meal",
-    train_meal_style: "Meal style", train_meal_style_mix: "Mix of cuisines", train_meal_style_kurdish: "All Kurdish",
     train_supplement: "Do you use a protein supplement?", train_supplement_none: "No",
     train_supplement_whey: "Whey protein", train_supplement_gainer: "Mass gainer",
     train_supplement_servings: "Servings per day",
@@ -155,7 +157,6 @@ const DICT = {
     train_chat_typing: "Typing…", train_chat_placeholder: "Type your question…",
     train_chat_error: "Couldn't get a reply — try again.",
     train_translating: "Updating your plan to match your language…",
-    train_supplement_summary: "Plus {servings} × {type}/day (~{protein}g protein, ~{cal} kcal) — the meals below are sized to make up the rest of your ~{totalCal} kcal / {totalProtein}g protein daily total.",
   },
   ar: {
     dir: "rtl", fontBody: "'Noto Kufi Arabic', sans-serif", fontDisplay: "'Noto Kufi Arabic', sans-serif",
@@ -241,10 +242,15 @@ const DICT = {
     train_generate: "أنشئ خطتي", train_generating: "جارٍ بناء برنامجك…",
     train_err_days: "اختر يوم تدريب واحدًا على الأقل أولًا.", train_err_generic: "تعذّر إنشاء خطة — حاول مجددًا.",
     train_week: "الأسبوع", train_your_split: "تقسيمتك", train_progression: "تركيز هذا الأسبوع",
-    train_sets: "مجموعات", train_reps: "تكرارات", train_meal_ideas: "أفكار وجبات", train_meal_ideas_sub: "بدّل بينها لتحقيق أهدافك",
-    train_meal_day: "يوم",
+    prot_title: "البروتين اليومي", prot_total: "المجموع", prot_per_kg: "{gkg} غ لكل كغ من وزن الجسم يوميًا",
+    prot_why_lose: "البروتين العالي يحمي عضلاتك أثناء خسارة الدهون.",
+    prot_why_maintain: "كمية كافية للحفاظ على عضلاتك والتعافي من التمارين.",
+    prot_why_gain: "يمنح عضلاتك ما تحتاجه للنمو مع السعرات الإضافية.",
+    prot_why_leanGain: "بروتين إضافي ليذهب فائض السعرات إلى العضلات لا إلى الدهون.",
+    prot_why_recomp: "بروتين عالٍ جدًا يتيح لك بناء العضلات مع خسارة الدهون.",
+    train_sets: "مجموعات", train_reps: "تكرارات", 
     train_today_workout: "تمرين اليوم", train_mark_complete: "وضع علامة مكتمل", train_workout_completed: "أُنجز اليوم",
-    train_workout_duration_label: "كم استغرقت الحصة؟ (دقائق)", train_meal_add: "إضافة لليوم",
+    train_workout_duration_label: "كم استغرقت الحصة؟ (دقائق)", 
     train_regenerate: "إنشاء خطة جديدة", train_regenerate_confirm: "سيستبدل هذا خطتك الحالية — متابعة؟",
     train_plan_done: "أكملت خطة الأسابيع الأربعة — عمل رائع. جاهز للتالية؟",
     train_started: "بدأت في", train_safety_note: "إرشادات عامة فقط، لا تغني عن مدرّب أو طبيب — توقف إذا شعرت بألم.",
@@ -257,12 +263,9 @@ const DICT = {
     train_focus_chest: "الصدر", train_focus_back: "الظهر", train_focus_core: "البطن / المنتصف", train_focus_legs: "الأرجل والمؤخرة",
     train_focus_badge: "تركيز إضافي",
     train_watch_how: "شاهد طريقة الأداء",
-    train_meal_sized_to: "مُحدَّد بمقدار", train_per_day: "يوم",
     train_swap_action: "استبدال هذا التمرين", train_swap_title: "استبدال التمرين",
     train_swap_sub: "بدائل لتمرين", train_swap_loading: "جارٍ البحث عن بدائل…",
     train_swap_fail: "تعذّر تحميل البدائل — حاول مجددًا.",
-    train_swap_meal_action: "استبدال هذه الوجبة", train_swap_meal_title: "استبدال الوجبة",
-    train_meal_style: "نمط الوجبات", train_meal_style_mix: "مزيج من المطابخ", train_meal_style_kurdish: "كردي بالكامل",
     train_supplement: "هل تستخدم مكمّل بروتين؟", train_supplement_none: "لا",
     train_supplement_whey: "بروتين واي (Whey)", train_supplement_gainer: "مكمّل زيادة الوزن (Gainer)",
     train_supplement_servings: "عدد الجرعات يوميًا",
@@ -274,7 +277,6 @@ const DICT = {
     train_chat_typing: "يكتب…", train_chat_placeholder: "اكتب سؤالك…",
     train_chat_error: "تعذّر الحصول على رد — حاول مجددًا.",
     train_translating: "جارٍ تحديث خطتك لتطابق لغتك…",
-    train_supplement_summary: "بالإضافة إلى {servings} × {type}/يوميًا (~{protein}غ بروتين، ~{cal} سعرة) — الوجبات أدناه مُحدَّدة لتكمل باقي إجمالي يومك ~{totalCal} سعرة / {totalProtein}غ بروتين.",
   },
   ckb: {
     dir: "rtl", fontBody: "'Noto Kufi Arabic', sans-serif", fontDisplay: "'Noto Kufi Arabic', sans-serif",
@@ -360,10 +362,15 @@ const DICT = {
     train_generate: "پلانەکەم دروست بکە", train_generating: "بەرنامەکەت دروست دەکرێت…",
     train_err_days: "سەرەتا لانیکەم یەک ڕۆژی ڕاهێنان هەڵبژێرە.", train_err_generic: "نەمانتوانی پلانێک دروست بکەین — دووبارە هەوڵ بدە.",
     train_week: "هەفتە", train_your_split: "دابەشکردنی ڕاهێنانت", train_progression: "سەرنجی ئەم هەفتەیە",
-    train_sets: "سێت", train_reps: "دووبارەبوونەوە", train_meal_ideas: "بیرۆکەی خواردن", train_meal_ideas_sub: "لەنێوانیاندا بگۆڕە بۆ گەیشتن بە ئامانجەکانت",
-    train_meal_day: "ڕۆژی",
+    prot_title: "پرۆتینی ڕۆژانە", prot_total: "کۆی گشتی", prot_per_kg: "{gkg} گرام بۆ هەر کیلۆیەک لە کێشی لەش لە ڕۆژێکدا",
+    prot_why_lose: "پرۆتینی زیاتر ماسولکەکانت دەپارێزێت لە کاتی کەمکردنەوەی چەوری.",
+    prot_why_maintain: "بەسە بۆ پاراستنی ماسولکەکانت و چاکبوونەوە لە ڕاهێنان.",
+    prot_why_gain: "ئەوەی ماسولکەکانت پێویستیانە بۆ گەشەکردن لەگەڵ کالۆریی زیادە پێیان دەدات.",
+    prot_why_leanGain: "پرۆتینی زیادە بۆ ئەوەی کالۆریی زیادەکەت بچێتە ماسولکە نەک چەوری.",
+    prot_why_recomp: "پرۆتینی زۆر بەرز ڕێگەت پێدەدات ماسولکە دروست بکەیت و چەوری کەم بکەیتەوە.",
+    train_sets: "سێت", train_reps: "دووبارەبوونەوە", 
     train_today_workout: "ڕاهێنانی ئەمڕۆ", train_mark_complete: "تەواو بکە", train_workout_completed: "ئەمڕۆ تەواو کرا",
-    train_workout_duration_label: "ڕاهێنانەکەت چەند خولەک خایاند؟", train_meal_add: "زیادکردن بۆ ئەمڕۆ",
+    train_workout_duration_label: "ڕاهێنانەکەت چەند خولەک خایاند؟", 
     train_regenerate: "پلانێکی نوێ دروست بکە", train_regenerate_confirm: "ئەمە جێگۆڕکێی پلانی ئێستات دەکات — بەردەوام بیت؟",
     train_plan_done: "پلانی ٤ هەفتەکەت تەواو کرد — کارێکی باش. ئامادەیت بۆ ئەوی داهاتوو؟",
     train_started: "دەستی پێکرد", train_safety_note: "ئەمە تەنها ڕێنمایی گشتییە و جێگرەوەی ڕاهێنەر یان پزیشک نییە — ئەگەر هەستت بە ئازار کرد ڕاوەستە.",
@@ -376,12 +383,9 @@ const DICT = {
     train_focus_chest: "سنگ", train_focus_back: "پشت", train_focus_core: "ناوچەی سک", train_focus_legs: "قاچ و سمت",
     train_focus_badge: "سەرنجی زیاتر",
     train_watch_how: "سەیری چۆنیەتی ئەنجامدانی بکە",
-    train_meal_sized_to: "ڕێکخراوە بۆ", train_per_day: "ڕۆژ",
     train_swap_action: "گۆڕینی ئەم ڕاهێنانە", train_swap_title: "گۆڕینی ڕاهێنان",
     train_swap_sub: "بژاردەکان بۆ", train_swap_loading: "بژاردە دەدۆزرێتەوە…",
     train_swap_fail: "نەمانتوانی بژاردەکان باربکەین — دووبارە هەوڵ بدە.",
-    train_swap_meal_action: "گۆڕینی ئەم خواردنە", train_swap_meal_title: "گۆڕینی خواردن",
-    train_meal_style: "شێوازی خواردن", train_meal_style_mix: "تێکەڵەی چێشتلێنان", train_meal_style_kurdish: "بە تەواوی کوردی",
     train_supplement: "ئایا پرۆتینی زیادە بەکاردەهێنیت؟", train_supplement_none: "نەخێر",
     train_supplement_whey: "پرۆتینی وەی (Whey)", train_supplement_gainer: "زیادکەری کێش (Gainer)",
     train_supplement_servings: "ژمارەی ژەم/سکۆپ لە ڕۆژێکدا",
@@ -393,7 +397,6 @@ const DICT = {
     train_chat_typing: "دەنووسێت…", train_chat_placeholder: "پرسیارەکەت بنووسە…",
     train_chat_error: "نەمانتوانی وەڵامێک بەدەستبهێنین — دووبارە هەوڵ بدە.",
     train_translating: "پلانەکەت نوێ دەکرێتەوە بۆ گونجان لەگەڵ زمانەکەت…",
-    train_supplement_summary: "سەرباری {servings} × {type}/ڕۆژانە (~{protein}گ پرۆتین، ~{cal} کالۆری) — خواردنەکانی خوارەوە ڕێکخراون بۆ تەواوکردنی کۆی گشتی ڕۆژانەت ~{totalCal} کالۆری / {totalProtein}گ پرۆتین.",
   },
 };
 
@@ -426,17 +429,30 @@ function calcBMR({ gender, age, weight, height }) {
 }
 const ACTIVITY_MULT = { sedentary: 1.2, light: 1.375, moderate: 1.55, active: 1.725, very: 1.9 };
 const GOAL_ADJUST = { lose: -500, maintain: 0, gain: 300, leanGain: 200, recomp: -150 };
+// Carbs/fat share of the calories left after protein.
 const MACRO_SPLIT = {
-  lose: { protein: 0.35, carbs: 0.35, fat: 0.30 },
-  maintain: { protein: 0.30, carbs: 0.40, fat: 0.30 },
-  gain: { protein: 0.30, carbs: 0.45, fat: 0.25 },
-  leanGain: { protein: 0.35, carbs: 0.40, fat: 0.25 },
-  recomp: { protein: 0.40, carbs: 0.35, fat: 0.25 },
+  lose: { carbs: 0.35, fat: 0.30 },
+  maintain: { carbs: 0.40, fat: 0.30 },
+  gain: { carbs: 0.45, fat: 0.25 },
+  leanGain: { carbs: 0.40, fat: 0.25 },
+  recomp: { carbs: 0.35, fat: 0.25 },
 };
+// Protein in g per kg of body weight per day, within the evidence-based
+// 1.6–2.2 g/kg range: higher in a deficit to protect muscle, highest for
+// recomposition (building muscle while losing fat).
+const PROTEIN_G_PER_KG = { lose: 2.0, maintain: 1.6, gain: 1.8, leanGain: 2.0, recomp: 2.2 };
 const SUPPLEMENT_PER_SERVING = {
   whey: { protein: 24, calories: 120 },
   gainer: { protein: 50, calories: 660 },
 };
+// At BMI 30+ total weight overstates protein needs (fat mass needs little
+// protein), so the weight at BMI 27 is used as the reference instead.
+function proteinReferenceWeight(weightKg, heightCm) {
+  const bmi = calcBMI(weightKg, heightCm);
+  if (!bmi || bmi < 30) return weightKg;
+  const m = heightCm / 100;
+  return 27 * m * m;
+}
 function computeTargets(profile) {
   const bmr = calcBMR(profile);
   const tdee = bmr * ACTIVITY_MULT[profile.activity];
@@ -444,13 +460,32 @@ function computeTargets(profile) {
   const floor = profile.gender === "male" ? 1500 : 1200;
   target = Math.max(Math.round(target), floor);
   const split = MACRO_SPLIT[profile.goal];
+  const proteinTarget = Math.round((PROTEIN_G_PER_KG[profile.goal] || 1.6) * proteinReferenceWeight(profile.weight, profile.height));
+  const remaining = Math.max(target - proteinTarget * 4, 0);
+  const carbShare = split.carbs / (split.carbs + split.fat);
   return {
     bmr: Math.round(bmr),
     tdee: Math.round(tdee),
     calorieTarget: target,
-    proteinTarget: Math.round((target * split.protein) / 4),
-    carbsTarget: Math.round((target * split.carbs) / 4),
-    fatTarget: Math.round((target * split.fat) / 9),
+    proteinTarget,
+    carbsTarget: Math.round((remaining * carbShare) / 4),
+    fatTarget: Math.round((remaining * (1 - carbShare)) / 9),
+  };
+}
+// Daily protein split: the supplement covers part of it, the rest is spread
+// over the three main meals (30/35/35) — even spread beats one big serving.
+function proteinMealPlan(profile, plan) {
+  const total = computeTargets(profile).proteinTarget;
+  const servings = plan && plan.supplement && plan.supplement !== "none" ? Number(plan.supplementServings) || 0 : 0;
+  const perServing = Number(plan && plan.supplementProteinPerServing) || 0;
+  const supplement = Math.round(servings * perServing);
+  const food = Math.max(total - supplement, 0);
+  const breakfast = Math.round(food * 0.3);
+  const lunch = Math.round(food * 0.35);
+  return {
+    gPerKg: PROTEIN_G_PER_KG[profile.goal] || 1.6,
+    total, supplement, servings, perServing,
+    breakfast, lunch, dinner: food - breakfast - lunch,
   };
 }
 function calcBMI(weightKg, heightCm) {
@@ -1012,9 +1047,6 @@ const KURDISH_BREAKFAST_DISHES = [
   { name: "Kahî (کاهی)", portion: "1 pastry slice", cal: [350, 450], protein: [4, 6] },
   { name: "Panîr u Sewzayî (پەنیر و سەوزایی)", portion: "50g fresh cheese + 1/2 bread", cal: [300, 380], protein: [14, 18] },
 ];
-function formatDishRef(list) {
-  return list.map((d) => `${d.name} [${d.portion}: ${d.cal[0]}-${d.cal[1]} kcal, ${d.protein[0]}-${d.protein[1]}g protein]`).join("; ");
-}
 function estimateMacrosFromCalProtein(calories, proteinG) {
   const proteinCal = proteinG * 4;
   const remaining = Math.max(calories - proteinCal, 0);
@@ -1073,38 +1105,6 @@ const ALL_LOG_DISHES = [
   ...toLogDishes(COMMON_DISHES),
 ];
 
-const GOAL_PROTEIN_NOTE_EN = {
-  lose: "Keep protein reasonably high in each meal (lean proteins, eggs, dairy, legumes) to help preserve muscle during the deficit, without making every meal identical.",
-  maintain: "Keep a reasonable protein source in each meal for satiety and general health, without needing to maximize it.",
-  gain: "This is for muscle building, so protein is a real priority: build every meal around a clear protein source (chicken, fish, eggs, Greek yogurt, cottage cheese, lean beef, tofu, legumes, protein powder) rather than a carb- or fat-heavy meal with protein as an afterthought.",
-  leanGain: "Protein is the top priority here even more than a standard bulk — build every meal around a clear protein source, since the surplus is smaller and protein is what ensures the extra calories go toward muscle rather than fat. Each meal should individually contribute a meaningful share of the daily protein target, not just balance out on average.",
-  recomp: "Protein is the single most important lever for this goal — this person is in a small deficit while trying to build muscle, and adequate protein in every single meal (not just on average) is what makes that possible. Build every meal around a clear, generous protein source, and don't let any meal be carb/fat-heavy with protein as an afterthought.",
-};
-
-async function generateMealIdeas({ goal, calorieTarget, proteinTarget, carbsTarget, fatTarget, mealStyle, lang }) {
-  const proteinNote = (GOAL_PROTEIN_NOTE_EN[goal] || GOAL_PROTEIN_NOTE_EN.maintain).replace("the daily protein target", `the ${proteinTarget}g daily protein target`);
-  const kurdishRef = `Here is a reference list of real Kurdish dishes with accurate calorie/protein ranges for a standard portion — pick dishes FROM this list (you can scale the portion up or down, and adjust the estimated calories/protein accordingly, to better fit the daily targets) rather than inventing unfamiliar ones or guessing your own numbers for them. Use each dish's name and spelling EXACTLY as given below — do not paraphrase, re-describe, or partially translate a dish name into your own words, since that's what produces garbled results:
-BREAKFAST DISHES: ${formatDishRef(KURDISH_BREAKFAST_DISHES)}
-LUNCH/DINNER DISHES: ${formatDishRef(KURDISH_MAIN_DISHES)}
-For a Kurdish snack, use something simple like tea with dates/nuts, or a cold yogurt-based or fruit drink, estimated reasonably.`;
-  const cuisineNote = mealStyle === "kurdish"
-    ? `Make ALL THREE sample days Kurdish cuisine — draw on a wide range of different dishes across the three days from the reference list below so they don't repeat.\n\n${kurdishRef}`
-    : `Vary the 3 days from each other (different cuisines/styles) so there's variety to rotate through — make one of the three days specifically Kurdish cuisine, drawing on the reference list below.\n\n${kurdishRef}`;
-  const langName = CHAT_LANG_NAMES[lang] || "English";
-  const langNote = lang && lang !== "en"
-    ? `\nWrite everything in ${langName} — the "style" tag for each day (e.g. translate "American-Style" into ${langName}) and every meal idea/description. The dish names from the Kurdish reference list above are already given in Kurdish script — use them as given rather than re-translating those specific names, but write any surrounding description (portion notes, non-Kurdish meal ideas on the other days, etc.) in ${langName} too.\n`
-    : "";
-  const ckbVocabNote = lang === "ckb"
-    ? `\nUse these exact Kurdish Sorani words (native speakers flagged the alternatives as wrong or unnatural): "ئۆملێتی" for omelet (not "نۆمێلێتی"), "برژاو" for grilled (not "بڕژاو"), "هاڕراو" or "قیمە" for minced meat (not "گۆشتی خواردراو"), "قاپ" for a plate/bowl of rice (not the transliterated "دیشک"), "شیش" for a meat skewer (not "سێخ"), "دەنک" for counting dates/grains (not "دەنگ", which means "sound"), "سوورکراوە" for a fried egg (not "سووڕاو", which means "spun/rotated"), "باڵی مریشک" for chicken wings (not "باڵنزی", which isn't a real word), "ملە" for a neck cut of meat (not "ملکە").\n`
-    : "";
-  const prompt = `You are a nutrition coach. Suggest 3 different realistic sample eating days for someone whose goal is to ${GOAL_DESC_EN[goal] || goal}, with a daily target of about ${calorieTarget} kcal, ${proteinTarget}g protein, ${carbsTarget}g carbs, ${fatTarget}g fat. ${proteinNote} Each sample day should have breakfast, lunch, dinner, and one snack, with simple realistic meal ideas (not recipes) and an estimated calorie count and protein count per meal that adds up close to the daily targets. ${cuisineNote}
-${langNote}${ckbVocabNote}
-Respond with ONLY compact raw JSON, no markdown, no explanation, in this exact shape:
-{"days":[{"style":"short cuisine/style tag only, e.g. American-Style — do NOT include any day number, the app adds that itself","meals":[{"type":"breakfast","idea":"short meal idea","calories":0,"protein_g":0}]}]}
-Each day's meals array must have exactly 4 entries with type one of: breakfast, lunch, dinner, snack.`;
-  return callClaude(prompt, 1900, lang);
-}
-
 async function translatePlanText(plan, targetLang) {
   const langName = CHAT_LANG_NAMES[targetLang] || "English";
   const payload = {
@@ -1153,14 +1153,6 @@ async function generateExerciseAlternatives({ exerciseName, equipment }) {
 
 Respond with ONLY compact raw JSON, no markdown, no explanation, in this exact shape:
 {"alternatives":[{"name":"exercise name","sets":3,"reps":"8-12"}]}`;
-  return callClaude(prompt, 700);
-}
-
-async function generateMealAlternatives({ mealIdea, mealType, calories, proteinG, goal }) {
-  const prompt = `Suggest 4 alternative ${mealType} ideas for someone whose goal is to ${GOAL_DESC_EN[goal] || goal}. Each alternative should be meaningfully different in style/ingredients from "${mealIdea}" — not a minor tweak — but should land close to the same nutrition: about ${calories} kcal and ${proteinG}g protein. Keep them realistic, simple meal ideas (not recipes).
-
-Respond with ONLY compact raw JSON, no markdown, no explanation, in this exact shape:
-{"alternatives":[{"idea":"short meal idea","calories":0,"protein_g":0}]}`;
   return callClaude(prompt, 700);
 }
 
@@ -2729,7 +2721,6 @@ function TrainingSetup({ profile, onGenerate, onUpdateWaist, lang }) {
   const [equipment, setEquipment] = useState("home");
   const [weekdays, setWeekdays] = useState(["monday", "wednesday", "thursday", "saturday", "sunday"]);
   const [focusAreas, setFocusAreas] = useState([]);
-  const [mealStyle, setMealStyle] = useState("mix");
   const [supplement, setSupplement] = useState("none");
   const [supplementServings, setSupplementServings] = useState(1);
   const [servingProtein, setServingProtein] = useState(SUPPLEMENT_PER_SERVING.whey.protein);
@@ -2761,22 +2752,13 @@ function TrainingSetup({ profile, onGenerate, onUpdateWaist, lang }) {
         protein: servings * (Number(servingProtein) || 0),
         calories: servings * (Number(servingCalories) || 0),
       };
-      const foodCalorieTarget = Math.max(Math.round(goalTargets.calorieTarget - supp.calories), 800);
-      const foodProteinTarget = Math.max(Math.round(goalTargets.proteinTarget - supp.protein), 20);
-      const [program, meals] = await Promise.all([
-        generateTrainingProgram({ goal: profile.goal, experience, equipment, weekdays: orderedDays, focusAreas, age: profile.age, lang }),
-        generateMealIdeas({
-          goal: profile.goal, calorieTarget: foodCalorieTarget, proteinTarget: foodProteinTarget,
-          carbsTarget: goalTargets.carbsTarget, fatTarget: goalTargets.fatTarget, mealStyle, lang,
-        }),
-      ]);
+      const program = await generateTrainingProgram({ goal: profile.goal, experience, equipment, weekdays: orderedDays, focusAreas, age: profile.age, lang });
       onGenerate({
-        goal: profile.goal, experience, equipment, weekdays: orderedDays, focusAreas, mealStyle, contentLang: lang || "en",
+        goal: profile.goal, experience, equipment, weekdays: orderedDays, focusAreas, contentLang: lang || "en",
         splitName: program.splitName || "",
         days: (program.days || []).map((d) => ({ ...d, weekday: (d.weekday || "").toLowerCase().trim() })),
         progression: (program.progression || []).map((p) => ({ ...p, week: Number(p.week) })), summary: program.summary || "",
-        mealIdeas: (meals.days || []).map((d) => ({ style: d.style || "", meals: d.meals || [] })), startDate: todayISO(),
-        mealCalorieTarget: foodCalorieTarget, mealProteinTarget: foodProteinTarget,
+        mealIdeas: [], startDate: todayISO(),
         dailyCalorieTarget: goalTargets.calorieTarget, dailyProteinTarget: goalTargets.proteinTarget,
         supplement, supplementServings: servings,
         supplementProteinPerServing: Number(servingProtein) || 0, supplementCaloriesPerServing: Number(servingCalories) || 0,
@@ -2843,13 +2825,6 @@ function TrainingSetup({ profile, onGenerate, onUpdateWaist, lang }) {
             );
           })}
         </div>
-      </Field>
-
-      <Field label={t.train_meal_style}>
-        <SegmentGroup value={mealStyle} onChange={setMealStyle} options={[
-          { value: "mix", label: t.train_meal_style_mix },
-          { value: "kurdish", label: t.train_meal_style_kurdish },
-        ]} />
       </Field>
 
       <Field label={t.train_supplement}>
@@ -2960,70 +2935,52 @@ function SwapExerciseModal({ exerciseName, equipment, onClose, onPick }) {
   );
 }
 
-function SwapMealModal({ mealIdea, mealType, calories, proteinG, goal, onClose, onPick }) {
+function ProteinGuide({ profile, plan }) {
   const t = useT();
-  const [alts, setAlts] = useState(null);
-  const [errMsg, setErrMsg] = useState("");
-  const mealTypeLabel = { breakfast: t.meal_breakfast, lunch: t.meal_lunch, dinner: t.meal_dinner, snack: t.meal_snack }[mealType] || mealType;
-
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const r = await generateMealAlternatives({ mealIdea, mealType: mealTypeLabel, calories, proteinG, goal });
-        if (cancelled) return;
-        const list = (r.alternatives || []).map((a) => ({
-          idea: a.idea || "Meal", calories: Math.round(a.calories) || 0, protein_g: Math.round(a.protein_g) || 0,
-        }));
-        setAlts(list);
-        if (!list.length) setErrMsg(t.train_swap_fail);
-      } catch (e) {
-        if (!cancelled) setErrMsg(`${t.train_swap_fail} (${e.message || e})`);
-      }
-    })();
-    return () => { cancelled = true; };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const p = proteinMealPlan(profile, plan);
+  const rows = [
+    { key: "breakfast", label: t.meal_breakfast, icon: Sunrise, grams: p.breakfast },
+    { key: "lunch", label: t.meal_lunch, icon: Sun, grams: p.lunch },
+    { key: "dinner", label: t.meal_dinner, icon: Moon, grams: p.dinner },
+  ];
+  if (p.supplement > 0) {
+    rows.push({
+      key: "supplement",
+      label: `${plan.supplement === "gainer" ? t.train_supplement_gainer : t.train_supplement_whey} (${p.servings} × ${p.perServing}g)`,
+      icon: Zap, grams: p.supplement,
+    });
+  }
+  const rowStyle = { display: "flex", alignItems: "center", gap: 10, padding: "9px 0", borderTop: `1px solid ${TOKENS.line}`, fontSize: 13.5 };
 
   return (
-    <Modal title={t.train_swap_meal_title} onClose={onClose}>
-      <div style={{ fontSize: 13, color: TOKENS.inkSoft, marginBottom: 14 }}>{t.train_swap_sub} <span style={{ fontWeight: 700, color: TOKENS.ink }}>{mealIdea}</span></div>
-      {alts === null && !errMsg && (
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "20px 0", color: TOKENS.inkSoft, fontSize: 13.5 }}>
-          <Loader2 size={16} className="spin" /> {t.train_swap_loading}
+    <div style={{ background: TOKENS.paperRaised, border: `1px solid ${TOKENS.line}`, borderRadius: 14, padding: "13px 15px", marginBottom: 20 }}>
+      <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8 }}>
+        <div style={{ fontWeight: 700, fontSize: 15, color: TOKENS.ink }}>{t.prot_title}</div>
+        <div style={{ fontFamily: "var(--font-display)", fontSize: 24, fontWeight: 600, color: TOKENS.herbDeep }}>{p.total}g</div>
+      </div>
+      <div style={{ fontSize: 12, color: TOKENS.herbDeep, fontWeight: 600, marginTop: 2 }}>{t.prot_per_kg.replace("{gkg}", p.gPerKg)}</div>
+      <div style={{ fontSize: 12, color: TOKENS.inkSoft, lineHeight: 1.5, margin: "4px 0 8px" }}>{t[`prot_why_${profile.goal}`] || ""}</div>
+      {rows.map((r) => (
+        <div key={r.key} style={rowStyle}>
+          <r.icon size={16} color={TOKENS.herb} style={{ flexShrink: 0 }} />
+          <span style={{ flex: 1, color: TOKENS.ink }}>{r.label}</span>
+          <span style={{ fontWeight: 700, color: TOKENS.ink }}>{r.grams}g</span>
         </div>
-      )}
-      {errMsg && (
-        <div style={{ color: TOKENS.clay, fontSize: 13, marginBottom: 10 }}>{errMsg}</div>
-      )}
-      {alts && alts.length > 0 && (
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          {alts.map((a, i) => (
-            <button key={i} onClick={() => onPick(a)} style={{
-              display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10,
-              background: TOKENS.paperRaised, border: `1.5px solid ${TOKENS.line}`, borderRadius: 12,
-              padding: "12px 14px", cursor: "pointer", textAlign: "start", fontFamily: "var(--font-body)",
-            }}>
-              <span style={{ fontSize: 13.5, fontWeight: 600, color: TOKENS.ink, flex: 1 }}>{a.idea}</span>
-              <span style={{ fontSize: 12, color: TOKENS.inkSoft, flexShrink: 0, textAlign: "end", marginInlineStart: 10 }}>
-                {a.calories} {t.unit_kcal}<br />{a.protein_g}{t.macro_protein[0]}
-              </span>
-            </button>
-          ))}
-        </div>
-      )}
-    </Modal>
+      ))}
+      <div style={{ ...rowStyle, fontWeight: 700 }}>
+        <span style={{ flex: 1, color: TOKENS.herbDeep }}>{t.prot_total}</span>
+        <span style={{ color: TOKENS.herbDeep }}>{Math.max(p.total, p.supplement)}g</span>
+      </div>
+    </div>
   );
 }
 
-function TrainingPlanDisplay({ plan, profile, onRegenerate, onUpdatePlan, todayLog, onCompleteWorkout, onAddMealIdea }) {
+function TrainingPlanDisplay({ plan, profile, onRegenerate, onUpdatePlan, todayLog, onCompleteWorkout }) {
   const t = useT();
   const [confirmRegen, setConfirmRegen] = useState(false);
   const [swapTarget, setSwapTarget] = useState(null);
-  const [mealSwapTarget, setMealSwapTarget] = useState(null);
   const [loggingWorkout, setLoggingWorkout] = useState(false);
   const [workoutMinutes, setWorkoutMinutes] = useState(45);
-  const [addedMeals, setAddedMeals] = useState(() => new Set());
   const week = currentTrainingWeek(plan.startDate);
   const done = week > 4;
   const [activeWeek, setActiveWeek] = useState(Math.min(week, 4));
@@ -3049,11 +3006,6 @@ function TrainingPlanDisplay({ plan, profile, onRegenerate, onUpdatePlan, todayL
     const caloriesBurned = Math.round(burnRatePerMin("weightTraining", (profile && profile.weight) || 75) * minutes);
     onCompleteWorkout({ id: uid(), type: todayWorkout.title, minutes, caloriesBurned, at: Date.now() });
     setLoggingWorkout(false);
-  }
-  function addMealIdeaToToday(dayIndex, mealIndex, m) {
-    const { carbs, fat } = estimateMacrosFromCalProtein(m.calories || 0, m.protein_g || 0);
-    onAddMealIdea({ id: uid(), type: m.type, name: m.idea, calories: m.calories || 0, protein: m.protein_g || 0, carbs, fat, at: Date.now() });
-    setAddedMeals((prev) => new Set(prev).add(`${dayIndex}-${mealIndex}`));
   }
 
   return (
@@ -3214,93 +3166,7 @@ function TrainingPlanDisplay({ plan, profile, onRegenerate, onUpdatePlan, todayL
         />
       )}
 
-      {plan.mealIdeas && plan.mealIdeas.length > 0 && (
-        <>
-          <div style={{ fontWeight: 700, fontSize: 15, color: TOKENS.ink, marginBottom: 3 }}>{t.train_meal_ideas}</div>
-          <div style={{ fontSize: 12, color: TOKENS.inkSoft, marginBottom: plan.mealCalorieTarget ? 2 : 10 }}>{t.train_meal_ideas_sub}</div>
-          {plan.mealCalorieTarget && (
-            <div style={{ fontSize: 12, color: TOKENS.herbDeep, fontWeight: 600, marginBottom: plan.supplement && plan.supplement !== "none" ? 4 : 10 }}>
-              {t.train_meal_sized_to} ~{plan.mealCalorieTarget} {t.unit_kcal}/{t.train_per_day}
-              {typeof plan.mealProteinTarget === "number" && <> · {plan.mealProteinTarget}g {t.macro_protein}</>}
-              {" "}({t[GOAL_LABEL_KEY[plan.goal]] || plan.goal})
-            </div>
-          )}
-          {plan.supplement && plan.supplement !== "none" && (
-            <div style={{ fontSize: 11.5, color: TOKENS.inkSoft, marginBottom: 10, lineHeight: 1.5 }}>
-              {t.train_supplement_summary
-                .replace("{servings}", plan.supplementServings)
-                .replace("{type}", plan.supplement === "whey" ? t.train_supplement_whey : t.train_supplement_gainer)
-                .replace("{protein}", plan.supplementProtein)
-                .replace("{cal}", plan.supplementCalories)
-                .replace("{totalCal}", plan.dailyCalorieTarget)
-                .replace("{totalProtein}", plan.dailyProteinTarget)}
-            </div>
-          )}
-          <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 20 }}>
-            {plan.mealIdeas.map((day, i) => (
-              <div key={i} style={{ background: TOKENS.paperRaised, border: `1px solid ${TOKENS.line}`, borderRadius: 14, padding: "13px 15px" }}>
-                <div style={{ fontWeight: 700, fontSize: 13, color: TOKENS.herbDeep, marginBottom: 8 }}>
-                  {t.train_meal_day} {i + 1}{day.style ? ` – ${day.style}` : ""}
-                </div>
-                <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                  {(day.meals || []).map((m, j) => (
-                    <div key={j} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, fontSize: 12.5, color: TOKENS.ink }}>
-                      <span style={{ flex: 1, minWidth: 0 }}><span style={{ color: TOKENS.inkSoft }}>{{ breakfast: t.meal_breakfast, lunch: t.meal_lunch, dinner: t.meal_dinner, snack: t.meal_snack }[m.type] || m.type}:</span> {m.idea}</span>
-                      <span style={{ color: TOKENS.inkSoft, flexShrink: 0, textAlign: "end" }}>
-                        {m.calories} {t.unit_kcal}{typeof m.protein_g === "number" ? <><br />{m.protein_g}{t.macro_protein[0]}</> : null}
-                      </span>
-                      <button
-                        onClick={() => addMealIdeaToToday(i, j, m)}
-                        disabled={addedMeals.has(`${i}-${j}`)}
-                        title={t.train_meal_add}
-                        style={{
-                          width: 26, height: 26, borderRadius: 999, flexShrink: 0,
-                          background: addedMeals.has(`${i}-${j}`) ? `${TOKENS.herb}22` : TOKENS.paper,
-                          border: `1px solid ${addedMeals.has(`${i}-${j}`) ? TOKENS.herb : TOKENS.line}`,
-                          display: "flex", alignItems: "center", justifyContent: "center", cursor: addedMeals.has(`${i}-${j}`) ? "default" : "pointer",
-                        }}
-                      >
-                        {addedMeals.has(`${i}-${j}`)
-                          ? <Check size={13} color={TOKENS.herbDeep} style={{ pointerEvents: "none" }} />
-                          : <Plus size={13} color={TOKENS.inkSoft} style={{ pointerEvents: "none" }} />}
-                      </button>
-                      <button
-                        onClick={() => setMealSwapTarget({ dayIndex: i, mealIndex: j, idea: m.idea, type: m.type, calories: m.calories, protein_g: m.protein_g })}
-                        title={t.train_swap_meal_action}
-                        style={{
-                          width: 26, height: 26, borderRadius: 999, background: TOKENS.paper, border: `1px solid ${TOKENS.line}`, flexShrink: 0,
-                          display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
-                        }}
-                      >
-                        <RefreshCw size={12} color={TOKENS.inkSoft} style={{ pointerEvents: "none" }} />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {mealSwapTarget && (
-            <SwapMealModal
-              mealIdea={mealSwapTarget.idea} mealType={mealSwapTarget.type}
-              calories={mealSwapTarget.calories} proteinG={mealSwapTarget.protein_g} goal={plan.goal}
-              onClose={() => setMealSwapTarget(null)}
-              onPick={(alt) => {
-                const nextMealIdeas = (plan.mealIdeas || []).map((day, di) => {
-                  if (di !== mealSwapTarget.dayIndex) return day;
-                  const nextMeals = (day.meals || []).map((m, mi) => (
-                    mi === mealSwapTarget.mealIndex ? { ...m, idea: alt.idea, calories: alt.calories, protein_g: alt.protein_g } : m
-                  ));
-                  return { ...day, meals: nextMeals };
-                });
-                onUpdatePlan({ ...plan, mealIdeas: nextMealIdeas });
-                setMealSwapTarget(null);
-              }}
-            />
-          )}
-        </>
-      )}
+      {profile && <ProteinGuide profile={profile} plan={plan} />}
 
       <div style={{ fontSize: 11.5, color: TOKENS.inkSoft, textAlign: "center", marginBottom: 14, lineHeight: 1.5 }}>{t.train_safety_note}</div>
 
@@ -3446,7 +3312,7 @@ function TrainerChatModal({ profile, plan, lang, onClose }) {
   );
 }
 
-function TrainingView({ profile, plan, onSavePlan, onUpdateWaist, lang, todayLog, onCompleteWorkout, onAddMealIdea }) {
+function TrainingView({ profile, plan, onSavePlan, onUpdateWaist, lang, todayLog, onCompleteWorkout }) {
   const t = useT();
   const [regenerating, setRegenerating] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
@@ -3487,7 +3353,7 @@ function TrainingView({ profile, plan, onSavePlan, onUpdateWaist, lang, todayLog
           )}
           <TrainingPlanDisplay
             plan={plan} profile={profile} onRegenerate={() => setRegenerating(true)} onUpdatePlan={onSavePlan}
-            todayLog={todayLog} onCompleteWorkout={onCompleteWorkout} onAddMealIdea={onAddMealIdea}
+            todayLog={todayLog} onCompleteWorkout={onCompleteWorkout}
           />
         </>
       )}
@@ -3581,7 +3447,9 @@ export default function App() {
       const [p, l, la, fc, tp] = await Promise.all([
         loadProfile(), loadLogs(), loadLang(), loadFoodCache(), loadTrainingPlan(),
       ]);
-      if (p) setProfile(p);
+      // Targets are fully derived from the profile, so recompute them rather
+      // than trust stored values that may predate a formula change.
+      if (p) setProfile({ ...p, ...computeTargets(p) });
       if (l) setLogs(l);
       if (la) setLang(la);
       if (fc) setFoodCache(fc);
@@ -3682,16 +3550,6 @@ export default function App() {
       const day = prev[today] || { meals: [], exercises: [], closed: false };
       return { ...prev, [today]: { ...day, closed: false, exercises: [...(day.exercises || []), savedEx] } };
     });
-  }
-  async function handleAddMealFromIdea(meal) {
-    const id = await insertMealRow(today, meal);
-    if (!id) return;
-    const savedMeal = { ...meal, id };
-    setLogs((prev) => {
-      const day = prev[today] || { meals: [], exercises: [], closed: false };
-      return { ...prev, [today]: { ...day, closed: false, meals: [...(day.meals || []), savedMeal] } };
-    });
-    cacheEntriesFor([savedMeal]);
   }
   function handleCloseDay() {
     setLogs((prev) => {
@@ -3831,7 +3689,7 @@ export default function App() {
                 onSavePlan={handleSaveTrainingPlan}
                 onUpdateWaist={handleUpdateWaist} lang={lang}
                 todayLog={logs[today] || { meals: [], exercises: [], closed: false }}
-                onCompleteWorkout={handleCompleteWorkout} onAddMealIdea={handleAddMealFromIdea}
+                onCompleteWorkout={handleCompleteWorkout}
               />
             )}
             {view === "settings" && (
@@ -3856,5 +3714,6 @@ export default function App() {
     </I18nContext.Provider>
   );
 }
+
 
 
