@@ -998,7 +998,7 @@ async function callAiProxy(payload) {
 // Your personal FIB code, used when FIB online payments aren't set up yet.
 const FIB_MANUAL_CODE = "PPPJ-OAR8-15JM";
 // WhatsApp number for payment screenshots, international format without "+" (e.g. "9647501234567").
-const WHATSAPP_NUMBER = "";
+const WHATSAPP_NUMBER = "9647701523886";
 const PlanContext = createContext(null);
 function usePlan() { return useContext(PlanContext); }
 
