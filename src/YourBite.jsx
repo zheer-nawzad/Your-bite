@@ -178,6 +178,19 @@ const DICT = {
     train_err_days: "Pick at least one training day first.", train_err_generic: "Couldn't generate a plan — try again.",
     train_week: "Week", train_your_split: "Your split", train_progression: "This week's focus",
     prot_title: "Daily protein", prot_total: "Total", prot_per_kg: "{gkg} g per kg of body weight per day",
+    train_injury: "Any injuries or pain? (optional)",
+    train_injury_hint: "We'll avoid exercises that stress these areas.",
+    injury_none: "No injuries",
+    injury_knees: "Knees",
+    injury_lowerBack: "Lower back",
+    injury_shoulders: "Shoulders",
+    injury_wrists: "Wrists / elbows",
+    injury_neck: "Neck",
+    train_session: "How long is each workout?",
+    unit_sec: "sec",
+    train_rest_between: "Rest",
+    train_warmup: "Warm-up",
+    train_goal_changed: "Your goal has changed since this plan was made. Build a new plan so your training matches your new goal.",
     muscle_chest: "Chest",
     muscle_back: "Back",
     muscle_shoulders: "Shoulders",
@@ -368,6 +381,19 @@ const DICT = {
     train_err_days: "اختر يوم تدريب واحدًا على الأقل أولًا.", train_err_generic: "تعذّر إنشاء خطة — حاول مجددًا.",
     train_week: "الأسبوع", train_your_split: "تقسيمتك", train_progression: "تركيز هذا الأسبوع",
     prot_title: "البروتين اليومي", prot_total: "المجموع", prot_per_kg: "{gkg} غ لكل كغ من وزن الجسم يوميًا",
+    train_injury: "هل لديك إصابة أو ألم؟ (اختياري)",
+    train_injury_hint: "سنتجنب التمارين التي تضغط على هذه المناطق.",
+    injury_none: "لا توجد إصابات",
+    injury_knees: "الركبتان",
+    injury_lowerBack: "أسفل الظهر",
+    injury_shoulders: "الكتفان",
+    injury_wrists: "المعصمان / المرفقان",
+    injury_neck: "الرقبة",
+    train_session: "كم مدة كل تمرين؟",
+    unit_sec: "ث",
+    train_rest_between: "راحة",
+    train_warmup: "الإحماء",
+    train_goal_changed: "تغيّر هدفك منذ إنشاء هذه الخطة. أنشئ خطة جديدة لتناسب هدفك الجديد.",
     muscle_chest: "الصدر",
     muscle_back: "الظهر",
     muscle_shoulders: "الأكتاف",
@@ -558,6 +584,19 @@ const DICT = {
     train_err_days: "سەرەتا لانیکەم یەک ڕۆژی ڕاهێنان هەڵبژێرە.", train_err_generic: "نەمانتوانی پلانێک دروست بکەین — دووبارە هەوڵ بدە.",
     train_week: "هەفتە", train_your_split: "دابەشکردنی ڕاهێنانت", train_progression: "سەرنجی ئەم هەفتەیە",
     prot_title: "پرۆتینی ڕۆژانە", prot_total: "کۆی گشتی", prot_per_kg: "{gkg} گرام بۆ هەر کیلۆیەک لە کێشی لەش لە ڕۆژێکدا",
+    train_injury: "هیچ برین یان ئازارێکت هەیە؟ (ئارەزوومەندانە)",
+    train_injury_hint: "ئەو ڕاهێنانانە لادەدەین کە فشار دەخەنە سەر ئەم شوێنانە.",
+    injury_none: "هیچ برینێک نییە",
+    injury_knees: "ئەژنۆ",
+    injury_lowerBack: "خوارەوەی پشت",
+    injury_shoulders: "شان",
+    injury_wrists: "مەچەک / ئانیشک",
+    injury_neck: "مل",
+    train_session: "هەر ڕاهێنانێک چەند دەخایەنێت؟",
+    unit_sec: "چرکە",
+    train_rest_between: "پشوو",
+    train_warmup: "خۆگەرمکردن",
+    train_goal_changed: "ئامانجەکەت گۆڕاوە لەو کاتەوەی ئەم پلانە دروستکرا. پلانێکی نوێ دروست بکە تا لەگەڵ ئامانجە نوێیەکەت بگونجێت.",
     muscle_chest: "سنگ",
     muscle_back: "پشت",
     muscle_shoulders: "شان",
@@ -920,6 +959,8 @@ function planRowToClient(row) {
     supplementProtein: Math.round((row.supplement_servings || 0) * (row.supplement_protein_per_serving || 0)),
     supplementCalories: Math.round((row.supplement_servings || 0) * (row.supplement_calories_per_serving || 0)),
     offDays: row.off_days || [],
+    // Setup choices live in the (otherwise unused) meal_ideas column, so no DB change is needed.
+    settings: ((row.meal_ideas || []).find((x) => x && x.kind === "settings")) || {},
   };
 }
 // Saved on its own (not via planClientToRow) so a missing off_days column
@@ -933,7 +974,7 @@ function planClientToRow(p) {
     goal: p.goal, experience: p.experience, equipment: p.equipment,
     weekdays: p.weekdays || [], focus_areas: p.focusAreas || [], meal_style: p.mealStyle,
     content_lang: p.contentLang, split_name: p.splitName, summary: p.summary,
-    days: p.days || [], progression: p.progression || [], meal_ideas: p.mealIdeas || [],
+    days: p.days || [], progression: p.progression || [], meal_ideas: p.settings ? [{ kind: "settings", ...p.settings }] : (p.mealIdeas || []),
     start_date: p.startDate,
     meal_calorie_target: p.mealCalorieTarget, meal_protein_target: p.mealProteinTarget,
     daily_calorie_target: p.dailyCalorieTarget, daily_protein_target: p.dailyProteinTarget,
@@ -1424,7 +1465,21 @@ function trainingProfileNote(profile) {
   return `\nPERSON: ${facts.join(" | ")}\n${rules.length ? `Because of this person's profile:\n- ${rules.join("\n- ")}\n` : ""}Use ALL of these details — not just the goal — to choose exercises, volume, cardio and progression, so this plan fits this specific person. In the summary, mention 1-2 personal reasons why the plan is built this way (e.g. their activity level, weight or calorie target).\n`;
 }
 
-async function generateTrainingProgram({ goal, experience, equipment, weekdays, focusAreas, age, lang, profile }) {
+const INJURY_RULES_EN = {
+  knees: "KNEES: avoid deep loaded squats, lunges, jumping and running; use leg press with a comfortable range, box squats, hip-dominant moves (hip thrust, Romanian deadlift with light-moderate load), hamstring curls and cycling.",
+  lowerBack: "LOWER BACK: avoid heavy barbell deadlifts, bent-over barbell rows, good mornings and heavy back squats; use chest-supported or machine rows, leg press, hip thrusts, and core stability work (bird dog, dead bug, side plank).",
+  shoulders: "SHOULDERS: avoid behind-the-neck presses, upright rows, dips and heavy barbell overhead pressing; use neutral-grip dumbbell or landmine presses, cable work, and add rear-delt / rotator-cuff work (face pulls, external rotations).",
+  wrists: "WRISTS / ELBOWS: prefer dumbbells, cables and machines with a neutral grip over straight barbells; avoid skull crushers and heavy straight-bar curls; do push-ups on handles or fists.",
+  neck: "NECK: avoid heavy shrugs, behind-the-neck movements and anything loading the head or neck; keep a neutral neck on all lifts.",
+};
+const SESSION_RULE_EN = {
+  30: "about 30 minutes: 3-4 exercises, use supersets for accessories, short rests",
+  45: "about 45 minutes: 4-5 exercises",
+  60: "about 60 minutes: 5-6 exercises",
+  90: "about 90 minutes: 6-8 exercises",
+};
+
+async function generateTrainingProgram({ goal, experience, equipment, weekdays, focusAreas, age, lang, profile, injuries, sessionMinutes, previousPlan }) {
   const activeFocus = (focusAreas || []).filter((f) => f && f !== "whole");
   const isFatLossGoal = goal === "lose" || goal === "recomp";
   const isBeginner = experience === "beginner";
@@ -1437,6 +1492,19 @@ async function generateTrainingProgram({ goal, experience, equipment, weekdays, 
 - Still train every other muscle group normally — no gaps.
 - Name the focus in that day's title (e.g. "Push — Chest & Shoulders focus").${isFatLossGoal ? "\nNote: fat loss happens across the whole body from the calorie deficit, not only in these areas — the extra work builds and shapes the focus muscles." : ""}\n`
     : `\nNO FOCUS AREA (whole body): the program must be BALANCED — give every major muscle group (chest, back, shoulders, arms, legs/glutes, core) roughly equal weekly sets and train each about twice a week where the days allow. Don't favor any one area.\n`;
+  const activeInjuries = (injuries || []).filter((i) => INJURY_RULES_EN[i]);
+  const injuryNote = activeInjuries.length
+    ? `\nINJURIES / PAIN — this overrides every other instruction:\n- ${activeInjuries.map((i) => INJURY_RULES_EN[i]).join("\n- ")}\nIn the summary, add one short line telling them to stop any exercise that causes pain and see a doctor or physiotherapist if it continues.\n`
+    : "";
+  const sessionNote = SESSION_RULE_EN[sessionMinutes]
+    ? `\nTIME: every workout must fit in ${SESSION_RULE_EN[sessionMinutes]} (warm-up and rests included). If this conflicts with the exercise count for their experience level, the time limit wins.\n`
+    : "";
+  const prevDays = previousPlan && (previousPlan.days || []).length
+    ? previousPlan.days.map((d) => `${d.weekday}: ${(d.exercises || []).map((e) => e.name).join(", ")}`).join("; ")
+    : "";
+  const previousNote = prevDays
+    ? `\nNEXT BLOCK: this person just finished a 4-week block of training. Their previous plan was: ${prevDays}. Build the NEXT block so they keep progressing: keep the main compound lifts (so they can track strength), change 1-2 accessory exercises per day for fresh stimulus, and make it a bit more demanding than before (one extra set on key lifts or slightly heavier rep ranges)${previousPlan.goal && previousPlan.goal !== goal ? " — but their goal has changed, so rebuild the split around the new goal first" : ""}${previousPlan.experience && previousPlan.experience !== experience ? " — and adjust to their new experience level" : ""}.\n`
+    : "";
   const dayCount = (weekdays || []).length;
   const daysNote = isBeginner && dayCount > 4
     ? `\nThis beginner chose ${dayCount} training days. Beginners recover slower: make at most 3-4 of them real strength workouts and make the others light days (20-30 min brisk walking or easy cardio, plus mobility and core). Never put hard strength workouts on more than 2 days in a row.\n`
@@ -1465,10 +1533,11 @@ Experience level: ${experience}
 How to train at this level: ${EXPERIENCE_STYLE[experience] || EXPERIENCE_STYLE.intermediate}
 Where they train: ${equipment === "gym" ? "a full gym with machines and free weights" : "at home with minimal/no equipment (bodyweight, maybe light dumbbells)"}
 Training days (fixed weekly schedule): ${weekdays.join(", ")}
-${focusNote}${daysNote}${ageNote}${langNote}${ckbVocabNote}
+${focusNote}${daysNote}${injuryNote}${sessionNote}${previousNote}${ageNote}${langNote}${ckbVocabNote}
 Design ONE workout for each of those training days (a sensible split like push/pull/legs, upper/lower, a body-part split, or full-body depending on the number of days, the goal's training approach above, and any focus areas above), reused every week for 4 weeks with the progression notes below driving intensity changes. Keep each workout to the exercise count given for their experience level above (never more than 8), and prefer common, well-known exercise names (e.g. "Barbell Bench Press", "Bent-Over Row", "Leg Press") so they're easy to recognize. Make sure the split as a whole gives complete, well-rounded coverage across the week with no gaps — don't skip muscle groups just because they're smaller: include direct core/abs work (e.g. plank, cable crunch, hanging leg raise) on at least one day, calves on at least one leg day, and some forearm/grip work where it naturally fits (e.g. on a pull or arm day) — fit these in as 1 of the 5-7 exercises on the most relevant day(s) rather than skipping them entirely. Set each exercise's sets/reps to actually match the goal's training approach above, not a generic default. Also give a one-line progression note for each of the 4 weeks that reflects this goal specifically (e.g. how to increase difficulty week to week, with week 4 as a lighter deload week).
 Respond with ONLY compact raw JSON, no markdown, no explanation, in this exact shape:
-{"splitName":"short name for this split","days":[{"weekday":"monday","title":"short workout title","exercises":[{"name":"exercise name","sets":3,"reps":"8-12"}]}],"progression":[{"week":1,"note":"short note"},{"week":2,"note":"..."},{"week":3,"note":"..."},{"week":4,"note":"..."}],"summary":"1-2 sentence overview of the plan and how to approach it safely"}
+{"splitName":"short name for this split","days":[{"weekday":"monday","title":"short workout title","warmup":"one short sentence","exercises":[{"name":"exercise name","sets":3,"reps":"8-12","rest":90}]}],"progression":[{"week":1,"note":"short note"},{"week":2,"note":"..."},{"week":3,"note":"..."},{"week":4,"note":"..."}],"summary":"1-2 sentence overview of the plan and how to approach it safely"}
+"rest" is the rest between sets in SECONDS, matched to the goal and the exercise: heavy compound lifts 120-180, other strength work 90, accessories 60, fat-loss accessories 45-60, cardio 0. "warmup" is one short sentence for that day's muscles (e.g. 5 minutes on the bike, then 2 light sets of the first exercise).
 The "weekday" field must be exactly one of: ${weekdays.join(", ")} (lowercase English, even when writing in another language) — exactly one entry for each of those days.`;
 
   let last = null;
@@ -1616,11 +1685,18 @@ function applyTranslatedPlanText(plan, translated) {
   };
 }
 
-async function generateExerciseAlternatives({ exerciseName, equipment }) {
+async function generateExerciseAlternatives({ exerciseName, equipment, context = {} }) {
+  const ctx = [
+    context.experience && `Their experience level is ${context.experience}${context.experience === "beginner" ? " — only suggest simple, easy-to-learn exercises (machines, dumbbells, cables)" : ""}.`,
+    context.goal && `Their goal: ${GOAL_DESC_EN[context.goal] || context.goal}.`,
+    context.bmi && context.bmi >= 30 && "They have a higher body weight — only low-impact, joint-friendly options (no jumping).",
+    ...(context.injuries || []).filter((i) => INJURY_RULES_EN[i]).map((i) => `Respect this injury: ${INJURY_RULES_EN[i]}`),
+  ].filter(Boolean).join(" ");
   const prompt = `Suggest 4 alternative exercises that train the same primary muscle group(s) as "${exerciseName}", each one using a noticeably different machine, equipment, or technique than the original (e.g. swap a barbell version for a machine, cable, or dumbbell version, or a different angle/grip). ${equipment === "gym" ? "Assume access to a full gym with machines and free weights." : "Assume home training with minimal or no equipment (bodyweight, maybe light dumbbells)."} For each, give a realistic sets/reps range of similar difficulty to the original. Prefer common, well-known exercise names.
 
-Respond with ONLY compact raw JSON, no markdown, no explanation, in this exact shape:
-{"alternatives":[{"name":"exercise name","sets":3,"reps":"8-12"}]}`;
+${ctx ? `\n${ctx}\n` : ""}
+Respond with ONLY compact raw JSON, no markdown, no explanation, in this exact shape ("rest" = seconds between sets):
+{"alternatives":[{"name":"exercise name","sets":3,"reps":"8-12","rest":90}]}`;
   return callClaude(prompt, 700, undefined, { feature: "training" });
 }
 
@@ -1631,6 +1707,10 @@ function buildTrainerContext(profile, plan) {
   if (plan.equipment) lines.push(`Trains at: ${plan.equipment === "gym" ? "a gym" : "home"}`);
   if (plan.weekdays && plan.weekdays.length) lines.push(`Training days: ${plan.weekdays.join(", ")}`);
   if (plan.focusAreas && plan.focusAreas.length) lines.push(`Extra focus areas this cycle: ${plan.focusAreas.join(", ")}`);
+  const st = plan.settings || {};
+  if (st.injuries && st.injuries.length) lines.push(`Injuries / pain to respect: ${st.injuries.join(", ")} — never suggest exercises that stress these areas`);
+  if (st.sessionMinutes) lines.push(`Time per workout: about ${st.sessionMinutes} minutes`);
+  if (st.block > 1) lines.push(`This is their training block number ${st.block}`);
   const cal = plan.dailyCalorieTarget || plan.mealCalorieTarget;
   const prot = plan.dailyProteinTarget || plan.mealProteinTarget;
   if (cal) lines.push(`Daily calorie target: ~${cal} kcal${prot ? `, protein target: ~${prot}g` : ""}`);
@@ -3267,16 +3347,21 @@ function WeekdayToggle({ value, onChange }) {
   );
 }
 
-function TrainingSetup({ profile, onGenerate, onUpdateWaist, lang }) {
+function TrainingSetup({ profile, onGenerate, onUpdateWaist, lang, previous = null }) {
   const t = useT();
-  const [experience, setExperience] = useState("beginner");
-  const [equipment, setEquipment] = useState("home");
-  const [weekdays, setWeekdays] = useState(["monday", "wednesday", "thursday", "saturday", "sunday"]);
-  const [focusAreas, setFocusAreas] = useState([]);
-  const [supplement, setSupplement] = useState("none");
-  const [supplementServings, setSupplementServings] = useState(1);
-  const [servingProtein, setServingProtein] = useState(SUPPLEMENT_PER_SERVING.whey.protein);
-  const [servingCalories, setServingCalories] = useState(SUPPLEMENT_PER_SERVING.whey.calories);
+  // Building the next plan starts from the last plan's choices.
+  const pv = previous || {};
+  const pvSettings = pv.settings || {};
+  const [experience, setExperience] = useState(pv.experience || "beginner");
+  const [equipment, setEquipment] = useState(pv.equipment || "home");
+  const [weekdays, setWeekdays] = useState(pv.weekdays && pv.weekdays.length ? pv.weekdays : ["monday", "wednesday", "thursday", "saturday", "sunday"]);
+  const [focusAreas, setFocusAreas] = useState(pv.focusAreas || []);
+  const [injuries, setInjuries] = useState(pvSettings.injuries || []);
+  const [sessionMinutes, setSessionMinutes] = useState(pvSettings.sessionMinutes || 60);
+  const [supplement, setSupplement] = useState(pv.supplement || "none");
+  const [supplementServings, setSupplementServings] = useState(pv.supplementServings || 1);
+  const [servingProtein, setServingProtein] = useState(pv.supplementProteinPerServing || SUPPLEMENT_PER_SERVING.whey.protein);
+  const [servingCalories, setServingCalories] = useState(pv.supplementCaloriesPerServing || SUPPLEMENT_PER_SERVING.whey.calories);
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState("");
 
@@ -3286,6 +3371,11 @@ function TrainingSetup({ profile, onGenerate, onUpdateWaist, lang }) {
       setServingProtein(SUPPLEMENT_PER_SERVING[next].protein);
       setServingCalories(SUPPLEMENT_PER_SERVING[next].calories);
     }
+  }
+
+  function toggleInjury(value) {
+    if (value === "none") { setInjuries([]); return; }
+    setInjuries((prev) => (prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]));
   }
 
   function toggleFocusArea(value) {
@@ -3304,11 +3394,18 @@ function TrainingSetup({ profile, onGenerate, onUpdateWaist, lang }) {
         protein: servings * (Number(servingProtein) || 0),
         calories: servings * (Number(servingCalories) || 0),
       };
-      const program = await generateTrainingProgram({ goal: profile.goal, experience, equipment, weekdays: orderedDays, focusAreas, age: profile.age, lang, profile });
+      const program = await generateTrainingProgram({
+        goal: profile.goal, experience, equipment, weekdays: orderedDays, focusAreas, age: profile.age, lang, profile,
+        injuries, sessionMinutes: Number(sessionMinutes), previousPlan: previous,
+      });
       onGenerate({
         goal: profile.goal, experience, equipment, weekdays: orderedDays, focusAreas, contentLang: lang || "en",
+        settings: { injuries, sessionMinutes: Number(sessionMinutes), block: previous ? ((previous.settings || {}).block || 1) + 1 : 1 },
         splitName: program.splitName || "",
-        days: (program.days || []).map((d) => ({ ...d, weekday: (d.weekday || "").toLowerCase().trim() })),
+        days: (program.days || []).map((d) => ({
+          ...d, weekday: (d.weekday || "").toLowerCase().trim(),
+          exercises: (d.exercises || []).map((e) => ({ ...e, sets: Number(e.sets) || 3, rest: Number(e.rest) || 0 })),
+        })),
         progression: (program.progression || []).map((p) => ({ ...p, week: Number(p.week) })), summary: program.summary || "",
         mealIdeas: [], startDate: todayISO(),
         dailyCalorieTarget: goalTargets.calorieTarget, dailyProteinTarget: goalTargets.proteinTarget,
@@ -3380,6 +3477,30 @@ function TrainingSetup({ profile, onGenerate, onUpdateWaist, lang }) {
         </div>
       </Field>
 
+      <Field label={t.train_injury}>
+        <div style={{ fontSize: 12, color: TOKENS.inkSoft, marginBottom: 8, marginTop: -6 }}>{t.train_injury_hint}</div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 8 }}>
+          {["none", "knees", "lowerBack", "shoulders", "wrists", "neck"].map((value) => {
+            const active = value === "none" ? injuries.length === 0 : injuries.includes(value);
+            return (
+              <button key={value} type="button" onClick={() => toggleInjury(value)} style={{
+                textAlign: "start", padding: "12px 13px", borderRadius: 11, cursor: "pointer",
+                border: `1.5px solid ${active ? TOKENS.herb : TOKENS.line}`,
+                background: active ? TOKENS.herb : TOKENS.paperRaised,
+                color: active ? TOKENS.cream : TOKENS.ink,
+                fontFamily: "var(--font-body)", fontWeight: 600, fontSize: 14, transition: "all .15s ease",
+              }}>
+                {t[`injury_${value}`]}
+              </button>
+            );
+          })}
+        </div>
+      </Field>
+
+      <Field label={t.train_session}>
+        <SegmentGroup columns={4} value={sessionMinutes} onChange={setSessionMinutes} options={[30, 45, 60, 90].map((m) => ({ value: m, label: `${m} ${t.ex_minutes}` }))} />
+      </Field>
+
       <Field label={t.train_supplement}>
         <SegmentGroup columns={3} value={supplement} onChange={pickSupplement} options={[
           { value: "none", label: t.train_supplement_none },
@@ -3435,7 +3556,7 @@ function currentTrainingWeek(startDate) {
   return clamp(Math.floor(diffDays / 7) + 1, 1, 5);
 }
 
-function SwapExerciseModal({ exerciseName, equipment, onClose, onPick }) {
+function SwapExerciseModal({ exerciseName, equipment, context, onClose, onPick }) {
   const t = useT();
   const [alts, setAlts] = useState(null);
   const [errMsg, setErrMsg] = useState("");
@@ -3444,10 +3565,10 @@ function SwapExerciseModal({ exerciseName, equipment, onClose, onPick }) {
     let cancelled = false;
     (async () => {
       try {
-        const r = await generateExerciseAlternatives({ exerciseName, equipment });
+        const r = await generateExerciseAlternatives({ exerciseName, equipment, context });
         if (cancelled) return;
         const list = (r.alternatives || []).map((a) => ({
-          name: a.name || "Exercise", sets: Number(a.sets) || 3, reps: a.reps || "8-12",
+          name: a.name || "Exercise", sets: Number(a.sets) || 3, reps: a.reps || "8-12", rest: Number(a.rest) || 0,
         }));
         setAlts(list);
         if (!list.length) setErrMsg(t.train_swap_fail);
@@ -3768,6 +3889,11 @@ function TrainingPlanDisplay({ plan, profile, onRegenerate, onUpdatePlan, todayL
                 <span style={{ fontWeight: 700, fontSize: 14.5, color: TOKENS.ink }}>{d.title}</span>
               </div>
               <MuscleLine exercises={d.exercises} />
+              {d.warmup && (
+                <div style={{ fontSize: 11.5, color: TOKENS.inkSoft, marginTop: 6, lineHeight: 1.45 }}>
+                  <span style={{ fontWeight: 700, color: TOKENS.saffronDeep }}>{t.train_warmup}:</span> {d.warmup}
+                </div>
+              )}
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
               {(d.exercises || []).map((ex, i) => (
@@ -3783,7 +3909,14 @@ function TrainingPlanDisplay({ plan, profile, onRegenerate, onUpdatePlan, todayL
                     <PlayCircle size={19} color={TOKENS.herbDeep} style={{ pointerEvents: "none" }} />
                   </a>
                   <div style={{ flex: 1, minWidth: 0, display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
-                    <span style={{ fontSize: 13, color: TOKENS.ink }}>{ex.name}</span>
+                    <span style={{ minWidth: 0 }}>
+                      <span style={{ display: "block", fontSize: 13, color: TOKENS.ink }}>{ex.name}</span>
+                      {Number(ex.rest) > 0 && (
+                        <span style={{ display: "block", fontSize: 11, color: TOKENS.inkSoft, marginTop: 1 }}>
+                          {t.train_rest_between} {Number(ex.rest) >= 120 ? `${+(Number(ex.rest) / 60).toFixed(1)} ${t.ex_minutes}` : `${Number(ex.rest)} ${t.unit_sec}`}
+                        </span>
+                      )}
+                    </span>
                     <span style={{ fontSize: 12, color: TOKENS.inkSoft, flexShrink: 0 }}>{ex.sets} {t.train_sets} × {ex.reps} {t.train_reps}</span>
                   </div>
                   <button
@@ -3806,6 +3939,10 @@ function TrainingPlanDisplay({ plan, profile, onRegenerate, onUpdatePlan, todayL
       {swapTarget && (
         <SwapExerciseModal
           exerciseName={swapTarget.name} equipment={plan.equipment}
+          context={{
+            experience: plan.experience, goal: plan.goal, injuries: (plan.settings || {}).injuries || [],
+            bmi: profile ? calcBMI(profile.weight, profile.height) : null,
+          }}
           onClose={() => setSwapTarget(null)}
           onPick={(alt) => {
             const nextDays = (plan.days || []).map((day) => {
@@ -4022,12 +4159,18 @@ function TrainingView({ profile, plan, onSavePlan, onUpdateWaist, lang, todayLog
         </button>
       )}
       {showSetup ? (
-        <TrainingSetup profile={profile} onGenerate={(p) => { onSavePlan(p); setRegenerating(false); }} onUpdateWaist={onUpdateWaist} lang={lang} />
+        <TrainingSetup profile={profile} previous={regenerating ? plan : null} onGenerate={(p) => { onSavePlan(p); setRegenerating(false); }} onUpdateWaist={onUpdateWaist} lang={lang} />
       ) : (
         <>
           {translating && (
             <div style={{ display: "flex", alignItems: "center", gap: 8, background: `${TOKENS.saffron}22`, border: `1px solid ${TOKENS.saffron}55`, borderRadius: 12, padding: "10px 13px", marginBottom: 14, fontSize: 13, color: TOKENS.ink }}>
               <Loader2 size={15} className="spin" /> {t.train_translating}
+            </div>
+          )}
+          {plan && profile && plan.goal && plan.goal !== profile.goal && (
+            <div style={{ background: `${TOKENS.clay}14`, border: `1px solid ${TOKENS.clay}44`, borderRadius: 14, padding: "13px 15px", marginBottom: 16 }}>
+              <div style={{ fontSize: 13.5, color: TOKENS.ink, lineHeight: 1.5, marginBottom: 10 }}>{t.train_goal_changed}</div>
+              <Button variant="saffron" onClick={() => setRegenerating(true)}><RefreshCw size={15} /> {t.train_regenerate}</Button>
             </div>
           )}
           <TrainingPlanDisplay
