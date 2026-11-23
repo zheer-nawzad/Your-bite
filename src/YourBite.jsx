@@ -1637,7 +1637,9 @@ The "weekday" field must be exactly one of: ${weekdays.join(", ")} (lowercase En
 
   let last = null;
   for (let attempt = 0; attempt < 2; attempt++) {
-    const r = await callClaude(promptText, 2600, lang, { feature: "training" });
+    // The plan follows many rules at once and is used for 4 weeks, so it gets a stronger model:
+    // Sonnet 5 for English/Arabic (Kurdish already uses Opus 5 inside callClaude).
+    const r = await callClaude(promptText, 2600, lang, { feature: "training", ...(lang === "ckb" ? {} : { model: "claude-sonnet-5" }) });
     const days = (r && r.days) || [];
     const got = new Set(days.map((d) => String(d.weekday || "").toLowerCase().trim()));
     if (weekdays.every((w) => got.has(w)) && days.every((d) => (d.exercises || []).length > 0)) return r;
