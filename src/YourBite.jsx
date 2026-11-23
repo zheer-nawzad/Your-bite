@@ -178,6 +178,16 @@ const DICT = {
     train_err_days: "Pick at least one training day first.", train_err_generic: "Couldn't generate a plan — try again.",
     train_week: "Week", train_your_split: "Your split", train_progression: "This week's focus",
     prot_title: "Daily protein", prot_total: "Total", prot_per_kg: "{gkg} g per kg of body weight per day",
+    muscle_chest: "Chest",
+    muscle_back: "Back",
+    muscle_shoulders: "Shoulders",
+    muscle_biceps: "Biceps",
+    muscle_triceps: "Triceps",
+    muscle_legs: "Legs",
+    muscle_glutes: "Glutes",
+    muscle_calves: "Calves",
+    muscle_core: "Abs / Core",
+    muscle_cardio: "Cardio",
     prot_food_title: "From food",
     prot_supp_explain: "You need {total}g of protein a day. Your {supp} gives you {s}g ({servings} × {per}g), so you only need {food}g from food — split over your meals below.",
     prot_supp_covers: "You need {total}g of protein a day. Your {supp} already gives you {s}g, which covers all of it — eat normal meals for your calories.",
@@ -358,6 +368,16 @@ const DICT = {
     train_err_days: "اختر يوم تدريب واحدًا على الأقل أولًا.", train_err_generic: "تعذّر إنشاء خطة — حاول مجددًا.",
     train_week: "الأسبوع", train_your_split: "تقسيمتك", train_progression: "تركيز هذا الأسبوع",
     prot_title: "البروتين اليومي", prot_total: "المجموع", prot_per_kg: "{gkg} غ لكل كغ من وزن الجسم يوميًا",
+    muscle_chest: "الصدر",
+    muscle_back: "الظهر",
+    muscle_shoulders: "الأكتاف",
+    muscle_biceps: "البايسبس",
+    muscle_triceps: "الترايسبس",
+    muscle_legs: "الأرجل",
+    muscle_glutes: "الأرداف",
+    muscle_calves: "بطة الساق",
+    muscle_core: "البطن",
+    muscle_cardio: "كارديو",
     prot_food_title: "من الطعام",
     prot_supp_explain: "تحتاج {total} غ من البروتين يوميًا. يعطيك {supp} {s} غ ({servings} × {per} غ)، لذلك تحتاج فقط {food} غ من الطعام — موزعة على وجباتك أدناه.",
     prot_supp_covers: "تحتاج {total} غ من البروتين يوميًا. يعطيك {supp} {s} غ وهذا يغطي الكمية كلها — تناول وجبات عادية لسعراتك.",
@@ -538,6 +558,16 @@ const DICT = {
     train_err_days: "سەرەتا لانیکەم یەک ڕۆژی ڕاهێنان هەڵبژێرە.", train_err_generic: "نەمانتوانی پلانێک دروست بکەین — دووبارە هەوڵ بدە.",
     train_week: "هەفتە", train_your_split: "دابەشکردنی ڕاهێنانت", train_progression: "سەرنجی ئەم هەفتەیە",
     prot_title: "پرۆتینی ڕۆژانە", prot_total: "کۆی گشتی", prot_per_kg: "{gkg} گرام بۆ هەر کیلۆیەک لە کێشی لەش لە ڕۆژێکدا",
+    muscle_chest: "سنگ",
+    muscle_back: "پشت",
+    muscle_shoulders: "شان",
+    muscle_biceps: "بایسێپس",
+    muscle_triceps: "ترایسێپس",
+    muscle_legs: "قاچ",
+    muscle_glutes: "سمت",
+    muscle_calves: "پشتی قاچ",
+    muscle_core: "سک",
+    muscle_cardio: "کاردیۆ",
     prot_food_title: "لە خواردنەوە",
     prot_supp_explain: "ڕۆژانە پێویستت بە {total} گرام پرۆتینە. {supp} ـەکەت {s} گرامت پێدەدات ({servings} × {per} گرام)، بۆیە تەنها {food} گرام لە خواردن پێویستە — بەسەر ژەمەکانی خوارەوەدا دابەشکراوە.",
     prot_supp_covers: "ڕۆژانە پێویستت بە {total} گرام پرۆتینە. {supp} ـەکەت {s} گرامت پێدەدات کە هەمووی پڕدەکاتەوە — ژەمی ئاسایی بخۆ بۆ کالۆرییەکانت.",
@@ -3517,6 +3547,52 @@ function ProteinGuide({ profile, plan }) {
   );
 }
 
+// Which body parts a workout trains, worked out from its (English) exercise
+// names, so every plan — old or new — can show "Chest · Shoulders · Triceps".
+// Rules are checked in order; the first one that matches an exercise wins.
+const MUSCLE_RULES = [
+  [/calf|calves/, ["calves"]],
+  [/leg curl|hamstring curl|nordic/, ["legs"]],
+  [/leg raise|knee raise|plank|crunch|sit-?up|ab wheel|rollout|russian twist|dead ?bug|mountain climber|\babs?\b|core|v-up|oblique|woodchop|pallof|hollow/, ["core"]],
+  [/tricep|pushdown|push-down|skull|french press|close-?grip (bench|press)|overhead extension/, ["triceps"]],
+  [/hip thrust|glute|kickback|bridge|abduct/, ["glutes"]],
+  [/romanian|\brdl\b|stiff/, ["legs", "glutes"]],
+  [/deadlift/, ["back", "legs"]],
+  [/squat|lunge|leg press|leg extension|step-?up|hack|sissy|wall sit/, ["legs"]],
+  [/face pull|rear delt|reverse fly|reverse pec/, ["shoulders", "back"]],
+  [/overhead press|shoulder|military|arnold|lateral raise|front raise|upright row|pike push|landmine press|\bohp\b/, ["shoulders"]],
+  [/\bdips?\b/, ["chest", "triceps"]],
+  [/bench|chest|push-?up|press-?up|\bfly|flye|\bpec|crossover|incline (dumbbell|barbell|machine)? ?press|decline/, ["chest"]],
+  [/treadmill|walk|\brun|jog|cycling|bike|elliptical|jump rope|skipping|stair|cardio|rowing machine|row erg|swim|hiit|burpee/, ["cardio"]],
+  [/chin-?up/, ["back", "biceps"]],
+  [/curl/, ["biceps"]],
+  [/pull-?up|pulldown|pull-down|\brows?\b|pullover|shrug|back extension|superman|hyperextension|good morning/, ["back"]],
+];
+function musclesForDay(exercises) {
+  const order = [];
+  (exercises || []).forEach((ex) => {
+    const name = String((ex && ex.name) || "").toLowerCase();
+    const rule = MUSCLE_RULES.find(([re]) => re.test(name));
+    if (rule) rule[1].forEach((m) => { if (!order.includes(m)) order.push(m); });
+  });
+  return order;
+}
+function MuscleLine({ exercises }) {
+  const t = useT();
+  const list = musclesForDay(exercises);
+  if (!list.length) return null;
+  return (
+    <div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginTop: 5 }}>
+      {list.map((m) => (
+        <span key={m} style={{
+          fontSize: 11, fontWeight: 700, color: TOKENS.herbDeep, background: `${TOKENS.herb}14`,
+          border: `1px solid ${TOKENS.herb}2e`, borderRadius: 999, padding: "2px 8px",
+        }}>{t[`muscle_${m}`] || m}</span>
+      ))}
+    </div>
+  );
+}
+
 function TrainingPlanDisplay({ plan, profile, onRegenerate, onUpdatePlan, todayLog, onCompleteWorkout }) {
   const t = useT();
   const [confirmRegen, setConfirmRegen] = useState(false);
@@ -3602,6 +3678,7 @@ function TrainingPlanDisplay({ plan, profile, onRegenerate, onUpdatePlan, todayL
                 {isTodaysWorkout ? t.train_today_workout : weekdayLabel[shiftKey(selectedWeekday)]}
               </div>
               <div style={{ fontSize: 14.5, fontWeight: 700, color: TOKENS.ink, marginTop: 2 }}>{todayWorkout.title}</div>
+              <MuscleLine exercises={todayWorkout.exercises} />
             </div>
             {workoutAlreadyLogged ? (
               <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12.5, fontWeight: 600, color: TOKENS.herbDeep, flexShrink: 0 }}>
@@ -3685,9 +3762,12 @@ function TrainingPlanDisplay({ plan, profile, onRegenerate, onUpdatePlan, todayL
       <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 20 }}>
         {orderedDays.map((d) => (
           <div key={d.weekday} style={{ background: TOKENS.paperRaised, border: `1px solid ${TOKENS.line}`, borderRadius: 14, padding: "13px 15px" }}>
-            <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 8 }}>
-              <span style={{ fontSize: 12, fontWeight: 700, color: TOKENS.saffronDeep, textTransform: "uppercase" }}>{weekdayLabel[shiftKey(d.weekday)]}</span>
-              <span style={{ fontWeight: 700, fontSize: 14.5, color: TOKENS.ink }}>{d.title}</span>
+            <div style={{ marginBottom: 8 }}>
+              <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+                <span style={{ fontSize: 12, fontWeight: 700, color: TOKENS.saffronDeep, textTransform: "uppercase" }}>{weekdayLabel[shiftKey(d.weekday)]}</span>
+                <span style={{ fontWeight: 700, fontSize: 14.5, color: TOKENS.ink }}>{d.title}</span>
+              </div>
+              <MuscleLine exercises={d.exercises} />
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
               {(d.exercises || []).map((ex, i) => (
