@@ -10,6 +10,7 @@ import {
   ResponsiveContainer, ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip
 } from "recharts";
 import { supabase } from "./lib/supabaseClient";
+import { initialLang, LANG_STORAGE_KEY } from "./Auth.jsx";
 
 /* ============================== DESIGN TOKENS ============================== */
 const TOKENS = {
@@ -88,7 +89,7 @@ const DICT = {
     summary_over: "A bit over target — tomorrow's a fresh start.",
     summary_net: "Net calories", summary_meals: "Meals logged", summary_exercise: "Exercise logged", summary_done: "Done",
     summary_reopen: "Reopen to add more",
-    reports_title: "Your progress", reports_7d: "Last 7 days", reports_month: "This month",
+    reports_title: "Your progress", reports_7d: "Last 7 days", reports_month: "Last 30 days",
     reports_avg: "Average intake", reports_adherence: "Average adherence", reports_days: "Days tracked",
     reports_empty: "Close a few days to start seeing trends here.",
     reports_target_line: "Target", reports_net_bar: "Net calories",
@@ -178,6 +179,16 @@ const DICT = {
     train_err_days: "Pick at least one training day first.", train_err_generic: "Couldn't generate a plan — try again.",
     train_week: "Week", train_your_split: "Your split", train_progression: "This week's focus",
     prot_title: "Daily protein", prot_total: "Total", prot_per_kg: "{gkg} g per kg of body weight per day",
+    today_over_word: "over",
+    save_failed: "Couldn't save — check your internet and try again.",
+    log_delete_q: "Delete?",
+    ex_err_minutes: "Enter between 1 and 600 minutes.",
+    summary_too_low: "You ate a lot less than your target. Very low days can cost muscle and energy — try to eat closer to your target.",
+    reports_avg_protein: "Avg protein",
+    settings_delete: "Delete my account",
+    settings_delete_title: "Delete your account?",
+    settings_delete_body: "This permanently deletes your account and all your meals, workouts, plans and chat. It can't be undone.",
+    settings_delete_confirm: "Yes, delete everything",
     onb_waist: "Waist (optional)",
     onb_waist_hint: "Measure around your belly button. It helps us judge belly fat better than weight alone.",
     onb_activity_hint: "Your normal day, NOT counting workouts — workouts you log are added on top.",
@@ -302,7 +313,7 @@ const DICT = {
     summary_over: "تجاوزت الهدف قليلًا — غدًا بداية جديدة.",
     summary_net: "السعرات الصافية", summary_meals: "الوجبات المسجَّلة", summary_exercise: "التمارين المسجَّلة", summary_done: "تم",
     summary_reopen: "إعادة الفتح لإضافة المزيد",
-    reports_title: "تقدّمك", reports_7d: "آخر ٧ أيام", reports_month: "هذا الشهر",
+    reports_title: "تقدّمك", reports_7d: "آخر ٧ أيام", reports_month: "آخر 30 يومًا",
     reports_avg: "متوسط المتناول", reports_adherence: "متوسط الالتزام", reports_days: "أيام مُتابَعة",
     reports_empty: "أغلق بضعة أيام لتبدأ رؤية الاتجاهات هنا.",
     reports_target_line: "الهدف", reports_net_bar: "السعرات الصافية",
@@ -392,6 +403,16 @@ const DICT = {
     train_err_days: "اختر يوم تدريب واحدًا على الأقل أولًا.", train_err_generic: "تعذّر إنشاء خطة — حاول مجددًا.",
     train_week: "الأسبوع", train_your_split: "تقسيمتك", train_progression: "تركيز هذا الأسبوع",
     prot_title: "البروتين اليومي", prot_total: "المجموع", prot_per_kg: "{gkg} غ لكل كغ من وزن الجسم يوميًا",
+    today_over_word: "زيادة",
+    save_failed: "تعذّر الحفظ — تحقق من الإنترنت وحاول مجددًا.",
+    log_delete_q: "حذف؟",
+    ex_err_minutes: "أدخل بين 1 و600 دقيقة.",
+    summary_too_low: "أكلت أقل بكثير من هدفك. الأيام منخفضة السعرات جدًا قد تُفقدك العضل والطاقة — حاول الاقتراب من هدفك.",
+    reports_avg_protein: "متوسط البروتين",
+    settings_delete: "حذف حسابي",
+    settings_delete_title: "حذف حسابك؟",
+    settings_delete_body: "سيؤدي هذا إلى حذف حسابك وكل وجباتك وتمارينك وخططك ومحادثاتك نهائيًا. لا يمكن التراجع عن ذلك.",
+    settings_delete_confirm: "نعم، احذف كل شيء",
     onb_waist: "محيط الخصر (اختياري)",
     onb_waist_hint: "قِسه حول السرّة. يساعدنا على تقدير دهون البطن أفضل من الوزن وحده.",
     onb_activity_hint: "يومك العادي دون احتساب التمارين — التمارين التي تسجّلها تُضاف فوقه.",
@@ -516,7 +537,7 @@ const DICT = {
     summary_over: "کەمێک لە ئامانج تێپەڕیت — سبەی دەستپێکێکی نوێیە.",
     summary_net: "کالۆری ڕەها", summary_meals: "خواردنی تۆمارکراو", summary_exercise: "ڕاهێنانی تۆمارکراو", summary_done: "تەواو",
     summary_reopen: "دووبارە کردنەوە بۆ زیادکردنی زیاتر",
-    reports_title: "پێشکەوتنت", reports_7d: "دوایین ٧ ڕۆژ", reports_month: "ئەم مانگە",
+    reports_title: "پێشکەوتنت", reports_7d: "دوایین ٧ ڕۆژ", reports_month: "30 ڕۆژی ڕابردوو",
     reports_avg: "تێکڕای خواردن", reports_adherence: "تێکڕای پابەندی", reports_days: "ڕۆژە تۆمارکراوەکان",
     reports_empty: "چەند ڕۆژێک داخە بۆ ئەوەی ئاڕاستەکان لێرە ببینیت.",
     reports_target_line: "ئامانج", reports_net_bar: "کالۆری ڕەها",
@@ -606,6 +627,16 @@ const DICT = {
     train_err_days: "سەرەتا لانیکەم یەک ڕۆژی ڕاهێنان هەڵبژێرە.", train_err_generic: "نەمانتوانی پلانێک دروست بکەین — دووبارە هەوڵ بدە.",
     train_week: "هەفتە", train_your_split: "دابەشکردنی ڕاهێنانت", train_progression: "سەرنجی ئەم هەفتەیە",
     prot_title: "پرۆتینی ڕۆژانە", prot_total: "کۆی گشتی", prot_per_kg: "{gkg} گرام بۆ هەر کیلۆیەک لە کێشی لەش لە ڕۆژێکدا",
+    today_over_word: "زیادە",
+    save_failed: "پاشەکەوت نەکرا — ئینتەرنێتەکەت بپشکنە و دووبارە هەوڵ بدەوە.",
+    log_delete_q: "بسڕدرێتەوە؟",
+    ex_err_minutes: "لە نێوان 1 بۆ 600 خولەک بنووسە.",
+    summary_too_low: "زۆر کەمتر لە ئامانجەکەت خواردووە. ڕۆژی زۆر کەم کالۆری ماسولکە و وزەت لێ دەستێنێت — هەوڵ بدە نزیکتر لە ئامانجەکەت بخۆیت.",
+    reports_avg_protein: "تێکڕای پرۆتین",
+    settings_delete: "سڕینەوەی هەژمارەکەم",
+    settings_delete_title: "هەژمارەکەت بسڕیتەوە؟",
+    settings_delete_body: "ئەمە هەژمارەکەت و هەموو ژەم، ڕاهێنان، پلان و گفتوگۆکانت بە یەکجاری دەسڕێتەوە. ناگەڕێتەوە.",
+    settings_delete_confirm: "بەڵێ، هەمووی بسڕەوە",
     onb_waist: "دەوری کەمەر (ئارەزوومەندانە)",
     onb_waist_hint: "بە دەوری ناوکدا بیپێوە. یارمەتیمان دەدات چەوری سک باشتر لە کێش بە تەنها بزانین.",
     onb_activity_hint: "ڕۆژی ئاسایی خۆت، بەبێ ڕاهێنان — ئەو ڕاهێنانانەی تۆماری دەکەیت لەسەری زیاد دەکرێن.",
@@ -795,20 +826,38 @@ const MET = {
   treadmill: 7.0, stationaryBike: 7.0, rowingMachine: 7.0, weightTraining: 5.0,
   jumpRope: 10.0, hiit: 8.0, dancing: 5.5,
 };
-const GYM_TYPES = ["treadmill", "stationaryBike", "rowingMachine", "weightTraining"];
-const HOME_TYPES = ["walking", "jumpRope", "hiit", "dancing"];
+const GYM_TYPES = ["treadmill", "stationaryBike", "rowingMachine", "weightTraining", "swimming"];
+const HOME_TYPES = ["walking", "running", "cycling", "jumpRope", "hiit", "dancing"];
+// Net calories: the resting part (1 MET) is already inside the daily target, so it's subtracted.
 function burnRatePerMin(type, weightKg) {
-  return (MET[type] * 3.5 * weightKg) / 200;
+  return ((Math.max((MET[type] || 5) - 1, 0)) * 3.5 * (weightKg || 75)) / 200;
 }
 
 /* ============================== STORAGE ============================== */
 // Backed by the real Supabase schema (profiles, daily_status, meal_logs,
 // exercise_logs, food_cache, training_plans, trainer_chat_messages), each
 // scoped to the signed-in user via row-level security.
+// Reads the signed-in user from the local session (no network round-trip per save).
 async function getUserId() {
-  const { data } = await supabase.auth.getUser();
-  return data?.user?.id || null;
+  const { data } = await supabase.auth.getSession();
+  return data?.session?.user?.id || null;
 }
+// The database returns at most 1000 rows per request — fetch every page so
+// long-time users never silently lose older (or newer) days.
+async function selectAll(table, uid) {
+  const PAGE = 1000;
+  const rows = [];
+  for (let from = 0; from < 200000; from += PAGE) {
+    const { data, error } = await supabase.from(table).select("*").eq("user_id", uid)
+      .order("date", { ascending: true }).range(from, from + PAGE - 1);
+    if (error) throw error;
+    rows.push(...(data || []));
+    if (!data || data.length < PAGE) break;
+  }
+  return rows;
+}
+// Tells the app to show a short message at the bottom of the screen.
+function notify(key) { window.dispatchEvent(new CustomEvent("yb-toast", { detail: { key } })); }
 
 /* ---- profile (profiles table; row also carries `lang`) ---- */
 function profileRowToClient(row) {
@@ -841,8 +890,9 @@ async function saveProfile(p) {
   const uid = await getUserId();
   if (!uid) return;
   try {
-    await supabase.from("profiles").upsert({ id: uid, ...profileClientToRow(p) }, { onConflict: "id" });
-  } catch (e) {}
+    const { error } = await supabase.from("profiles").upsert({ id: uid, ...profileClientToRow(p) }, { onConflict: "id" });
+    if (error) notify("save_failed");
+  } catch (e) { notify("save_failed"); }
 }
 async function loadLang() {
   const uid = await getUserId();
@@ -867,11 +917,10 @@ async function loadLogs() {
   const uid = await getUserId();
   if (!uid) return {};
   try {
-    const [mealsRes, exRes, statusRes] = await Promise.all([
-      supabase.from("meal_logs").select("*").eq("user_id", uid),
-      supabase.from("exercise_logs").select("*").eq("user_id", uid),
-      supabase.from("daily_status").select("*").eq("user_id", uid),
+    const [meals, exs, statuses] = await Promise.all([
+      selectAll("meal_logs", uid), selectAll("exercise_logs", uid), selectAll("daily_status", uid),
     ]);
+    const mealsRes = { data: meals }, exRes = { data: exs }, statusRes = { data: statuses };
     const logs = {};
     const dayFor = (date) => (logs[date] || (logs[date] = emptyDay()));
     (mealsRes.data || []).forEach((m) => {
@@ -903,7 +952,8 @@ async function insertMealRow(dateISO, meal) {
   } catch (e) { return null; }
 }
 async function deleteMealRow(mealId) {
-  try { await supabase.from("meal_logs").delete().eq("id", mealId); } catch (e) {}
+  try { const { error } = await supabase.from("meal_logs").delete().eq("id", mealId); if (error) notify("save_failed"); }
+  catch (e) { notify("save_failed"); }
 }
 async function insertExerciseRow(dateISO, ex) {
   const uid = await getUserId();
@@ -918,7 +968,8 @@ async function insertExerciseRow(dateISO, ex) {
   } catch (e) { return null; }
 }
 async function deleteExerciseRow(exId) {
-  try { await supabase.from("exercise_logs").delete().eq("id", exId); } catch (e) {}
+  try { const { error } = await supabase.from("exercise_logs").delete().eq("id", exId); if (error) notify("save_failed"); }
+  catch (e) { notify("save_failed"); }
 }
 async function setDayClosed(dateISO, closed) {
   const uid = await getUserId();
@@ -2080,17 +2131,17 @@ function CalorieRingCard({ target, consumed, burned }) {
           <div style={{ fontFamily: "var(--font-display)", fontSize: 27, fontWeight: 600, color: over ? TOKENS.clay : TOKENS.herbDeep, lineHeight: 1 }}>
             {Math.abs(remaining)}
           </div>
-          <div style={{ fontSize: 10.5, color: TOKENS.inkSoft, marginTop: 5, fontWeight: 600, textAlign: "center", lineHeight: 1.3 }}>
-            {t.unit_kcal}<br />{t.today_remaining}
+          <div style={{ fontSize: 10.5, color: over ? TOKENS.clay : TOKENS.inkSoft, marginTop: 5, fontWeight: 600, textAlign: "center", lineHeight: 1.3 }}>
+            {t.unit_kcal}<br />{over ? t.today_over_word : t.today_remaining}
           </div>
         </div>
       </div>
       <div style={{ display: "flex", gap: 14, marginTop: 12 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 10.5, color: TOKENS.inkSoft }}>
-          <span style={{ width: 7, height: 7, borderRadius: 999, background: TOKENS.saffron, display: "inline-block" }} />{t.today_consumed}
+          <span style={{ width: 7, height: 7, borderRadius: 999, background: TOKENS.saffron, display: "inline-block" }} />{t.today_consumed} <b style={{ color: TOKENS.ink }}>{consumed}</b>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 10.5, color: TOKENS.inkSoft }}>
-          <span style={{ width: 7, height: 7, borderRadius: 999, background: TOKENS.clay, display: "inline-block" }} />{t.today_burned}
+          <span style={{ width: 7, height: 7, borderRadius: 999, background: TOKENS.clay, display: "inline-block" }} />{t.today_burned} <b style={{ color: TOKENS.ink }}>{burned}</b>
         </div>
       </div>
     </div>
@@ -2130,10 +2181,10 @@ function WeekStrip({ viewedISO, weekOffset, onWeekOffset, onPick, logs, target }
   return (
     <div style={{ marginBottom: 16 }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
-        <button onClick={() => onWeekOffset(weekOffset - 1)} style={navArrowStyle}><ChevronLeft size={16} color={TOKENS.inkSoft} /></button>
+        <button onClick={() => onWeekOffset(weekOffset - 1)} style={navArrowStyle}>{t.dir === "rtl" ? <ChevronRight size={16} color={TOKENS.inkSoft} /> : <ChevronLeft size={16} color={TOKENS.inkSoft} />}</button>
         <div style={{ fontSize: 13, fontWeight: 700, color: TOKENS.ink }}>{monthLabel}</div>
         <button onClick={() => weekOffset < 0 && onWeekOffset(weekOffset + 1)} style={{ ...navArrowStyle, opacity: weekOffset >= 0 ? 0.3 : 1, cursor: weekOffset >= 0 ? "default" : "pointer" }} disabled={weekOffset >= 0}>
-          <ChevronRight size={16} color={TOKENS.inkSoft} />
+          {t.dir === "rtl" ? <ChevronLeft size={16} color={TOKENS.inkSoft} /> : <ChevronRight size={16} color={TOKENS.inkSoft} />}
         </button>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 5 }}>
@@ -2191,6 +2242,12 @@ const MEAL_ICONS = { breakfast: Sunrise, lunch: Sun, dinner: Moon, snack: Cookie
 function LogList({ meals, exercises, locked, onDeleteMeal, onDeleteExercise }) {
   const t = useT();
   const [filter, setFilter] = useState("all");
+  const [pendingDelete, setPendingDelete] = useState(null);
+  useEffect(() => {
+    if (!pendingDelete) return undefined;
+    const timer = setTimeout(() => setPendingDelete(null), 3000);
+    return () => clearTimeout(timer);
+  }, [pendingDelete]);
   const mealLabel = { breakfast: t.meal_breakfast, lunch: t.meal_lunch, dinner: t.meal_dinner, snack: t.meal_snack };
   const exLabel = {
     walking: t.ex_walking, running: t.ex_running, cycling: t.ex_cycling, swimming: t.ex_swimming,
@@ -2227,7 +2284,10 @@ function LogList({ meals, exercises, locked, onDeleteMeal, onDeleteExercise }) {
           {filtered.map((r) => {
             const Icon = r.kind === "meal" ? (MEAL_ICONS[r.type] || UtensilsCrossed) : (EX_ICONS[r.type] || Dumbbell);
             const title = r.kind === "meal" ? r.name : (exLabel[r.type] || r.type);
-            const subtitle = r.kind === "meal" ? mealLabel[r.type] : `${r.minutes} ${t.ex_minutes}`;
+            const subtitle = r.kind === "meal"
+              ? `${mealLabel[r.type] || ""}${r.protein ? ` · ${r.protein}g ${t.macro_protein}` : ""}`
+              : `${r.minutes} ${t.ex_minutes}`;
+            const confirming = pendingDelete === r.id;
             const value = r.kind === "meal" ? r.calories : -r.caloriesBurned;
             return (
               <div key={r.id} style={{
@@ -2250,14 +2310,21 @@ function LogList({ meals, exercises, locked, onDeleteMeal, onDeleteExercise }) {
                 </div>
                 {!locked && (
                   <button
-                    onClick={() => (r.kind === "meal" ? onDeleteMeal(r.id) : onDeleteExercise(r.id))}
-                    title={t.log_delete} aria-label={t.log_delete}
+                    onClick={() => {
+                      if (!confirming) { setPendingDelete(r.id); return; }
+                      setPendingDelete(null);
+                      if (r.kind === "meal") onDeleteMeal(r.id); else onDeleteExercise(r.id);
+                    }}
+                    title={confirming ? t.log_delete_q : t.log_delete} aria-label={confirming ? t.log_delete_q : t.log_delete}
                     style={{
-                      width: 26, height: 26, borderRadius: 999, background: "transparent", border: "none",
+                      height: 26, minWidth: 26, padding: confirming ? "0 9px" : 0, borderRadius: 999,
+                      background: confirming ? TOKENS.clay : "transparent", border: "none", gap: 4,
                       display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0,
+                      color: "#fff", fontSize: 11.5, fontWeight: 700, fontFamily: "var(--font-body)",
                     }}
                   >
-                    <Trash2 size={14} color={TOKENS.inkSoft} style={{ pointerEvents: "none" }} />
+                    <Trash2 size={13} color={confirming ? "#fff" : TOKENS.inkSoft} style={{ pointerEvents: "none" }} />
+                    {confirming && <span style={{ pointerEvents: "none" }}>{t.log_delete_q}</span>}
                   </button>
                 )}
               </div>
@@ -2592,7 +2659,10 @@ function ExerciseModal({ onClose, onSave, excess, weight }) {
     if (v !== "walking") setEntryMode("duration");
   }
 
+  const [minErr, setMinErr] = useState(false);
   function logExercise(type, minutes) {
+    if (!(minutes >= 1 && minutes <= 600)) { setMinErr(true); return; }
+    setMinErr(false);
     const rate = burnRatePerMin(type, weight);
     const burned = Math.round(rate * minutes);
     onSave({ id: uid(), type, minutes: Math.round(minutes), caloriesBurned: burned, at: Date.now() });
@@ -2620,7 +2690,7 @@ function ExerciseModal({ onClose, onSave, excess, weight }) {
           <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 20 }}>
             {types.map((type) => {
               const rate = burnRatePerMin(type, weight);
-              const minutes = Math.max(5, Math.round(excess / rate));
+              const minutes = clamp(Math.round(excess / rate), 5, 90);
               const Icon = EX_ICONS[type] || Dumbbell;
               return (
                 <div key={type} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: TOKENS.paperRaised, border: `1px solid ${TOKENS.line}`, borderRadius: 12, padding: "11px 13px" }}>
@@ -2661,9 +2731,10 @@ function ExerciseModal({ onClose, onSave, excess, weight }) {
         </Field>
       ) : (
         <Field label={t.ex_duration}>
-          <input type="number" style={inputStyle} value={manualMin} onChange={(e) => setManualMin(e.target.value)} />
+          <input type="number" inputMode="numeric" min="1" max="600" style={inputStyle} value={manualMin} onChange={(e) => setManualMin(e.target.value)} />
         </Field>
       )}
+      {minErr && <div style={{ fontSize: 12.5, color: TOKENS.clay, marginBottom: 10 }}>{t.ex_err_minutes}</div>}
       <Button variant="primary" full onClick={logManual}>
         <Plus size={16} /> {t.ex_add}
       </Button>
@@ -2677,7 +2748,8 @@ function DaySummaryModal({ onClose, onReopen, target, consumed, burned, mealsCou
   const net = consumed - burned;
   const diff = net - target;
   let msg = t.summary_under;
-  if (diff > target * 0.1) msg = t.summary_over;
+  if (mealsCount > 0 && net < target * 0.7) msg = t.summary_too_low;
+  else if (diff > target * 0.1) msg = t.summary_over;
   else if (Math.abs(diff) > target * 0.03) msg = t.summary_close_call;
   return (
     <Modal title={t.summary_title} onClose={onClose}>
@@ -3247,7 +3319,7 @@ function TodayView({ profile, log, foodCache, viewedISO, onChangeDate, logs, onA
 }
 
 /* ============================== REPORTS VIEW ============================== */
-function ReportsView({ logs, target }) {
+function ReportsView({ logs, target, proteinTarget }) {
   const t = useT();
   const days = useMemo(() => {
     const arr = [];
@@ -3259,16 +3331,20 @@ function ReportsView({ logs, target }) {
       const burned = log ? (log.exercises || []).reduce((s, e) => s + e.caloriesBurned, 0) : 0;
       const net = consumed === null ? null : consumed - burned;
       arr.push({
-        label: d.toLocaleDateString(undefined, { weekday: "short" }),
+        label: t.weekdaysShort[(d.getDay() + 6) % 7],
         net, target,
       });
     }
     return arr;
   }, [logs, target]);
 
-  const closedDays = Object.values(logs).filter((l) => l.closed);
-  const now = new Date();
-  const monthDays = Object.entries(logs).filter(([iso, l]) => l.closed && iso.startsWith(todayISO(now).slice(0, 7)));
+  // Last 30 days, only days where food was actually logged (empty days would drag averages to zero).
+  const since = (() => { const d = new Date(); d.setDate(d.getDate() - 29); return todayISO(d); })();
+  const monthDays = Object.entries(logs).filter(([iso, l]) => iso >= since && iso <= todayISO() && (l.meals || []).length > 0);
+  const closedDays = monthDays;
+  const avgProtein = monthDays.length
+    ? Math.round(monthDays.reduce((s, [, l]) => s + (l.meals || []).reduce((a, m) => a + (m.protein || 0), 0), 0) / monthDays.length)
+    : 0;
   const avgCalories = monthDays.length
     ? Math.round(monthDays.reduce((s, [, l]) => s + ((l.meals || []).reduce((a, m) => a + m.calories, 0) - (l.exercises || []).reduce((a, e) => a + e.caloriesBurned, 0)), 0) / monthDays.length)
     : 0;
@@ -3306,8 +3382,9 @@ function ReportsView({ logs, target }) {
       </div>
 
       <div style={{ fontSize: 13, fontWeight: 700, color: TOKENS.ink, marginBottom: 10 }}>{t.reports_month}</div>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
         <StatCard label={t.reports_avg} value={`${avgCalories}`} sub={t.unit_kcal} />
+        <StatCard label={t.reports_avg_protein} value={`${avgProtein}g`} sub={proteinTarget ? `/ ${proteinTarget}g` : ""} />
         <StatCard label={t.reports_adherence} value={`${avgAdherence}%`} />
         <StatCard label={t.reports_days} value={`${monthDays.length}`} />
       </div>
@@ -3328,6 +3405,17 @@ function StatCard({ label, value, sub }) {
 const LANGS = [{ code: "en", label: "English" }, { code: "ar", label: "العربية" }, { code: "ckb", label: "کوردیی ناوەندی" }];
 function SettingsView({ lang, onLangChange, onEditProfile }) {
   const t = useT();
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteErr, setDeleteErr] = useState(false);
+  async function deleteAccount() {
+    setDeleting(true); setDeleteErr(false);
+    try {
+      await billingCall("delete_account");
+      try { localStorage.removeItem(PENDING_PAYMENT_KEY); } catch (e) {}
+      await supabase.auth.signOut();
+    } catch (e) { setDeleteErr(true); setDeleting(false); }
+  }
   return (
     <Screen>
       <h1 style={{ fontFamily: "var(--font-display)", fontSize: 26, color: TOKENS.herbDeep, margin: "14px 0 18px" }}>{t.settings_title}</h1>
@@ -3355,6 +3443,22 @@ function SettingsView({ lang, onLangChange, onEditProfile }) {
           <LogOut size={15} /> {t.settings_logout}
         </Button>
       </div>
+
+      <button onClick={() => setConfirmDelete(true)} style={{
+        marginTop: 18, width: "100%", background: "none", border: "none", cursor: "pointer",
+        color: TOKENS.inkSoft, fontSize: 12.5, textDecoration: "underline", fontFamily: "var(--font-body)",
+      }}>{t.settings_delete}</button>
+
+      {confirmDelete && (
+        <Modal title={t.settings_delete_title} onClose={() => !deleting && setConfirmDelete(false)}>
+          <div style={{ fontSize: 14, color: TOKENS.ink, lineHeight: 1.6, marginBottom: 18 }}>{t.settings_delete_body}</div>
+          {deleteErr && <div style={{ fontSize: 12.5, color: TOKENS.clay, marginBottom: 12 }}>{t.save_failed}</div>}
+          <Button variant="danger" full onClick={deleteAccount} disabled={deleting}>
+            {deleting ? <Loader2 size={16} className="spin" /> : <Trash2 size={15} />} {t.settings_delete_confirm}
+          </Button>
+          <Button variant="ghost" full style={{ marginTop: 10 }} onClick={() => setConfirmDelete(false)} disabled={deleting}>{t.cancel}</Button>
+        </Modal>
+      )}
     </Screen>
   );
 }
@@ -4636,6 +4740,13 @@ export default function App() {
   const [langMenuOpen, setLangMenuOpen] = useState(false);
   const [todayDate, setTodayDate] = useState(todayISO());
   const [planInfo, setPlanInfo] = useState(null);
+  const [toast, setToast] = useState(null);
+  useEffect(() => {
+    let timer;
+    const onToast = (e) => { setToast((e.detail && e.detail.key) || "save_failed"); clearTimeout(timer); timer = setTimeout(() => setToast(null), 4000); };
+    window.addEventListener("yb-toast", onToast);
+    return () => { window.removeEventListener("yb-toast", onToast); clearTimeout(timer); };
+  }, []);
   const [upgradeReason, setUpgradeReason] = useState(null);
 
   const refreshPlan = useCallback(async (opts = {}) => {
@@ -4679,6 +4790,7 @@ export default function App() {
       if (p) setProfile({ ...p, ...computeTargets(p) });
       if (l) setLogs(l);
       if (la) setLang(la);
+      else { const l = initialLang(); setLang(l); saveLang(l); }
       if (fc) setFoodCache(fc);
       if (tp) setTrainingPlan(tp);
       setReady(true);
@@ -4705,6 +4817,8 @@ export default function App() {
       const nowISO = todayISO();
       if (nowISO !== todayDate) {
         setTodayDate(nowISO);
+        // Still looking at "today" from before midnight? Move to the new day.
+        setViewedISO((v) => (v === todayDate ? nowISO : v));
         autoCloseOverdueDays(logsRef.current, nowISO);
       }
     }, 60000);
@@ -4734,7 +4848,7 @@ export default function App() {
 
   async function handleAddMeal(meal) {
     const id = await insertMealRow(viewedISO, meal);
-    if (!id) return;
+    if (!id) { notify("save_failed"); return; }
     const savedMeal = { ...meal, id };
     setLogs((prev) => {
       const day = prev[viewedISO] || { meals: [], exercises: [], closed: false };
@@ -4749,6 +4863,7 @@ export default function App() {
       const id = await insertMealRow(viewedISO, meal);
       if (id) saved.push({ ...meal, id });
     }
+    if (saved.length < meals.length) notify("save_failed");
     if (!saved.length) return;
     setLogs((prev) => {
       const day = prev[viewedISO] || { meals: [], exercises: [], closed: false };
@@ -4758,7 +4873,7 @@ export default function App() {
   }
   async function handleAddExercise(ex) {
     const id = await insertExerciseRow(viewedISO, ex);
-    if (!id) return;
+    if (!id) { notify("save_failed"); return; }
     const savedEx = { ...ex, id };
     setLogs((prev) => {
       const day = prev[viewedISO] || { meals: [], exercises: [], closed: false };
@@ -4781,7 +4896,7 @@ export default function App() {
   }
   async function handleCompleteWorkout(entry) {
     const id = await insertExerciseRow(today, entry);
-    if (!id) return;
+    if (!id) { notify("save_failed"); return; }
     const savedEx = { ...entry, id };
     setLogs((prev) => {
       const day = prev[today] || { meals: [], exercises: [], closed: false };
@@ -4807,6 +4922,7 @@ export default function App() {
   function handleLangChange(l) {
     setLang(l);
     saveLang(l);
+    try { localStorage.setItem(LANG_STORAGE_KEY, l); } catch (e) {}
   }
   function handleProfileSaved(p) {
     setProfile(p);
@@ -4920,7 +5036,7 @@ export default function App() {
                 onCloseDay={handleCloseDay} onOpenSummary={() => setShowSummary(true)}
               />
             )}
-            {view === "reports" && <ReportsView logs={logs} target={profile.calorieTarget} />}
+            {view === "reports" && <ReportsView logs={logs} target={profile.calorieTarget} proteinTarget={profile.proteinTarget} />}
             {view === "training" && (
               <TrainingView
                 profile={profile} plan={trainingPlan}
@@ -4950,6 +5066,15 @@ export default function App() {
         )}
 
         {upgradeReason && <UpgradeModal reason={upgradeReason} onClose={() => setUpgradeReason(null)} />}
+        {toast && t[toast] && (
+          <div role="status" style={{
+            position: "fixed", bottom: 84, insetInlineStart: 16, insetInlineEnd: 16, zIndex: 70, display: "flex", justifyContent: "center", pointerEvents: "none",
+          }}>
+            <div style={{ maxWidth: 440, background: TOKENS.ink, color: TOKENS.cream, borderRadius: 12, padding: "11px 15px", fontSize: 13.5, lineHeight: 1.45, boxShadow: "0 8px 24px rgba(0,0,0,.25)" }}>
+              {t[toast]}
+            </div>
+          </div>
+        )}
       </div>
      </PlanContext.Provider>
     </I18nContext.Provider>

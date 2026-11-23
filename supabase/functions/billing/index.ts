@@ -131,6 +131,14 @@ Deno.serve(async (req) => {
       return json({ status, plan: await getPlan(admin, user.id) });
     }
 
+    // The user deletes their own account. Every table references auth.users with
+    // "on delete cascade", so this removes all of their data too.
+    if (action === "delete_account") {
+      const { error } = await admin.auth.admin.deleteUser(user.id);
+      if (error) throw error;
+      return json({ ok: true });
+    }
+
     if (action === "admin_activate") {
       if (!isAdminEmail(user.email)) return json({ error: "forbidden" }, 403);
       const tier = ["free", "pro", "pro_plus"].includes(body.tier) ? body.tier : null;
