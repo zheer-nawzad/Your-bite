@@ -178,6 +178,9 @@ const DICT = {
     train_err_days: "Pick at least one training day first.", train_err_generic: "Couldn't generate a plan — try again.",
     train_week: "Week", train_your_split: "Your split", train_progression: "This week's focus",
     prot_title: "Daily protein", prot_total: "Total", prot_per_kg: "{gkg} g per kg of body weight per day",
+    prot_food_title: "From food",
+    prot_supp_explain: "You need {total}g of protein a day. Your {supp} gives you {s}g ({servings} × {per}g), so you only need {food}g from food — split over your meals below.",
+    prot_supp_covers: "You need {total}g of protein a day. Your {supp} already gives you {s}g, which covers all of it — eat normal meals for your calories.",
     prot_why_lose: "Higher protein protects your muscle while you lose fat.",
     prot_why_maintain: "Enough to keep your muscle and recover from training.",
     prot_why_gain: "Gives your muscles what they need to grow with your extra calories.",
@@ -355,6 +358,9 @@ const DICT = {
     train_err_days: "اختر يوم تدريب واحدًا على الأقل أولًا.", train_err_generic: "تعذّر إنشاء خطة — حاول مجددًا.",
     train_week: "الأسبوع", train_your_split: "تقسيمتك", train_progression: "تركيز هذا الأسبوع",
     prot_title: "البروتين اليومي", prot_total: "المجموع", prot_per_kg: "{gkg} غ لكل كغ من وزن الجسم يوميًا",
+    prot_food_title: "من الطعام",
+    prot_supp_explain: "تحتاج {total} غ من البروتين يوميًا. يعطيك {supp} {s} غ ({servings} × {per} غ)، لذلك تحتاج فقط {food} غ من الطعام — موزعة على وجباتك أدناه.",
+    prot_supp_covers: "تحتاج {total} غ من البروتين يوميًا. يعطيك {supp} {s} غ وهذا يغطي الكمية كلها — تناول وجبات عادية لسعراتك.",
     prot_why_lose: "البروتين العالي يحمي عضلاتك أثناء خسارة الدهون.",
     prot_why_maintain: "كمية كافية للحفاظ على عضلاتك والتعافي من التمارين.",
     prot_why_gain: "يمنح عضلاتك ما تحتاجه للنمو مع السعرات الإضافية.",
@@ -532,6 +538,9 @@ const DICT = {
     train_err_days: "سەرەتا لانیکەم یەک ڕۆژی ڕاهێنان هەڵبژێرە.", train_err_generic: "نەمانتوانی پلانێک دروست بکەین — دووبارە هەوڵ بدە.",
     train_week: "هەفتە", train_your_split: "دابەشکردنی ڕاهێنانت", train_progression: "سەرنجی ئەم هەفتەیە",
     prot_title: "پرۆتینی ڕۆژانە", prot_total: "کۆی گشتی", prot_per_kg: "{gkg} گرام بۆ هەر کیلۆیەک لە کێشی لەش لە ڕۆژێکدا",
+    prot_food_title: "لە خواردنەوە",
+    prot_supp_explain: "ڕۆژانە پێویستت بە {total} گرام پرۆتینە. {supp} ـەکەت {s} گرامت پێدەدات ({servings} × {per} گرام)، بۆیە تەنها {food} گرام لە خواردن پێویستە — بەسەر ژەمەکانی خوارەوەدا دابەشکراوە.",
+    prot_supp_covers: "ڕۆژانە پێویستت بە {total} گرام پرۆتینە. {supp} ـەکەت {s} گرامت پێدەدات کە هەمووی پڕدەکاتەوە — ژەمی ئاسایی بخۆ بۆ کالۆرییەکانت.",
     prot_why_lose: "پرۆتینی زیاتر ماسولکەکانت دەپارێزێت لە کاتی کەمکردنەوەی چەوری.",
     prot_why_maintain: "بەسە بۆ پاراستنی ماسولکەکانت و چاکبوونەوە لە ڕاهێنان.",
     prot_why_gain: "ئەوەی ماسولکەکانت پێویستیانە بۆ گەشەکردن لەگەڵ کالۆریی زیادە پێیان دەدات.",
@@ -1337,22 +1346,39 @@ const GOAL_DESC_EN = {
 const GOAL_LABEL_KEY = { lose: "goal_lose", maintain: "goal_maintain", gain: "goal_gain", leanGain: "goal_lean_gain", recomp: "goal_recomp" };
 
 const GOAL_TRAINING_STYLE = {
-  lose: "Favor moderate-to-higher rep ranges (10-15) with shorter rest periods, mixing compound lifts with higher-rep accessory work. The calorie deficit is what drives fat loss — training's job here is preserving muscle and keeping metabolic demand reasonably high, not chasing maximal strength.",
+  lose: "Favor moderate-to-higher rep ranges (10-15) with shorter rest periods, mixing compound lifts with higher-rep accessory work. The calorie deficit is what drives fat loss — training's job here is preserving muscle and keeping metabolic demand reasonably high, not chasing maximal strength. On 2-3 of the days, add a 10-20 minute cardio finisher as the last exercise (e.g. {\"name\":\"Incline Treadmill Walk\",\"sets\":1,\"reps\":\"15 min\"}, or brisk walking / jump rope at home).",
   maintain: "Use a balanced mix of rep ranges (8-15) across compound and accessory work. This is general fitness upkeep, not a specialized phase — nothing needs to be pushed to an extreme.",
   gain: "Favor moderate rep ranges (8-12) on compound lifts and slightly higher (10-15) on accessories, with generous overall volume. There's a comfortable calorie surplus to fuel recovery, so more total weekly work is appropriate and well tolerated.",
   leanGain: "Prioritize compound lifts in the 6-10 rep range for strength-and-size efficiency, with accessories in the 8-12 range. Keep volume purposeful rather than maximal — the surplus is smaller than a standard bulk, so every set should earn its place rather than just adding junk volume.",
   recomp: "Prioritize compound lifts in the 6-10 rep range with genuine progressive overload — that's what preserves and builds muscle while in a deficit. Keep total weekly volume moderate rather than high, since recovery capacity is reduced on a deficit, and favor a structure (full-body or upper/lower) where each muscle group still gets trained at least twice a week rather than a very high-frequency body-part split.",
 };
 
+// How hard / complex the program is, by experience level.
+const EXPERIENCE_STYLE = {
+  beginner: "BEGINNER — keep it simple and safe. Use full-body or upper/lower workouts with 4-5 exercises each and 2-3 sets per exercise. Pick easy-to-learn movements: machines, dumbbells and basic bodyweight moves (e.g. leg press, machine chest press, lat pulldown, goblet squat, push-ups, seated row). No advanced techniques (no drop sets, supersets or training to failure) — stop every set with 2-3 reps still in the tank. Week-to-week progress = small, steady increases.",
+  intermediate: "INTERMEDIATE — 5-6 exercises per workout, 3-4 sets each, a mix of free weights and machines. Train every muscle about twice a week. Stop most sets 1-2 reps before failure; supersets on accessory exercises are fine.",
+  advanced: "ADVANCED — 6-7 exercises per workout, 3-5 sets each. Start with heavy compound lifts, then higher-volume accessories (about 12-20 hard sets per muscle per week). Use intensity techniques (drop sets, rest-pause, supersets) on the last set of accessory exercises, especially for focus areas.",
+};
+
 async function generateTrainingProgram({ goal, experience, equipment, weekdays, focusAreas, age, lang }) {
   const activeFocus = (focusAreas || []).filter((f) => f && f !== "whole");
   const isFatLossGoal = goal === "lose" || goal === "recomp";
-  const separationNote = activeFocus.length > 1
-    ? ` These are separate priorities, not a combo — do NOT stack two of them as extra emphasis on the same day (e.g. don't pile extra chest work and extra shoulder work onto one single day, since both are push muscles and that overloads that day). Instead, if the number of training days allows it, give each focus area its own separate day, paired with a complementary group that makes sense (e.g. chest with triceps, shoulders on their own or with a light accessory group, back with biceps) — a classic body-part-split style division across the week is a good fit for this. Only if there genuinely aren't enough training days to separate them should you spread the extra volume thinner across a shared day instead of dropping any of the focus areas.`
-    : ``;
+  const isBeginner = experience === "beginner";
   const focusNote = activeFocus.length
-    ? `\nThis person specifically wants extra focus on: ${activeFocus.map((f) => FOCUS_AREA_LABEL_EN[f] || f).join(", ")}.${separationNote} This should still be a complete, balanced program that covers the whole body normally with no gaps — don't neglect any other muscle group — but on the day(s) dedicated to each focus area, push it noticeably harder: add 1-2 extra exercises and/or extra sets for it compared to other muscle groups, so it clearly gets more effective, harder training than the rest of the body. ${isFatLossGoal ? "Note: fat loss happens across the whole body from the calorie deficit, not just these areas — but you can still add targeted strengthening/toning work for them." : ""}\n`
-    : "";
+    ? `\nFOCUS AREAS: ${activeFocus.map((f) => FOCUS_AREA_LABEL_EN[f] || f).join(", ")}. The person wants these to grow faster, so make them the clear priority:
+- Train each focus area at least 2 times per week if the number of days allows it.
+- On every day that trains a focus area, put its exercises FIRST (while fresh) and make them ${isBeginner ? "noticeably harder than the rest of the body, but still beginner-safe: 1 extra exercise for it and 3 sets, no training to failure" : "hard and aggressive: 2-3 exercises for it, 4 sets each, heavier loads, the last set taken close to failure" + (experience === "advanced" ? ", plus a drop set or rest-pause on the last set" : "")}.
+- Give each focus area about 30-50% more weekly sets than the non-focus muscles.
+- If two focus areas are trained on the same day (e.g. chest and shoulders on a push day), train BOTH hard on that day, lead with the bigger muscle (chest before shoulders, back before arms, legs before core), and make room by cutting non-focus accessory work on that day — keep the day to at most 8 exercises.
+- Still train every other muscle group normally — no gaps.
+- Name the focus in that day's title (e.g. "Push — Chest & Shoulders focus").${isFatLossGoal ? "\nNote: fat loss happens across the whole body from the calorie deficit, not only in these areas — the extra work builds and shapes the focus muscles." : ""}\n`
+    : `\nNO FOCUS AREA (whole body): the program must be BALANCED — give every major muscle group (chest, back, shoulders, arms, legs/glutes, core) roughly equal weekly sets and train each about twice a week where the days allow. Don't favor any one area.\n`;
+  const dayCount = (weekdays || []).length;
+  const daysNote = isBeginner && dayCount > 4
+    ? `\nThis beginner chose ${dayCount} training days. Beginners recover slower: make at most 3-4 of them real strength workouts and make the others light days (20-30 min brisk walking or easy cardio, plus mobility and core). Never put hard strength workouts on more than 2 days in a row.\n`
+    : dayCount >= 6
+      ? `\nWith ${dayCount} training days, make sure no muscle group is trained hard on two days in a row, and make one day lighter (cardio, mobility, core).\n`
+      : "";
   const ageNote = age
     ? age >= 50
       ? `\nThis person is ${age} years old. Favor joint-friendly variations and controlled tempos where a lower-impact option exists without sacrificing effectiveness (e.g. leg press or goblet squat alongside/instead of only heavy barbell back squat, machine or cable variations for pressing/pulling where reasonable), and keep the progression notes a bit more conservative week to week.\n`
@@ -1372,14 +1398,24 @@ async function generateTrainingProgram({ goal, experience, equipment, weekdays, 
 Goal: ${GOAL_DESC_EN[goal] || goal}
 Training approach for this specific goal: ${goalStyle}
 Experience level: ${experience}
+How to train at this level: ${EXPERIENCE_STYLE[experience] || EXPERIENCE_STYLE.intermediate}
 Where they train: ${equipment === "gym" ? "a full gym with machines and free weights" : "at home with minimal/no equipment (bodyweight, maybe light dumbbells)"}
 Training days (fixed weekly schedule): ${weekdays.join(", ")}
-${focusNote}${ageNote}${langNote}${ckbVocabNote}
-Design ONE workout for each of those training days (a sensible split like push/pull/legs, upper/lower, a body-part split, or full-body depending on the number of days, the goal's training approach above, and any focus areas above), reused every week for 4 weeks with the progression notes below driving intensity changes. Keep each workout to 5-7 exercises, and prefer common, well-known exercise names (e.g. "Barbell Bench Press", "Bent-Over Row", "Leg Press") so they're easy to recognize. Make sure the split as a whole gives complete, well-rounded coverage across the week with no gaps — don't skip muscle groups just because they're smaller: include direct core/abs work (e.g. plank, cable crunch, hanging leg raise) on at least one day, calves on at least one leg day, and some forearm/grip work where it naturally fits (e.g. on a pull or arm day) — fit these in as 1 of the 5-7 exercises on the most relevant day(s) rather than skipping them entirely. Set each exercise's sets/reps to actually match the goal's training approach above, not a generic default. Also give a one-line progression note for each of the 4 weeks that reflects this goal specifically (e.g. how to increase difficulty week to week, with week 4 as a lighter deload week).
+${focusNote}${daysNote}${ageNote}${langNote}${ckbVocabNote}
+Design ONE workout for each of those training days (a sensible split like push/pull/legs, upper/lower, a body-part split, or full-body depending on the number of days, the goal's training approach above, and any focus areas above), reused every week for 4 weeks with the progression notes below driving intensity changes. Keep each workout to the exercise count given for their experience level above (never more than 8), and prefer common, well-known exercise names (e.g. "Barbell Bench Press", "Bent-Over Row", "Leg Press") so they're easy to recognize. Make sure the split as a whole gives complete, well-rounded coverage across the week with no gaps — don't skip muscle groups just because they're smaller: include direct core/abs work (e.g. plank, cable crunch, hanging leg raise) on at least one day, calves on at least one leg day, and some forearm/grip work where it naturally fits (e.g. on a pull or arm day) — fit these in as 1 of the 5-7 exercises on the most relevant day(s) rather than skipping them entirely. Set each exercise's sets/reps to actually match the goal's training approach above, not a generic default. Also give a one-line progression note for each of the 4 weeks that reflects this goal specifically (e.g. how to increase difficulty week to week, with week 4 as a lighter deload week).
 Respond with ONLY compact raw JSON, no markdown, no explanation, in this exact shape:
-{"splitName":"short name for this split","days":[{"weekday":"monday","title":"short workout title","exercises":[{"name":"exercise name","sets":3,"reps":"8-12"}]}],"progression":[{"week":1,"note":"short note"},{"week":2,"note":"..."},{"week":3,"note":"..."},{"week":4,"note":"..."}],"summary":"1-2 sentence overview of the plan and how to approach it safely"}`;
+{"splitName":"short name for this split","days":[{"weekday":"monday","title":"short workout title","exercises":[{"name":"exercise name","sets":3,"reps":"8-12"}]}],"progression":[{"week":1,"note":"short note"},{"week":2,"note":"..."},{"week":3,"note":"..."},{"week":4,"note":"..."}],"summary":"1-2 sentence overview of the plan and how to approach it safely"}
+The "weekday" field must be exactly one of: ${weekdays.join(", ")} (lowercase English, even when writing in another language) — exactly one entry for each of those days.`;
 
-  return callClaude(promptText, 2200, lang, { feature: "training" });
+  let last = null;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const r = await callClaude(promptText, 2600, lang, { feature: "training" });
+    const days = (r && r.days) || [];
+    const got = new Set(days.map((d) => String(d.weekday || "").toLowerCase().trim()));
+    if (weekdays.every((w) => got.has(w)) && days.every((d) => (d.exercises || []).length > 0)) return r;
+    last = r;
+  }
+  return last;
 }
 
 const KURDISH_MAIN_DISHES = [
@@ -1535,6 +1571,7 @@ function buildTrainerContext(profile, plan) {
   const prot = plan.dailyProteinTarget || plan.mealProteinTarget;
   if (cal) lines.push(`Daily calorie target: ~${cal} kcal${prot ? `, protein target: ~${prot}g` : ""}`);
   if (plan.supplement && plan.supplement !== "none") {
+    if (prot) lines.push(`Protein still needed from food after the supplement: ~${Math.max(prot - (plan.supplementProtein || 0), 0)}g (the supplement already covers ${plan.supplementProtein || 0}g)`);
     lines.push(`Takes ${plan.supplementServings || 1} serving(s)/day of ${plan.supplement === "whey" ? "whey protein" : "a mass gainer"} (~${plan.supplementProtein || 0}g protein, ~${plan.supplementCalories || 0} kcal)`);
   }
   if (plan.days && plan.days.length) {
@@ -3413,6 +3450,24 @@ function ProteinGuide({ profile, plan }) {
       </div>
       <div style={{ fontSize: 12, color: TOKENS.herbDeep, fontWeight: 600, marginTop: 2 }}>{t.prot_per_kg.replace("{gkg}", p.gPerKg)}</div>
       <div style={{ fontSize: 12, color: TOKENS.inkSoft, lineHeight: 1.5, margin: "4px 0 8px" }}>{t[`prot_why_${profile.goal}`] || ""}</div>
+      {p.supplement > 0 && (
+        <div style={{ background: `${TOKENS.herb}12`, border: `1px solid ${TOKENS.herb}33`, borderRadius: 12, padding: "10px 12px", margin: "4px 0 10px" }}>
+          <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8 }}>
+            <span style={{ fontSize: 13, fontWeight: 700, color: TOKENS.herbDeep }}>{t.prot_food_title}</span>
+            <span dir="ltr" style={{ fontSize: 13, color: TOKENS.inkSoft }}>
+              <span style={{ textDecoration: "line-through" }}>{p.total}g</span>
+              <span style={{ margin: "0 6px" }}>→</span>
+              <span style={{ fontFamily: "var(--font-display)", fontSize: 20, fontWeight: 700, color: TOKENS.herbDeep }}>{Math.max(p.total - p.supplement, 0)}g</span>
+            </span>
+          </div>
+          <div style={{ fontSize: 12, color: TOKENS.ink, lineHeight: 1.55, marginTop: 4 }}>
+            {fill(p.supplement >= p.total ? t.prot_supp_covers : t.prot_supp_explain, {
+              total: p.total, supp: plan.supplement === "gainer" ? t.train_supplement_gainer : t.train_supplement_whey,
+              s: p.supplement, servings: p.servings, per: p.perServing, food: Math.max(p.total - p.supplement, 0),
+            })}
+          </div>
+        </div>
+      )}
       {rows.map((r) => (
         <div key={r.key} style={rowStyle}>
           <r.icon size={16} color={TOKENS.herb} style={{ flexShrink: 0 }} />
