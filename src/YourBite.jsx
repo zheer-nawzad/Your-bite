@@ -1360,7 +1360,41 @@ const EXPERIENCE_STYLE = {
   advanced: "ADVANCED — 6-7 exercises per workout, 3-5 sets each. Start with heavy compound lifts, then higher-volume accessories (about 12-20 hard sets per muscle per week). Use intensity techniques (drop sets, rest-pause, supersets) on the last set of accessory exercises, especially for focus areas.",
 };
 
-async function generateTrainingProgram({ goal, experience, equipment, weekdays, focusAreas, age, lang }) {
+// The person's body, daily life and calorie targets, plus what they mean for
+// training — so two people only get the same plan when their profiles match.
+const ACTIVITY_DESC_EN = {
+  sedentary: "sits most of the day (desk job, little walking)",
+  light: "lightly active day to day",
+  moderate: "moderately active day to day",
+  active: "very active day to day (on their feet a lot)",
+  very: "extremely active day to day (physical job or lots of sport)",
+};
+function trainingProfileNote(profile) {
+  if (!profile) return "";
+  const targets = computeTargets(profile);
+  const bmi = calcBMI(profile.weight, profile.height);
+  const whtr = calcWHtR(profile.waist, profile.height);
+  const balance = targets.calorieTarget - targets.tdee;
+  const facts = [
+    profile.gender && `Sex: ${profile.gender}`,
+    profile.weight && profile.height && `Body: ${profile.weight} kg, ${profile.height} cm${bmi ? `, BMI ${bmi.toFixed(1)}` : ""}`,
+    whtr && `Waist: ${profile.waist} cm (waist-to-height ratio ${whtr.toFixed(2)})`,
+    profile.activity && `Outside training: ${ACTIVITY_DESC_EN[profile.activity] || profile.activity}`,
+    `Daily calories: ${targets.calorieTarget} kcal (maintenance ~${targets.tdee} kcal, so a ${balance < 0 ? `${-balance} kcal deficit` : balance > 0 ? `${balance} kcal surplus` : "maintenance intake"}), protein target ${targets.proteinTarget} g/day`,
+  ].filter(Boolean);
+  const rules = [];
+  if (bmi && bmi >= 30) rules.push("Higher body weight: use low-impact, joint-friendly choices — no jumping, burpees or running intervals; use cycling, incline walking, rowing or elliptical for cardio; favor machines and supported exercises that are kind to knees and lower back; add regular cardio for health.");
+  else if (bmi && bmi >= 25 && (profile.goal === "lose" || profile.goal === "recomp")) rules.push("Somewhat above a healthy weight while trying to lose fat: include a little more cardio (2-3 short sessions a week) and keep jumping moves to a minimum.");
+  if (bmi && bmi < 18.5) rules.push("Underweight: keep cardio to a minimum and build the plan around compound strength lifts to add muscle.");
+  if (whtr && whtr >= 0.5) rules.push("High waist-to-height ratio (belly fat, a health risk): include regular cardio / daily steps and core strengthening.");
+  if (profile.activity === "sedentary") rules.push("Sits most of the day: add mobility for hips and upper back and posture work (rows, face pulls, glute bridges), and start week 1 a little easier so the body can adapt.");
+  if (profile.activity === "active" || profile.activity === "very") rules.push("Already very active outside the gym: keep extra cardio low and watch total fatigue — recovery matters more than extra volume.");
+  if (balance <= -400) rules.push("Large calorie deficit: keep volume moderate (recovery is limited) and prioritize heavy compound lifts to protect muscle.");
+  if (balance >= 250) rules.push("Eating in a surplus: they can recover from more volume, so use the higher end of the set ranges.");
+  return `\nPERSON: ${facts.join(" | ")}\n${rules.length ? `Because of this person's profile:\n- ${rules.join("\n- ")}\n` : ""}Use ALL of these details — not just the goal — to choose exercises, volume, cardio and progression, so this plan fits this specific person. In the summary, mention 1-2 personal reasons why the plan is built this way (e.g. their activity level, weight or calorie target).\n`;
+}
+
+async function generateTrainingProgram({ goal, experience, equipment, weekdays, focusAreas, age, lang, profile }) {
   const activeFocus = (focusAreas || []).filter((f) => f && f !== "whole");
   const isFatLossGoal = goal === "lose" || goal === "recomp";
   const isBeginner = experience === "beginner";
@@ -1396,7 +1430,7 @@ async function generateTrainingProgram({ goal, experience, equipment, weekdays, 
   const goalStyle = GOAL_TRAINING_STYLE[goal] || GOAL_TRAINING_STYLE.maintain;
   const promptText = `You are a certified strength & conditioning coach. Design a repeating weekly workout split for this person:
 Goal: ${GOAL_DESC_EN[goal] || goal}
-Training approach for this specific goal: ${goalStyle}
+${trainingProfileNote(profile)}Training approach for this specific goal: ${goalStyle}
 Experience level: ${experience}
 How to train at this level: ${EXPERIENCE_STYLE[experience] || EXPERIENCE_STYLE.intermediate}
 Where they train: ${equipment === "gym" ? "a full gym with machines and free weights" : "at home with minimal/no equipment (bodyweight, maybe light dumbbells)"}
@@ -3240,7 +3274,7 @@ function TrainingSetup({ profile, onGenerate, onUpdateWaist, lang }) {
         protein: servings * (Number(servingProtein) || 0),
         calories: servings * (Number(servingCalories) || 0),
       };
-      const program = await generateTrainingProgram({ goal: profile.goal, experience, equipment, weekdays: orderedDays, focusAreas, age: profile.age, lang });
+      const program = await generateTrainingProgram({ goal: profile.goal, experience, equipment, weekdays: orderedDays, focusAreas, age: profile.age, lang, profile });
       onGenerate({
         goal: profile.goal, experience, equipment, weekdays: orderedDays, focusAreas, contentLang: lang || "en",
         splitName: program.splitName || "",
