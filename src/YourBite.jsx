@@ -48,11 +48,11 @@ const DICT = {
     onb_weight: "Weight", onb_weight_unit: "kg",
     onb_height: "Height", onb_height_unit: "cm",
     onb_activity: "Activity level",
-    act_sedentary: "Sedentary", act_sedentary_d: "Little to no exercise",
-    act_light: "Light", act_light_d: "Exercise 1–3 days a week",
-    act_moderate: "Moderate", act_moderate_d: "Exercise 3–5 days a week",
-    act_active: "Active", act_active_d: "Exercise 6–7 days a week",
-    act_very: "Very active", act_very_d: "Hard exercise, physical job",
+    act_sedentary: "Sedentary", act_sedentary_d: "Desk job, little walking",
+    act_light: "Light", act_light_d: "On your feet some of the day (e.g. teacher, shop)",
+    act_moderate: "Moderate", act_moderate_d: "On your feet most of the day, lots of walking",
+    act_active: "Active", act_active_d: "Physical job (e.g. construction, delivery)",
+    act_very: "Very active", act_very_d: "Very hard physical work, or a full-time athlete",
     onb_goal: "Goal", goal_lose: "Lose weight", goal_maintain: "Maintain weight", goal_gain: "Gain weight",
     goal_lean_gain: "Gain weight (muscle)", goal_lean_gain_sub: "Smaller surplus, higher protein — build muscle with less fat gain",
     goal_recomp: "Gain muscle & lose fat", goal_recomp_sub: "Small deficit, very high protein — body recomposition",
@@ -178,6 +178,17 @@ const DICT = {
     train_err_days: "Pick at least one training day first.", train_err_generic: "Couldn't generate a plan — try again.",
     train_week: "Week", train_your_split: "Your split", train_progression: "This week's focus",
     prot_title: "Daily protein", prot_total: "Total", prot_per_kg: "{gkg} g per kg of body weight per day",
+    onb_waist: "Waist (optional)",
+    onb_waist_hint: "Measure around your belly button. It helps us judge belly fat better than weight alone.",
+    onb_activity_hint: "Your normal day, NOT counting workouts — workouts you log are added on top.",
+    goal_lose_sub: "Calorie deficit — about 0.5 kg less per week",
+    goal_maintain_sub: "Keep your current weight",
+    goal_gain_sub: "Bigger surplus — faster weight gain, but more fat too",
+    goal_warn_under: "Your BMI is {bmi} (underweight). Losing weight isn't healthy for you — choose Maintain or Gain weight (muscle).",
+    goal_warn_gain_high: "Your BMI is {bmi}. Plain weight gain would add mostly fat — Gain weight (muscle) or Gain muscle & lose fat suits you better.",
+    goal_warn_teen: "Under 18: we keep the calorie deficit small so your body can keep growing.",
+    onb_preview: "Your daily target: {kcal} kcal · {p}g protein",
+    onb_preview_sub: "Maintenance ~{tdee} kcal · BMI {bmi}",
     train_injury: "Any injuries or pain? (optional)",
     train_injury_hint: "We'll avoid exercises that stress these areas.",
     injury_none: "No injuries",
@@ -251,11 +262,11 @@ const DICT = {
     onb_weight: "الوزن", onb_weight_unit: "كغم",
     onb_height: "الطول", onb_height_unit: "سم",
     onb_activity: "مستوى النشاط",
-    act_sedentary: "خامل", act_sedentary_d: "قليل أو بلا رياضة",
-    act_light: "خفيف", act_light_d: "رياضة ١-٣ أيام أسبوعيًا",
-    act_moderate: "متوسط", act_moderate_d: "رياضة ٣-٥ أيام أسبوعيًا",
-    act_active: "نشيط", act_active_d: "رياضة ٦-٧ أيام أسبوعيًا",
-    act_very: "نشيط جدًا", act_very_d: "رياضة شاقة أو عمل بدني",
+    act_sedentary: "خامل", act_sedentary_d: "عمل مكتبي، مشي قليل",
+    act_light: "خفيف", act_light_d: "واقف جزءًا من اليوم (مثل معلم، متجر)",
+    act_moderate: "متوسط", act_moderate_d: "واقف معظم اليوم مع مشي كثير",
+    act_active: "نشيط", act_active_d: "عمل بدني (مثل البناء أو التوصيل)",
+    act_very: "نشيط جدًا", act_very_d: "عمل بدني شاق جدًا أو رياضي محترف",
     onb_goal: "الهدف", goal_lose: "إنقاص الوزن", goal_maintain: "الحفاظ على الوزن", goal_gain: "زيادة الوزن",
     goal_lean_gain: "زيادة الوزن (عضلات)", goal_lean_gain_sub: "فائض أقل وبروتين أعلى — بناء عضلات بدهون أقل",
     goal_recomp: "بناء عضلات وخسارة دهون معًا", goal_recomp_sub: "عجز بسيط وبروتين عالٍ جدًا — إعادة تكوين الجسم",
@@ -381,6 +392,17 @@ const DICT = {
     train_err_days: "اختر يوم تدريب واحدًا على الأقل أولًا.", train_err_generic: "تعذّر إنشاء خطة — حاول مجددًا.",
     train_week: "الأسبوع", train_your_split: "تقسيمتك", train_progression: "تركيز هذا الأسبوع",
     prot_title: "البروتين اليومي", prot_total: "المجموع", prot_per_kg: "{gkg} غ لكل كغ من وزن الجسم يوميًا",
+    onb_waist: "محيط الخصر (اختياري)",
+    onb_waist_hint: "قِسه حول السرّة. يساعدنا على تقدير دهون البطن أفضل من الوزن وحده.",
+    onb_activity_hint: "يومك العادي دون احتساب التمارين — التمارين التي تسجّلها تُضاف فوقه.",
+    goal_lose_sub: "عجز في السعرات — حوالي 0.5 كغ أقل أسبوعيًا",
+    goal_maintain_sub: "حافظ على وزنك الحالي",
+    goal_gain_sub: "فائض أكبر — زيادة أسرع في الوزن مع دهون أكثر",
+    goal_warn_under: "مؤشر كتلة جسمك {bmi} (نقص في الوزن). خسارة الوزن ليست صحية لك — اختر الحفاظ على الوزن أو زيادة الوزن (عضل).",
+    goal_warn_gain_high: "مؤشر كتلة جسمك {bmi}. زيادة الوزن العادية ستضيف دهونًا في الغالب — زيادة الوزن (عضل) أو بناء العضل مع خسارة الدهون أنسب لك.",
+    goal_warn_teen: "أقل من 18 عامًا: نُبقي عجز السعرات صغيرًا حتى يواصل جسمك النمو.",
+    onb_preview: "هدفك اليومي: {kcal} سعرة · {p} غ بروتين",
+    onb_preview_sub: "سعرات الثبات ~{tdee} · مؤشر الكتلة {bmi}",
     train_injury: "هل لديك إصابة أو ألم؟ (اختياري)",
     train_injury_hint: "سنتجنب التمارين التي تضغط على هذه المناطق.",
     injury_none: "لا توجد إصابات",
@@ -454,11 +476,11 @@ const DICT = {
     onb_weight: "کێش", onb_weight_unit: "کیلۆگرام",
     onb_height: "باڵا", onb_height_unit: "سانتیمەتر",
     onb_activity: "ئاستی چالاکی",
-    act_sedentary: "کەم‌جووڵە", act_sedentary_d: "ڕاهێنانی نییە یان زۆر کەمە",
-    act_light: "سووک", act_light_d: "ڕاهێنان ١-٣ ڕۆژ لە هەفتەیەک",
-    act_moderate: "مامناوەند", act_moderate_d: "ڕاهێنان ٣-٥ ڕۆژ لە هەفتەیەک",
-    act_active: "چالاک", act_active_d: "ڕاهێنان ٦-٧ ڕۆژ لە هەفتەیەک",
-    act_very: "زۆر چالاک", act_very_d: "ڕاهێنانی سەخت یان کاری جەستەیی",
+    act_sedentary: "کەم‌جووڵە", act_sedentary_d: "کاری مێز، کەم ڕۆیشتن",
+    act_light: "سووک", act_light_d: "بەشێک لە ڕۆژ بە پێوەیت (وەک مامۆستا، دوکان)",
+    act_moderate: "مامناوەند", act_moderate_d: "زۆربەی ڕۆژ بە پێوەیت و زۆر دەڕۆیت",
+    act_active: "چالاک", act_active_d: "کاری جەستەیی (وەک بیناسازی، گەیاندن)",
+    act_very: "زۆر چالاک", act_very_d: "کاری جەستەیی زۆر قورس، یان وەرزشوانی پیشەیی",
     onb_goal: "ئامانج", goal_lose: "کەمکردنەوەی کێش", goal_maintain: "پاراستنی کێش", goal_gain: "زیادکردنی کێش",
     goal_lean_gain: "زیادکردنی کێش (ماسولکە)", goal_lean_gain_sub: "زیادەیەکی کەمتر و پرۆتینی زیاتر — بنیادنانی ماسولکە بە چەوری کەمتر",
     goal_recomp: "بنیادنانی ماسولکە و کەمکردنەوەی چەوری پێکەوە", goal_recomp_sub: "کەمبوونەوەیەکی بچووک و پرۆتینی زۆر بەرز — دووبارە پێکهاتەی لەش",
@@ -584,6 +606,17 @@ const DICT = {
     train_err_days: "سەرەتا لانیکەم یەک ڕۆژی ڕاهێنان هەڵبژێرە.", train_err_generic: "نەمانتوانی پلانێک دروست بکەین — دووبارە هەوڵ بدە.",
     train_week: "هەفتە", train_your_split: "دابەشکردنی ڕاهێنانت", train_progression: "سەرنجی ئەم هەفتەیە",
     prot_title: "پرۆتینی ڕۆژانە", prot_total: "کۆی گشتی", prot_per_kg: "{gkg} گرام بۆ هەر کیلۆیەک لە کێشی لەش لە ڕۆژێکدا",
+    onb_waist: "دەوری کەمەر (ئارەزوومەندانە)",
+    onb_waist_hint: "بە دەوری ناوکدا بیپێوە. یارمەتیمان دەدات چەوری سک باشتر لە کێش بە تەنها بزانین.",
+    onb_activity_hint: "ڕۆژی ئاسایی خۆت، بەبێ ڕاهێنان — ئەو ڕاهێنانانەی تۆماری دەکەیت لەسەری زیاد دەکرێن.",
+    goal_lose_sub: "کەمکردنەوەی کالۆری — نزیکەی 0.5 کگ کەمتر لە هەفتەیەکدا",
+    goal_maintain_sub: "کێشی ئێستات بپارێزە",
+    goal_gain_sub: "زیادەی زیاتر — خێراتر کێش زیاد دەکەیت، بەڵام چەوریش زیاتر",
+    goal_warn_under: "BMI ـەکەت {bmi} ـە (کێشت کەمە). دابەزاندنی کێش بۆت تەندروست نییە — پاراستنی کێش یان زیادکردنی کێش (ماسولکە) هەڵبژێرە.",
+    goal_warn_gain_high: "BMI ـەکەت {bmi} ـە. زیادکردنی کێشی ئاسایی زۆرتر چەوری زیاد دەکات — زیادکردنی کێش (ماسولکە) یان زیادکردنی ماسولکە و کەمکردنی چەوری باشترە بۆت.",
+    goal_warn_teen: "کەمتر لە 18 ساڵ: کەمکردنەوەی کالۆری بچووک دەهێڵینەوە تا جەستەت بەردەوام گەشە بکات.",
+    onb_preview: "ئامانجی ڕۆژانەت: {kcal} کالۆری · {p} گرام پرۆتین",
+    onb_preview_sub: "کالۆری پاراستنی کێش ~{tdee} · BMI {bmi}",
     train_injury: "هیچ برین یان ئازارێکت هەیە؟ (ئارەزوومەندانە)",
     train_injury_hint: "ئەو ڕاهێنانانە لادەدەین کە فشار دەخەنە سەر ئەم شوێنانە.",
     injury_none: "هیچ برینێک نییە",
@@ -676,8 +709,19 @@ function calcBMR({ gender, age, weight, height }) {
   const base = 10 * weight + 6.25 * height - 5 * age;
   return gender === "male" ? base + 5 : base - 161;
 }
-const ACTIVITY_MULT = { sedentary: 1.2, light: 1.375, moderate: 1.55, active: 1.725, very: 1.9 };
-const GOAL_ADJUST = { lose: -500, maintain: 0, gain: 300, leanGain: 200, recomp: -150 };
+// Daily life WITHOUT workouts. Workouts are logged in the app and their calories are
+// added back on the Today screen, so counting them here too would count them twice.
+const ACTIVITY_MULT = { sedentary: 1.2, light: 1.35, moderate: 1.45, active: 1.6, very: 1.75 };
+// Deficit / surplus as a share of maintenance (with sensible limits), so a small
+// person isn't crash-dieted and a big person isn't under-fed.
+function goalAdjust(goal, tdee, age) {
+  const pct = (p, lo, hi) => Math.round(clamp(tdee * p, lo, hi));
+  if (goal === "lose") return -(age && age < 18 ? Math.min(pct(0.2, 300, 750), 300) : pct(0.2, 300, 750));
+  if (goal === "gain") return pct(0.15, 300, 500);
+  if (goal === "leanGain") return pct(0.08, 150, 300);
+  if (goal === "recomp") return -pct(0.1, 150, 300);
+  return 0;
+}
 // Carbs/fat share of the calories left after protein.
 const MACRO_SPLIT = {
   lose: { carbs: 0.35, fat: 0.30 },
@@ -705,7 +749,7 @@ function proteinReferenceWeight(weightKg, heightCm) {
 function computeTargets(profile) {
   const bmr = calcBMR(profile);
   const tdee = bmr * ACTIVITY_MULT[profile.activity];
-  let target = tdee + GOAL_ADJUST[profile.goal];
+  let target = tdee + goalAdjust(profile.goal, tdee, profile.age);
   const floor = profile.gender === "male" ? 1500 : 1200;
   target = Math.max(Math.round(target), floor);
   const split = MACRO_SPLIT[profile.goal];
@@ -1876,8 +1920,8 @@ function Modal({ title, onClose, children }) {
 /* ============================== ONBOARDING ============================== */
 function Onboarding({ existing, onSaved, onCancel }) {
   const t = useT();
-  const [form, setForm] = useState(existing || {
-    gender: "male", age: "", weight: "", height: "", activity: "moderate", goal: "maintain",
+  const [form, setForm] = useState(existing ? { ...existing, waist: existing.waist || "" } : {
+    gender: "male", age: "", weight: "", height: "", waist: "", activity: "sedentary", goal: "maintain",
   });
   const [err, setErr] = useState(false);
 
@@ -1890,10 +1934,26 @@ function Onboarding({ existing, onSaved, onCancel }) {
       return;
     }
     setErr(false);
-    const profile = { gender: form.gender, age, weight, height, activity: form.activity, goal: form.goal };
+    const waist = Number(form.waist);
+    // Keep everything else already on the profile (e.g. waist), only replace what the form edits.
+    const profile = {
+      ...(existing || {}), gender: form.gender, age, weight, height, activity: form.activity, goal: form.goal,
+      waist: waist >= 40 && waist <= 250 ? waist : (existing && existing.waist) || null,
+    };
     const targets = computeTargets(profile);
     onSaved({ ...profile, ...targets });
   }
+
+  // Live preview + goal warnings once the numbers look real.
+  const pAge = Number(form.age), pWeight = Number(form.weight), pHeight = Number(form.height);
+  const valid = pAge >= 10 && pAge <= 100 && pWeight >= 25 && pWeight <= 300 && pHeight >= 100 && pHeight <= 250;
+  const preview = valid ? computeTargets({ gender: form.gender, age: pAge, weight: pWeight, height: pHeight, activity: form.activity, goal: form.goal }) : null;
+  const bmi = valid ? calcBMI(pWeight, pHeight) : null;
+  const bmiText = bmi ? bmi.toFixed(1) : "";
+  let goalWarn = "";
+  if (bmi && bmi < 18.5 && (form.goal === "lose" || form.goal === "recomp")) goalWarn = fill(t.goal_warn_under, { bmi: bmiText });
+  else if (bmi && bmi >= 27 && form.goal === "gain") goalWarn = fill(t.goal_warn_gain_high, { bmi: bmiText });
+  else if (valid && pAge < 18 && (form.goal === "lose" || form.goal === "recomp")) goalWarn = t.goal_warn_teen;
 
   return (
     <Screen>
@@ -1914,14 +1974,20 @@ function Onboarding({ existing, onSaved, onCancel }) {
           <input style={inputStyle} type="number" inputMode="numeric" placeholder={t.onb_age_unit} value={form.age} onChange={(e) => set("age", e.target.value)} />
         </Field>
         <Field label={`${t.onb_weight}`}>
-          <input style={inputStyle} type="number" inputMode="numeric" placeholder={t.onb_weight_unit} value={form.weight} onChange={(e) => set("weight", e.target.value)} />
+          <input style={inputStyle} type="number" inputMode="decimal" step="0.1" placeholder={t.onb_weight_unit} value={form.weight} onChange={(e) => set("weight", e.target.value)} />
         </Field>
         <Field label={`${t.onb_height}`}>
           <input style={inputStyle} type="number" inputMode="numeric" placeholder={t.onb_height_unit} value={form.height} onChange={(e) => set("height", e.target.value)} />
         </Field>
       </div>
 
+      <Field label={t.onb_waist}>
+        <input style={{ ...inputStyle, maxWidth: 160 }} type="number" inputMode="decimal" placeholder={t.onb_height_unit} value={form.waist || ""} onChange={(e) => set("waist", e.target.value)} />
+        <div style={{ fontSize: 12, color: TOKENS.inkSoft, marginTop: 6, lineHeight: 1.45 }}>{t.onb_waist_hint}</div>
+      </Field>
+
       <Field label={t.onb_activity}>
+        <div style={{ fontSize: 12, color: TOKENS.inkSoft, marginBottom: 8, marginTop: -6, lineHeight: 1.45 }}>{t.onb_activity_hint}</div>
         <SegmentGroup
           columns={1}
           value={form.activity} onChange={(v) => set("activity", v)}
@@ -1940,15 +2006,30 @@ function Onboarding({ existing, onSaved, onCancel }) {
           columns={1}
           value={form.goal} onChange={(v) => set("goal", v)}
           options={[
-            { value: "lose", label: t.goal_lose },
-            { value: "maintain", label: t.goal_maintain },
-            { value: "gain", label: t.goal_gain },
+            { value: "lose", label: t.goal_lose, sub: t.goal_lose_sub },
+            { value: "maintain", label: t.goal_maintain, sub: t.goal_maintain_sub },
+            { value: "gain", label: t.goal_gain, sub: t.goal_gain_sub },
             { value: "leanGain", label: t.goal_lean_gain, sub: t.goal_lean_gain_sub },
             { value: "recomp", label: t.goal_recomp, sub: t.goal_recomp_sub },
           ]}
         />
       </Field>
 
+      {goalWarn && (
+        <div style={{ background: `${TOKENS.clay}14`, border: `1px solid ${TOKENS.clay}44`, borderRadius: 12, padding: "11px 13px", marginBottom: 12, fontSize: 13, color: TOKENS.ink, lineHeight: 1.5 }}>
+          {goalWarn}
+        </div>
+      )}
+      {preview && (
+        <div style={{ background: `${TOKENS.herb}12`, border: `1px solid ${TOKENS.herb}33`, borderRadius: 12, padding: "11px 13px", marginBottom: 12 }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: TOKENS.herbDeep }}>
+            {fill(t.onb_preview, { kcal: fmtIQD(preview.calorieTarget), p: preview.proteinTarget })}
+          </div>
+          <div style={{ fontSize: 12, color: TOKENS.inkSoft, marginTop: 3 }}>
+            {fill(t.onb_preview_sub, { tdee: fmtIQD(preview.tdee), bmi: bmiText })}
+          </div>
+        </div>
+      )}
       {err && <div style={{ color: TOKENS.clay, fontSize: 13.5, marginBottom: 14 }}>{t.onb_err}</div>}
 
       <div style={{ display: "flex", gap: 10, marginTop: 6 }}>
