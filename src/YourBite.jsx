@@ -106,6 +106,11 @@ const DICT = {
     weekdaysShort: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
     months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
     fab_meal: "Log a meal", fab_scan: "Live scan", fab_exercise: "Log exercise", quick_upload: "Upload",
+    quick_name_ph: "e.g. 300g chicken, 1 plate rice",
+    quick_need_amount: "Add an amount — e.g. 300g chicken, 1 whole chicken, 1 plate rice, 1 bowl mushroom soup.",
+    quick_protein_ph: "Protein",
+    quick_protein_unit: "g",
+    quick_fail: "Couldn't estimate that — type the kcal yourself.",
     plan_free: "Free",
     plan_pro: "Pro",
     plan_proplus: "Pro+",
@@ -278,6 +283,11 @@ const DICT = {
     weekdaysShort: ["إثنين", "ثلاثاء", "أربعاء", "خميس", "جمعة", "سبت", "أحد"],
     months: ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"],
     fab_meal: "تسجيل وجبة", fab_scan: "مسح مباشر", fab_exercise: "تسجيل تمرين", quick_upload: "رفع صورة",
+    quick_name_ph: "مثال: 300 غ دجاج، صحن رز",
+    quick_need_amount: "أضف الكمية — مثال: 300 غ دجاج، دجاجة كاملة، صحن رز، وعاء شوربة فطر.",
+    quick_protein_ph: "بروتين",
+    quick_protein_unit: "غ",
+    quick_fail: "تعذّر التقدير — اكتب السعرات بنفسك.",
     plan_free: "مجاني",
     plan_pro: "Pro",
     plan_proplus: "⁦Pro+⁩",
@@ -450,6 +460,11 @@ const DICT = {
     weekdaysShort: ["٢شەمە", "٣شەمە", "٤شەمە", "٥شەمە", "هەینی", "شەمە", "١شەمە"],
     months: ["ژانویە", "فێبروایە", "مارس", "ئەپریل", "مایس", "حوزەیران", "تەمووز", "ئاب", "ئەیلوول", "تشرینی یەکەم", "تشرینی دووەم", "کانونی یەکەم"],
     fab_meal: "تۆمارکردنی خواردن", fab_scan: "سکانی ڕاستەوخۆ", fab_exercise: "تۆمارکردنی ڕاهێنان", quick_upload: "بارکردنی وێنە",
+    quick_name_ph: "بۆ نموونە: 300 گرام مریشک، قاپێک برنج",
+    quick_need_amount: "بڕەکەشی بنووسە — بۆ نموونە: 300 گرام مریشک، مریشکێکی تەواو، قاپێک برنج، کاسەیەک شۆربای قارچک.",
+    quick_protein_ph: "پرۆتین",
+    quick_protein_unit: "گ",
+    quick_fail: "نەمانتوانی بیخەمڵێنین — کالۆرییەکە خۆت بنووسە.",
     plan_free: "بەخۆڕایی",
     plan_pro: "Pro",
     plan_proplus: "⁦Pro+⁩",
@@ -1209,6 +1224,23 @@ In Kurdish/Middle Eastern home cooking rice is normally cooked with oil, so use 
 Split a meal into separate items when they are separate foods (chicken + rice + salad); keep one mixed dish as one item.`;
 
 const FOOD_ITEM_SHAPE = `{"name":"...","ref":null,"unit":"g","amount":0,"grams_per_unit":1,"per_100g":{"kcal":0,"protein_g":0,"carbs_g":0,"fat_g":0}}`;
+
+// True when the text says how much: a number, or an amount/unit word
+// ("whole chicken", "plate of rice", "صحن رز", "قاپێک برنج").
+const AMOUNT_WORDS_EN = /\b(whole|half|quarter|one|two|three|four|five|six|seven|eight|nine|ten|dozen|couple|few|a|an|plate|plates|bowl|bowls|cup|cups|glass|glasses|mug|slice|slices|piece|pieces|pcs|spoon|spoons|spoonful|tbsp|tsp|tablespoons?|teaspoons?|can|cans|bottle|bottles|handful|scoop|scoops|serving|servings|portion|portions|small|medium|large|big|gram|grams|g|kg|kilo|ml|l|liter|litre|liters|litres|pack|packet|bar|loaf|box|sandwich)\b/i;
+const AMOUNT_WORDS_AR = ["نصف", "ربع", "كامل", "واحد", "واحدة", "اثنين", "ثلاث", "أربع", "صحن", "طبق", "كوب", "كأس", "وعاء", "زبدية", "ملعقة", "ملاعق", "شريحة", "شرائح", "قطعة", "قطع", "علبة", "حبة", "حبات", "غرام", "جرام", "كيلو", "لتر", "رغيف", "حفنة", "صغير", "كبير", "وسط"];
+const AMOUNT_WORDS_CKB = ["قاپ", "کاسە", "پەرداخ", "کەوچک", "پارچە", "دانە", "قوتو", "گرام", "کیلۆ", "لیتر", "نیو", "تەواو", "یەک", "دوو", "چوار", "پێنج", "مشت", "بچووک", "گەورە", "ناوەند"];
+function hasMeasurement(text) {
+  const s = String(text || "").trim();
+  if (/[0-9٠-٩۰-۹]/.test(s)) return true;
+  if (AMOUNT_WORDS_EN.test(s)) return true;
+  if (AMOUNT_WORDS_AR.some((w) => s.includes(w)) || AMOUNT_WORDS_CKB.some((w) => s.includes(w))) return true;
+  // Short words that would match inside other words: only as whole words.
+  const tokens = s.split(/[\s،,]+/);
+  if (tokens.some((w) => ["سێ", "نص", "غ", "مل"].includes(w))) return true;
+  // Kurdish "-ێک" / "-یەک" ending means "one" (مریشکێک = one chicken).
+  return tokens.some((w) => /(ێک|یەک|ێکی|یەکی)$/.test(w));
+}
 
 async function parseMealPortions(foodName, mealType) {
   const prompt = `List the foods in this ${mealType} the user described, with a realistic portion for each.
@@ -2679,6 +2711,10 @@ function QuickMealCard({ defaultType, onManualAdd, onSmartLog, onLiveScan, onUpl
   const [type, setType] = useState(defaultType);
   const [name, setName] = useState("");
   const [kcal, setKcal] = useState("");
+  const [prot, setProt] = useState("");
+  const [est, setEst] = useState(null); // last AI estimate: { text, calories, protein, carbs, fat }
+  const [busy, setBusy] = useState(false);
+  const [hint, setHint] = useState("");
   const fileRef = useRef(null);
   const types = [
     { value: "breakfast", label: t.meal_breakfast, icon: Sunrise },
@@ -2687,21 +2723,54 @@ function QuickMealCard({ defaultType, onManualAdd, onSmartLog, onLiveScan, onUpl
     { value: "snack", label: t.meal_snack, icon: Cookie },
   ];
 
-  // With a kcal number the meal is added as typed; without one, "+" falls
-  // back to the AI estimate so it's never added as 0 kcal by accident.
+  function changeName(v) {
+    setName(v);
+    setHint("");
+    // The numbers belonged to the old text — clear them so they can't be saved by mistake.
+    if (est) { setEst(null); setKcal(""); setProt(""); }
+  }
+
+  // ✨ fills the kcal and protein boxes right here, no popup.
+  async function estimate() {
+    const text = name.trim();
+    if (!text || busy) return;
+    if (!hasMeasurement(text)) { setHint(t.quick_need_amount); return; }
+    setHint(""); setBusy(true);
+    try {
+      const items = await parseMealPortions(text, type);
+      if (!items.length) throw new Error("no items");
+      const n = sumNutrition(items);
+      setEst({ text, ...n });
+      setKcal(String(n.calories));
+      setProt(String(n.protein));
+    } catch (e) {
+      if (!(e && e.quota)) setHint(t.quick_fail);
+    } finally { setBusy(false); }
+  }
+
+  // With a kcal number the meal is added as shown; without one, "+" estimates first.
   function add() {
-    if (!name.trim()) return;
+    const text = name.trim();
+    if (!text) return;
     const k = Number(kcal);
-    if (k > 0) {
-      onManualAdd({ id: uid(), type, name: name.trim(), calories: Math.round(k), protein: 0, carbs: 0, fat: 0, at: Date.now() });
-    } else {
-      onSmartLog(name.trim(), type);
-    }
-    setName(""); setKcal("");
+    if (!(k > 0)) { estimate(); return; }
+    const p = Math.max(Number(prot) || 0, 0);
+    // Keep carbs/fat from the estimate, scaled if the kcal was edited.
+    const same = est && est.text === text;
+    const ratio = same && est.calories ? k / est.calories : 0;
+    onManualAdd({
+      id: uid(), type, name: text, calories: Math.round(k), protein: Math.round(p),
+      carbs: same ? Math.round(est.carbs * ratio) : 0, fat: same ? Math.round(est.fat * ratio) : 0, at: Date.now(),
+    });
+    setName(""); setKcal(""); setProt(""); setEst(null); setHint("");
   }
 
   const squareBtn = {
     width: 46, height: 46, flexShrink: 0, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
+  };
+  const unitTag = {
+    position: "absolute", top: "50%", transform: "translateY(-50%)", insetInlineEnd: 10,
+    fontSize: 11, color: TOKENS.inkSoft, pointerEvents: "none",
   };
   const dashedBtn = {
     flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "11px 6px",
@@ -2729,29 +2798,46 @@ function QuickMealCard({ defaultType, onManualAdd, onSmartLog, onLiveScan, onUpl
         })}
       </div>
 
-      <div style={{ display: "flex", gap: 6, marginBottom: 10 }}>
+      <div style={{ display: "flex", gap: 6, marginBottom: 6 }}>
         <input
           style={{ ...inputStyle, flex: 1, minWidth: 0, padding: "11px 12px" }}
-          placeholder={t.meal_name_ph} value={name}
-          onChange={(e) => setName(e.target.value)}
-          onKeyDown={(e) => { if (e.key === "Enter") add(); }}
+          placeholder={t.quick_name_ph} value={name}
+          onChange={(e) => changeName(e.target.value)}
+          onKeyDown={(e) => { if (e.key === "Enter") estimate(); }}
         />
         <button
-          title={t.meal_estimate} onClick={() => onSmartLog(name.trim(), type)}
-          style={{ ...squareBtn, background: TOKENS.paperRaised, border: `1.5px solid ${TOKENS.line}` }}
+          title={t.meal_estimate} onClick={estimate} disabled={busy || !name.trim()}
+          style={{ ...squareBtn, background: TOKENS.paperRaised, border: `1.5px solid ${TOKENS.line}`, opacity: name.trim() ? 1 : 0.55 }}
         >
-          <Sparkles size={17} color={TOKENS.herb} style={{ pointerEvents: "none" }} />
+          {busy
+            ? <Loader2 size={17} color={TOKENS.herb} className="spin" style={{ pointerEvents: "none" }} />
+            : <Sparkles size={17} color={TOKENS.herb} style={{ pointerEvents: "none" }} />}
         </button>
-        <input
-          type="number" inputMode="numeric" placeholder={t.unit_kcal} value={kcal}
-          onChange={(e) => setKcal(e.target.value)}
-          onKeyDown={(e) => { if (e.key === "Enter") add(); }}
-          style={{ ...inputStyle, width: 74, flexShrink: 0, padding: "11px 8px", textAlign: "center" }}
-        />
-        <button onClick={add} disabled={!name.trim()} style={{ ...squareBtn, background: TOKENS.herb, border: "none", opacity: name.trim() ? 1 : 0.55 }}>
+      </div>
+      <div style={{ display: "flex", gap: 6, marginBottom: 10 }}>
+        <div style={{ position: "relative", flex: 1, minWidth: 0 }}>
+          <input
+            type="number" inputMode="numeric" placeholder={t.unit_kcal} value={kcal}
+            onChange={(e) => setKcal(e.target.value)}
+            onKeyDown={(e) => { if (e.key === "Enter") add(); }}
+            style={{ ...inputStyle, padding: "11px 8px", textAlign: "center" }}
+          />
+          {kcal !== "" && <span style={unitTag}>{t.unit_kcal}</span>}
+        </div>
+        <div style={{ position: "relative", flex: 1, minWidth: 0 }}>
+          <input
+            type="number" inputMode="numeric" placeholder={t.quick_protein_ph} value={prot}
+            onChange={(e) => setProt(e.target.value)}
+            onKeyDown={(e) => { if (e.key === "Enter") add(); }}
+            style={{ ...inputStyle, padding: "11px 8px", textAlign: "center" }}
+          />
+          {prot !== "" && <span style={unitTag}>{t.quick_protein_unit}</span>}
+        </div>
+        <button onClick={add} disabled={!name.trim() || busy} style={{ ...squareBtn, background: TOKENS.herb, border: "none", opacity: name.trim() && !busy ? 1 : 0.55 }}>
           <Plus size={19} color={TOKENS.cream} style={{ pointerEvents: "none" }} />
         </button>
       </div>
+      {hint && <div style={{ fontSize: 12, color: TOKENS.clay, lineHeight: 1.5, margin: "-4px 2px 10px" }}>{hint}</div>}
 
       <div style={{ display: "flex", gap: 6 }}>
         <button style={dashedBtn} onClick={() => onLiveScan(type)}>
