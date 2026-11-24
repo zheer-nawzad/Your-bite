@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 
+// The logo is a small (~60 KB) copy that is preloaded in index.html, and it only
+// appears once fully loaded — so it never draws half-finished on refresh.
 export default function Splash({ fadingOut }) {
+  const [loaded, setLoaded] = useState(false);
   return (
     <div
       style={{
@@ -11,9 +14,17 @@ export default function Splash({ fadingOut }) {
       }}
     >
       <img
-        src="/yourbite-logo.png"
+        src="/logo-splash.png"
         alt="YourBite"
-        style={{ width: "60%", maxWidth: 260, animation: "splash-pulse 1.4s ease-in-out infinite" }}
+        width="640" height="123"
+        decoding="async"
+        onLoad={() => setLoaded(true)}
+        ref={(el) => { if (el && el.complete && el.naturalWidth && !loaded) setLoaded(true); }}
+        style={{
+          width: "60%", maxWidth: 260, height: "auto",
+          opacity: loaded ? 1 : 0, transition: "opacity 0.25s ease",
+          animation: loaded ? "splash-pulse 1.4s ease-in-out infinite" : "none",
+        }}
       />
       <style>{`
         @keyframes splash-pulse {
