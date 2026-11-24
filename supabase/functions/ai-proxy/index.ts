@@ -4,10 +4,10 @@
 // Secret:      supabase secrets set ANTHROPIC_API_KEY=sk-ant-...
 import {
   adminClient, baghdadDay, corsHeaders, FREE_LIMITS, getPlan, getUser, json, nextResetISO,
-  PAID_PHOTO_CAP, TEXT_DAILY_CAP,
+  PAID_PHOTO_CAP, TEXT_DAILY_CAP, CHAT_DAILY_LIMIT,
 } from "../_shared/plan.ts";
 
-const TRAINING_FEATURES = new Set(["training", "chat"]);
+const TRAINING_FEATURES = new Set(["training"]);
 const TEXT_MODEL = "claude-haiku-4-5-20251001";
 
 function hasImage(body: any): boolean {
@@ -33,6 +33,7 @@ Deno.serve(async (req) => {
   delete body.feature;
   let feature: string;
   if (hasImage(body)) feature = requested === "scan" ? "scan" : "upload";
+  else if (requested === "chat") feature = "chat";
   else if (TRAINING_FEATURES.has(requested)) feature = "training";
   else {
     feature = "text";
@@ -55,13 +56,19 @@ Deno.serve(async (req) => {
         return json({ error: { type: "quota_exceeded", feature, limit, resetAt: nextResetISO(), message: "Daily free limit reached." } }, 402);
       }
       counted = feature;
-    } else if (feature === "training") {
+    } else if (feature === "training" || feature === "chat") {
       if (plan.tier !== "pro_plus") {
         if (!plan.trialStart) {
           await admin.rpc("start_training_trial", { p_user: user.id });
         } else if (!plan.trainingAllowed) {
           return json({ error: { type: "trial_ended", feature, message: "Free training trial ended." } }, 402);
         }
+      }
+      if (feature === "chat") {
+        const { data: ok, error } = await admin.rpc("use_quota", { p_user: user.id, p_day: day, p_feature: "chat", p_limit: CHAT_DAILY_LIMIT });
+        if (error) throw error;
+        if (!ok) return json({ error: { type: "quota_exceeded", feature: "chat", limit: CHAT_DAILY_LIMIT, resetAt: nextResetISO(), message: "Daily chat limit reached." } }, 402);
+        counted = "chat";
       }
     } else {
       const { data: ok, error } = await admin.rpc("use_quota", { p_user: user.id, p_day: day, p_feature: "text", p_limit: TEXT_DAILY_CAP });

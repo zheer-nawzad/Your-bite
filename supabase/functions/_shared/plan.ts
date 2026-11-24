@@ -5,6 +5,7 @@ export const FREE_LIMITS: Record<string, number> = { scan: 2, upload: 2 };
 export const PAID_PHOTO_CAP = 150;   // anti-abuse ceiling per day for paid users
 export const TEXT_DAILY_CAP = 300;   // anti-abuse ceiling per day for everyone
 export const TRIAL_DAYS = 14;
+export const CHAT_DAILY_LIMIT = 5;    // AI trainer questions per day (Pro+ and trial)
 export const PRICES: Record<string, number> = { pro: 5000, pro_plus: 10000 }; // IQD per 30 days
 export const PLAN_DAYS = 30;
 

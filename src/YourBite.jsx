@@ -127,7 +127,7 @@ const DICT = {
     up_pro_f3: "Smart kcal, protein, carbs & fat",
     up_plus_f1: "Everything in Pro",
     up_plus_f2: "Training plan + protein guide",
-    up_plus_f3: "AI personal trainer chat",
+    up_plus_f3: "AI personal trainer (5 questions a day)",
     up_current: "Your plan",
     up_pay_fib: "Pay {amount} IQD with FIB",
     up_open_fib: "Open FIB app",
@@ -179,6 +179,23 @@ const DICT = {
     train_err_days: "Pick at least one training day first.", train_err_generic: "Couldn't generate a plan — try again.",
     train_week: "Week", train_your_split: "Your split", train_progression: "This week's focus",
     prot_title: "Daily protein", prot_total: "Total", prot_per_kg: "{gkg} g per kg of body weight per day",
+    sugg_mine: "Your meal",
+    chat_left: "{n} of {max} questions left today",
+    chat_limit_reached: "You've used your {max} questions for today. Your trainer is back in {t}.",
+    weight_title: "Weight",
+    weight_ph: "Today's weight (kg)",
+    weight_save: "Save",
+    weight_saved: "Saved — your calorie and protein targets were updated.",
+    weight_err: "Enter a weight between 25 and 300 kg.",
+    weight_since: "since {date}",
+    weight_per_week: "kg per week",
+    weight_hint: "Weigh yourself once a week, in the morning before eating. Your targets update automatically.",
+    weight_fast_loss: "You're losing more than 1% of your weight a week — eat a little more to protect your muscle.",
+    weight_wrong_lose: "Your weight is going up while your goal is to lose — check your portions and log every meal.",
+    weight_wrong_gain: "Your weight is going down while your goal is to gain — eat a little more each day.",
+    weight_fast_gain: "You're gaining faster than 0.5 kg a week — slow down a little to gain less fat.",
+    settings_privacy: "Privacy Policy",
+    settings_terms: "Terms of Service",
     today_over_word: "over",
     save_failed: "Couldn't save — check your internet and try again.",
     log_delete_q: "Delete?",
@@ -351,7 +368,7 @@ const DICT = {
     up_pro_f3: "حساب ذكي للسعرات والبروتين والكربوهيدرات والدهون",
     up_plus_f1: "كل ما في Pro",
     up_plus_f2: "خطة تدريب + دليل البروتين",
-    up_plus_f3: "محادثة مع مدرب شخصي ذكي",
+    up_plus_f3: "مدرب شخصي ذكي (5 أسئلة يوميًا)",
     up_current: "خطتك",
     up_pay_fib: "ادفع {amount} دينار عبر FIB",
     up_open_fib: "افتح تطبيق FIB",
@@ -403,6 +420,23 @@ const DICT = {
     train_err_days: "اختر يوم تدريب واحدًا على الأقل أولًا.", train_err_generic: "تعذّر إنشاء خطة — حاول مجددًا.",
     train_week: "الأسبوع", train_your_split: "تقسيمتك", train_progression: "تركيز هذا الأسبوع",
     prot_title: "البروتين اليومي", prot_total: "المجموع", prot_per_kg: "{gkg} غ لكل كغ من وزن الجسم يوميًا",
+    sugg_mine: "وجبتك",
+    chat_left: "تبقّى {n} من {max} أسئلة اليوم",
+    chat_limit_reached: "استخدمت أسئلتك الـ{max} لهذا اليوم. يعود مدربك بعد {t}.",
+    weight_title: "الوزن",
+    weight_ph: "وزن اليوم (كغ)",
+    weight_save: "حفظ",
+    weight_saved: "تم الحفظ — تم تحديث أهداف السعرات والبروتين.",
+    weight_err: "أدخل وزنًا بين 25 و300 كغ.",
+    weight_since: "منذ {date}",
+    weight_per_week: "كغ أسبوعيًا",
+    weight_hint: "زِن نفسك مرة أسبوعيًا صباحًا قبل الأكل. تتحدث أهدافك تلقائيًا.",
+    weight_fast_loss: "تخسر أكثر من 1% من وزنك أسبوعيًا — كُل أكثر قليلًا لحماية عضلاتك.",
+    weight_wrong_lose: "وزنك يزيد بينما هدفك الخسارة — راجع كمياتك وسجّل كل وجبة.",
+    weight_wrong_gain: "وزنك ينخفض بينما هدفك الزيادة — كُل أكثر قليلًا كل يوم.",
+    weight_fast_gain: "تزيد أسرع من 0.5 كغ أسبوعيًا — خفّف قليلًا لتكسب دهونًا أقل.",
+    settings_privacy: "سياسة الخصوصية",
+    settings_terms: "شروط الاستخدام",
     today_over_word: "زيادة",
     save_failed: "تعذّر الحفظ — تحقق من الإنترنت وحاول مجددًا.",
     log_delete_q: "حذف؟",
@@ -575,7 +609,7 @@ const DICT = {
     up_pro_f3: "ژماردنی زیرەکی کالۆری، پرۆتین، کاربۆهیدرات و چەوری",
     up_plus_f1: "هەموو شتەکانی Pro",
     up_plus_f2: "پلانی ڕاهێنان + ڕێنمایی پرۆتین",
-    up_plus_f3: "گفتوگۆ لەگەڵ ڕاهێنەری تایبەتی زیرەک",
+    up_plus_f3: "ڕاهێنەری تایبەتی زیرەک (ڕۆژانە 5 پرسیار)",
     up_current: "پلانەکەت",
     up_pay_fib: "پارەدانی {amount} دینار بە FIB",
     up_open_fib: "کردنەوەی ئەپی FIB",
@@ -627,6 +661,23 @@ const DICT = {
     train_err_days: "سەرەتا لانیکەم یەک ڕۆژی ڕاهێنان هەڵبژێرە.", train_err_generic: "نەمانتوانی پلانێک دروست بکەین — دووبارە هەوڵ بدە.",
     train_week: "هەفتە", train_your_split: "دابەشکردنی ڕاهێنانت", train_progression: "سەرنجی ئەم هەفتەیە",
     prot_title: "پرۆتینی ڕۆژانە", prot_total: "کۆی گشتی", prot_per_kg: "{gkg} گرام بۆ هەر کیلۆیەک لە کێشی لەش لە ڕۆژێکدا",
+    sugg_mine: "ژەمی خۆت",
+    chat_left: "{n} لە {max} پرسیار ماوە بۆ ئەمڕۆ",
+    chat_limit_reached: "هەر {max} پرسیارەکەی ئەمڕۆت بەکارهێنا. ڕاهێنەرەکەت دوای {t} دەگەڕێتەوە.",
+    weight_title: "کێش",
+    weight_ph: "کێشی ئەمڕۆ (کگ)",
+    weight_save: "پاشەکەوت",
+    weight_saved: "پاشەکەوت کرا — ئامانجی کالۆری و پرۆتینەکەت نوێ کرایەوە.",
+    weight_err: "کێشێک لە نێوان 25 بۆ 300 کگ بنووسە.",
+    weight_since: "لە {date} ـەوە",
+    weight_per_week: "کگ لە هەفتەیەکدا",
+    weight_hint: "هەفتەی جارێک، بەیانی پێش نانخواردن خۆت بکێشە. ئامانجەکانت خۆکار نوێ دەبنەوە.",
+    weight_fast_loss: "لە هەفتەیەکدا زیاتر لە 1%ی کێشت کەم دەکەیت — کەمێک زیاتر بخۆ بۆ پاراستنی ماسولکەکانت.",
+    weight_wrong_lose: "کێشت زیاد دەکات لە کاتێکدا ئامانجت کەمکردنەوەیە — بڕی خواردنەکانت بپشکنە و هەموو ژەمێک تۆمار بکە.",
+    weight_wrong_gain: "کێشت کەم دەبێتەوە لە کاتێکدا ئامانجت زیادکردنە — ڕۆژانە کەمێک زیاتر بخۆ.",
+    weight_fast_gain: "لە هەفتەیەکدا خێراتر لە 0.5 کگ زیاد دەکەیت — کەمێک هێواشتر بڕۆ بۆ ئەوەی چەوری کەمتر زیاد بکەیت.",
+    settings_privacy: "سیاسەتی تایبەتمەندی",
+    settings_terms: "مەرجەکانی بەکارهێنان",
     today_over_word: "زیادە",
     save_failed: "پاشەکەوت نەکرا — ئینتەرنێتەکەت بپشکنە و دووبارە هەوڵ بدەوە.",
     log_delete_q: "بسڕدرێتەوە؟",
@@ -856,6 +907,26 @@ async function selectAll(table, uid) {
   }
   return rows;
 }
+// Photos from new phones can be 4-8 MB; the AI accepts at most 5 MB. Shrinking to
+// ~1600 px keeps the same accuracy, uploads much faster and never hits the limit.
+function shrinkImage(dataUrl, maxDim = 1600, quality = 0.85) {
+  return new Promise((resolve) => {
+    try {
+      const img = new Image();
+      img.onload = () => {
+        const scale = Math.min(1, maxDim / Math.max(img.width || 1, img.height || 1));
+        if (scale === 1 && String(dataUrl).length < 3500000) { resolve(dataUrl); return; }
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.max(1, Math.round(img.width * scale));
+        canvas.height = Math.max(1, Math.round(img.height * scale));
+        canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL("image/jpeg", quality));
+      };
+      img.onerror = () => resolve(dataUrl);
+      img.src = dataUrl;
+    } catch (e) { resolve(dataUrl); }
+  });
+}
 // Tells the app to show a short message at the bottom of the screen.
 function notify(key) { window.dispatchEvent(new CustomEvent("yb-toast", { detail: { key } })); }
 
@@ -1004,6 +1075,25 @@ function dishMatchesQuery(dishName, query) {
   // so a whole/partial word matches but an unrelated substring does not
   return qWords.every((qw) => qw.length >= 2 && dWords.some((dw) => dw.startsWith(qw) || qw.startsWith(dw)));
 }
+/* ---- weight (weight_logs table) ---- */
+async function loadWeights() {
+  const uid = await getUserId();
+  if (!uid) return [];
+  try {
+    const { data, error } = await supabase.from("weight_logs").select("date, weight").eq("user_id", uid)
+      .order("date", { ascending: true }).limit(1000);
+    if (error) return [];
+    return (data || []).map((r) => ({ date: r.date, weight: Number(r.weight) }));
+  } catch (e) { return []; }
+}
+async function saveWeightRow(dateISO, weight) {
+  const uid = await getUserId();
+  if (!uid) return false;
+  try {
+    const { error } = await supabase.from("weight_logs").upsert({ user_id: uid, date: dateISO, weight }, { onConflict: "user_id,date" });
+    return !error;
+  } catch (e) { return false; }
+}
 /* ---- food cache (food_cache table) ---- */
 async function loadFoodCache() {
   const uid = await getUserId();
@@ -1114,9 +1204,9 @@ async function loadTrainerChat() {
   try {
     const { data, error } = await supabase
       .from("trainer_chat_messages").select("*").eq("user_id", uid)
-      .order("created_at", { ascending: true }).limit(60);
+      .order("created_at", { ascending: false }).limit(30);
     if (error || !data) return [];
-    return data.slice(-30).map((r) => ({ id: r.id, role: r.role, content: r.content }));
+    return data.slice().reverse().map((r) => ({ id: r.id, role: r.role, content: r.content }));
   } catch (e) { return []; }
 }
 async function insertTrainerMessage(msg) {
@@ -1174,10 +1264,13 @@ async function callAiProxy(payload) {
   if (resp.status === 402) {
     let info = {};
     try { info = (await resp.json()).error || {}; } catch (e) {}
+    const chatLimit = info.type === "quota_exceeded" && info.feature === "chat";
     const reason = info.type === "trial_ended" ? "trial" : (info.feature || "scan");
-    window.dispatchEvent(new CustomEvent("yb-upgrade", { detail: { reason } }));
+    if (chatLimit) window.dispatchEvent(new Event("yb-plan-refresh"));
+    else window.dispatchEvent(new CustomEvent("yb-upgrade", { detail: { reason } }));
     const err = new Error("plan limit reached");
     err.quota = true;
+    err.chatLimit = chatLimit;
     throw err;
   }
   if (resp.ok && feature !== "text") window.dispatchEvent(new Event("yb-plan-refresh"));
@@ -1799,8 +1892,18 @@ Respond with ONLY compact raw JSON, no markdown, no explanation, in this exact s
   return callClaude(prompt, 700, undefined, { feature: "training" });
 }
 
-function buildTrainerContext(profile, plan) {
+function buildTrainerContext(profile, plan, todayLog) {
   const lines = [];
+  if (todayLog && profile) {
+    const meals = todayLog.meals || [];
+    const sum = (k) => meals.reduce((a, m) => a + (Number(m[k]) || 0), 0);
+    const eaten = sum("calories"), protein = sum("protein");
+    const burned = (todayLog.exercises || []).reduce((a, e) => a + (Number(e.caloriesBurned) || 0), 0);
+    const target = profile.calorieTarget || computeTargets(profile).calorieTarget;
+    const proteinTarget = profile.proteinTarget || computeTargets(profile).proteinTarget;
+    lines.push(`Today so far: eaten ${eaten} kcal and ${protein}g protein, burned ${burned} kcal with exercise. Still left today: about ${Math.round(target - eaten + burned)} kcal and ${Math.max(proteinTarget - protein, 0)}g protein (daily targets ${target} kcal, ${proteinTarget}g protein).`);
+    if (meals.length) lines.push(`Meals logged today: ${meals.slice(0, 10).map((m) => `${m.name} (${m.calories} kcal)`).join("; ")}`);
+  }
   lines.push(`Goal: ${GOAL_DESC_EN[plan.goal] || plan.goal}`);
   if (plan.experience) lines.push(`Experience level: ${plan.experience}`);
   if (plan.equipment) lines.push(`Trains at: ${plan.equipment === "gym" ? "a gym" : "home"}`);
@@ -1850,7 +1953,8 @@ Answer conversationally and helpfully — about their training plan, specific ex
       max_tokens: isOpus ? 1400 : 600,
       ...(isOpus ? { output_config: { effort: "low" } } : {}),
       system: systemPrompt,
-      messages: history.map((m) => ({ role: m.role, content: m.content })),
+      // The last 20 messages are plenty of context and keep each question cheap.
+      messages: history.slice(-20).map((m) => ({ role: m.role, content: m.content })),
     });
   } catch (e) {
     if (e && e.quota) throw e;
@@ -2429,9 +2533,9 @@ function AddMealModal({ mealType, cache, onClose, onSave, initialName = "", auto
   function processFile(file) {
     const reader = new FileReader();
     reader.onload = async () => {
-      const dataUrl = reader.result;
+      const dataUrl = await shrinkImage(reader.result);
       const base64 = dataUrl.split(",")[1];
-      const mimeType = file.type || "image/jpeg";
+      const mimeType = (String(dataUrl).match(/^data:([^;]+);/) || [])[1] || file.type || "image/jpeg";
       setPhotoData(dataUrl);
       setLoading(true); setErrMsg(""); setResult(null); setPortions(null); setMatchedCache(false); setMatchedKurdish(false);
       try {
@@ -2878,15 +2982,16 @@ function LiveScanModal({ mealType, onClose, onSaveItems, initialFile = null }) {
     const video = videoRef.current;
     if (!video || !video.videoWidth) return;
     const canvas = document.createElement("canvas");
-    canvas.width = video.videoWidth; canvas.height = video.videoHeight;
-    canvas.getContext("2d").drawImage(video, 0, 0);
+    const scale = Math.min(1, 1600 / Math.max(video.videoWidth, video.videoHeight));
+    canvas.width = Math.round(video.videoWidth * scale); canvas.height = Math.round(video.videoHeight * scale);
+    canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
     stopStream();
     analyze(canvas.toDataURL("image/jpeg", 0.85));
   }
 
   function readFile(file) {
     const reader = new FileReader();
-    reader.onload = () => analyze(reader.result);
+    reader.onload = async () => analyze(await shrinkImage(reader.result));
     reader.readAsDataURL(file);
   }
 
@@ -3044,7 +3149,7 @@ function LiveScanModal({ mealType, onClose, onSaveItems, initialFile = null }) {
 }
 
 /* ============================== TODAY VIEW ============================== */
-function QuickMealCard({ defaultType, onManualAdd, onSmartLog, onLiveScan, onUpload, onLogExercise, canUpload = true, onUploadBlocked, quotaNote, onGoPro }) {
+function QuickMealCard({ defaultType, foodCache, onManualAdd, onSmartLog, onLiveScan, onUpload, onLogExercise, canUpload = true, onUploadBlocked, quotaNote, onGoPro }) {
   const t = useT();
   const [type, setType] = useState(defaultType);
   const [name, setName] = useState("");
@@ -3053,7 +3158,29 @@ function QuickMealCard({ defaultType, onManualAdd, onSmartLog, onLiveScan, onUpl
   const [est, setEst] = useState(null); // last AI estimate: { text, calories, protein, carbs, fat }
   const [busy, setBusy] = useState(false);
   const [hint, setHint] = useState("");
+  const [focused, setFocused] = useState(false);
   const fileRef = useRef(null);
+
+  // Typing shows matching meals you logged before and dishes from the built-in library.
+  // One tap fills kcal + protein — instant, no AI needed.
+  const suggestions = useMemo(() => {
+    if (est) return [];
+    const mine = Object.values(foodCache || {}).sort((a, b) => (b.count - a.count) || (b.lastAt - a.lastAt));
+    if (foldForSearch(name).length < 2) {
+      return focused ? mine.filter((e) => e.count >= 2).slice(0, 4).map((e) => ({ ...e, mine: true })) : [];
+    }
+    const own = mine.filter((e) => dishMatchesQuery(e.name, name)).slice(0, 3).map((e) => ({ ...e, mine: true }));
+    const ownKeys = new Set(own.map((e) => normalizeFoodName(e.name)));
+    const lib = ALL_LOG_DISHES.filter((d) => dishMatchesQuery(d.name, name) && !ownKeys.has(normalizeFoodName(d.name)));
+    return [...own, ...lib].slice(0, 4);
+  }, [name, foodCache, est, focused]);
+  function pickSuggestion(e) {
+    setName(e.name);
+    setKcal(String(Math.round(e.calories || 0)));
+    setProt(String(Math.round(e.protein || 0)));
+    setEst({ text: e.name, calories: e.calories || 0, protein: e.protein || 0, carbs: e.carbs || 0, fat: e.fat || 0 });
+    setHint("");
+  }
   const types = [
     { value: "breakfast", label: t.meal_breakfast, icon: Sunrise },
     { value: "lunch", label: t.meal_lunch, icon: Sun },
@@ -3142,6 +3269,7 @@ function QuickMealCard({ defaultType, onManualAdd, onSmartLog, onLiveScan, onUpl
           placeholder={t.quick_name_ph} value={name}
           onChange={(e) => changeName(e.target.value)}
           onKeyDown={(e) => { if (e.key === "Enter") estimate(); }}
+          onFocus={() => setFocused(true)} onBlur={() => setTimeout(() => setFocused(false), 150)}
         />
         <button
           title={t.meal_estimate} onClick={estimate} disabled={busy || !name.trim()}
@@ -3152,6 +3280,25 @@ function QuickMealCard({ defaultType, onManualAdd, onSmartLog, onLiveScan, onUpl
             : <Sparkles size={17} color={TOKENS.herb} style={{ pointerEvents: "none" }} />}
         </button>
       </div>
+      {suggestions.length > 0 && (
+        <div style={{ display: "flex", flexDirection: "column", gap: 5, marginBottom: 8 }}>
+          {suggestions.map((e) => (
+            <button
+              key={(e.mine ? "m:" : "d:") + e.name} type="button"
+              onMouseDown={(ev) => ev.preventDefault()} onClick={() => pickSuggestion(e)}
+              style={{
+                display: "flex", alignItems: "center", gap: 8, width: "100%", textAlign: "start", cursor: "pointer",
+                background: TOKENS.paper, border: `1px solid ${TOKENS.line}`, borderRadius: 10, padding: "8px 10px",
+                fontFamily: "var(--font-body)", color: TOKENS.ink,
+              }}
+            >
+              <span style={{ flex: 1, minWidth: 0, fontSize: 13, fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{e.name}</span>
+              {e.mine && <span style={{ fontSize: 10.5, fontWeight: 700, color: TOKENS.saffronDeep, flexShrink: 0 }}>{t.sugg_mine}</span>}
+              <span style={{ fontSize: 12, color: TOKENS.inkSoft, flexShrink: 0 }}>{Math.round(e.calories || 0)} {t.unit_kcal} · {Math.round(e.protein || 0)}g</span>
+            </button>
+          ))}
+        </div>
+      )}
       <div style={{ display: "flex", gap: 6, marginBottom: 10 }}>
         <div style={{ position: "relative", flex: 1, minWidth: 0 }}>
           <input
@@ -3273,7 +3420,7 @@ function TodayView({ profile, log, foodCache, viewedISO, onChangeDate, logs, onA
 
       {!locked && (
         <QuickMealCard
-          defaultType={guessedMealType}
+          defaultType={guessedMealType} foodCache={foodCache}
           onManualAdd={onAddMeal}
           onSmartLog={(name, type) => setMealModal({ type, name, autoParse: true })}
           onLiveScan={(type) => (scanLeft > 0 ? setScanModal({ type }) : openUpgrade("scan"))}
@@ -3323,7 +3470,82 @@ function TodayView({ profile, log, foodCache, viewedISO, onChangeDate, logs, onA
 }
 
 /* ============================== REPORTS VIEW ============================== */
-function ReportsView({ logs, target, proteinTarget }) {
+function WeightCard({ weights, profile, onLogWeight }) {
+  const t = useT();
+  const planCtx = usePlan();
+  const [val, setVal] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+  const [saved, setSaved] = useState(false);
+  const list = (weights || []).slice(-90);
+  const first = list[0], last = list[list.length - 1];
+  const current = last ? last.weight : profile && profile.weight;
+  const change = list.length > 1 ? Math.round((last.weight - first.weight) * 10) / 10 : null;
+  const days = list.length > 1 ? (new Date(last.date) - new Date(first.date)) / 86400000 : 0;
+  const perWeek = change !== null && days >= 7 ? Math.round((change / (days / 7)) * 100) / 100 : null;
+  let advice = "";
+  if (perWeek !== null && profile) {
+    const g = profile.goal;
+    if ((g === "lose" || g === "recomp") && perWeek < -(last.weight * 0.01)) advice = t.weight_fast_loss;
+    else if (g === "lose" && perWeek > 0.1) advice = t.weight_wrong_lose;
+    else if ((g === "gain" || g === "leanGain") && perWeek < -0.1) advice = t.weight_wrong_gain;
+    else if (g === "leanGain" && perWeek > 0.5) advice = t.weight_fast_gain;
+  }
+  async function save() {
+    const w = Number(val);
+    if (!(w >= 25 && w <= 300)) { setErr(t.weight_err); return; }
+    setBusy(true); setErr("");
+    const ok = await onLogWeight(Math.round(w * 10) / 10);
+    setBusy(false);
+    if (ok) { setVal(""); setSaved(true); setTimeout(() => setSaved(false), 3000); }
+  }
+  const chartData = list.map((x) => ({ label: `${Number(x.date.slice(8, 10))}/${Number(x.date.slice(5, 7))}`, weight: x.weight }));
+  return (
+    <div style={{ background: TOKENS.paperRaised, border: `1px solid ${TOKENS.line}`, borderRadius: 14, padding: "14px 14px 8px", marginBottom: 16 }}>
+      <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8 }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: TOKENS.ink }}>{t.weight_title}</div>
+        {current ? <div style={{ fontFamily: "var(--font-display)", fontSize: 22, fontWeight: 600, color: TOKENS.herbDeep }}>{current} <span style={{ fontSize: 12, color: TOKENS.inkSoft }}>{t.onb_weight_unit}</span></div> : null}
+      </div>
+      {change !== null && (
+        <div style={{ fontSize: 12.5, color: TOKENS.inkSoft, marginTop: 2 }}>
+          <span dir="ltr" style={{ fontWeight: 700, color: TOKENS.ink, unicodeBidi: "isolate" }}>{change > 0 ? "+" : ""}{change} {t.onb_weight_unit}</span>
+          {" "}{fill(t.weight_since, { date: `${Number(first.date.slice(8, 10))} ${t.months[Number(first.date.slice(5, 7)) - 1]}` })}
+          {perWeek !== null && <> · <span dir="ltr" style={{ unicodeBidi: "isolate" }}>{perWeek > 0 ? "+" : ""}{perWeek}</span> {t.weight_per_week}</>}
+        </div>
+      )}
+      {advice && <div style={{ fontSize: 12.5, color: TOKENS.clay, marginTop: 6, lineHeight: 1.5 }}>{advice}</div>}
+      <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
+        <input
+          type="number" inputMode="decimal" step="0.1" placeholder={t.weight_ph} value={val}
+          onChange={(e) => setVal(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") save(); }}
+          style={{ ...inputStyle, flex: 1, minWidth: 0, padding: "10px 12px" }}
+        />
+        <Button onClick={save} disabled={busy || !val} style={{ padding: "10px 16px", flexShrink: 0 }}>
+          {busy ? <Loader2 size={16} className="spin" /> : t.weight_save}
+        </Button>
+      </div>
+      {err && <div style={{ fontSize: 12.5, color: TOKENS.clay, marginTop: 6 }}>{err}</div>}
+      {saved && <div style={{ fontSize: 12.5, color: TOKENS.herbDeep, marginTop: 6 }}>{t.weight_saved}</div>}
+      {chartData.length >= 2 ? (
+        <div style={{ marginTop: 10 }}>
+          <ResponsiveContainer width="100%" height={150}>
+            <ComposedChart data={chartData} margin={{ top: 6, right: 8, left: -18, bottom: 0 }}>
+              <CartesianGrid stroke={TOKENS.line} vertical={false} />
+              <XAxis dataKey="label" tick={{ fontSize: 10.5, fill: TOKENS.inkSoft }} axisLine={{ stroke: TOKENS.line }} tickLine={false} minTickGap={18} />
+              <YAxis domain={[Math.floor(Math.min(...chartData.map((x) => x.weight)) - 1), Math.ceil(Math.max(...chartData.map((x) => x.weight)) + 1)]} tick={{ fontSize: 10.5, fill: TOKENS.inkSoft }} axisLine={false} tickLine={false} allowDecimals={false} />
+              <Tooltip contentStyle={{ borderRadius: 10, border: `1px solid ${TOKENS.line}`, fontSize: 12 }} />
+              <Line dataKey="weight" name={t.weight_title} stroke={TOKENS.herb} strokeWidth={2.5} dot={{ r: 2.5 }} isAnimationActive={false} />
+            </ComposedChart>
+          </ResponsiveContainer>
+        </div>
+      ) : (
+        <div style={{ fontSize: 12, color: TOKENS.inkSoft, marginTop: 8, marginBottom: 6, lineHeight: 1.5 }}>{t.weight_hint}</div>
+      )}
+    </div>
+  );
+}
+
+function ReportsView({ logs, target, proteinTarget, weights, profile, onLogWeight }) {
   const t = useT();
   const days = useMemo(() => {
     const arr = [];
@@ -3364,6 +3586,8 @@ function ReportsView({ logs, target, proteinTarget }) {
   return (
     <Screen>
       <h1 style={{ fontFamily: "var(--font-display)", fontSize: 26, color: TOKENS.herbDeep, margin: "14px 0 18px" }}>{t.reports_title}</h1>
+
+      <WeightCard weights={weights} profile={profile} onLogWeight={onLogWeight} />
 
       {!hasData && (
         <div style={{ background: TOKENS.paperRaised, border: `1px dashed ${TOKENS.line}`, borderRadius: 14, padding: 22, textAlign: "center", color: TOKENS.inkSoft, fontSize: 14 }}>
@@ -3440,6 +3664,10 @@ function SettingsView({ lang, onLangChange, onEditProfile }) {
         <div style={{ fontWeight: 700, fontSize: 14, color: TOKENS.ink, marginBottom: 6 }}>{t.settings_about}</div>
         <div style={{ fontSize: 13, color: TOKENS.inkSoft, lineHeight: 1.6 }}>{t.settings_about_body}</div>
         <div style={{ fontSize: 12, color: TOKENS.inkSoft, marginTop: 10, paddingTop: 10, borderTop: `1px solid ${TOKENS.line}` }}>{t.settings_credit}</div>
+        <div style={{ display: "flex", gap: 14, marginTop: 8, fontSize: 12 }}>
+          <a href={`/privacy.html#${lang}`} target="_blank" rel="noopener noreferrer" style={{ color: TOKENS.herbDeep }}>{t.settings_privacy}</a>
+          <a href={`/terms.html#${lang}`} target="_blank" rel="noopener noreferrer" style={{ color: TOKENS.herbDeep }}>{t.settings_terms}</a>
+        </div>
       </div>
 
       <div style={{ marginTop: 16 }}>
@@ -3942,7 +4170,7 @@ function TrainingPlanDisplay({ plan, profile, onRegenerate, onUpdatePlan, todayL
   const todayWorkout = (plan.days || []).find((d) => d.weekday === selectedWeekday);
   const workoutAlreadyLogged = !!(todayWorkout && (todayLog?.exercises || []).some((e) => e.type === todayWorkout.title));
   function confirmCompleteWorkout() {
-    const minutes = Math.max(5, Number(workoutMinutes) || 45);
+    const minutes = clamp(Math.round(Number(workoutMinutes) || 45), 5, 240);
     const caloriesBurned = Math.round(burnRatePerMin("weightTraining", (profile && profile.weight) || 75) * minutes);
     onCompleteWorkout({ id: uid(), type: todayWorkout.title, minutes, caloriesBurned, at: Date.now() });
     setLoggingWorkout(false);
@@ -4206,8 +4434,14 @@ function renderChatText(text) {
   return elements;
 }
 
-function TrainerChatModal({ profile, plan, lang, onClose }) {
+function TrainerChatModal({ profile, plan, lang, todayLog, onClose }) {
   const t = useT();
+  const planCtx = usePlan();
+  const planInfo = planCtx && planCtx.planInfo;
+  const chatLimit = (planInfo && planInfo.chatLimit) || 5;
+  const chatLeft = planInfo ? Math.max(chatLimit - ((planInfo.usage && planInfo.usage.chat) || 0), 0) : null;
+  const [limitHit, setLimitHit] = useState(false);
+  const outOfQuestions = limitHit || chatLeft === 0;
   const [messages, setMessages] = useState(null);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
@@ -4229,20 +4463,23 @@ function TrainerChatModal({ profile, plan, lang, onClose }) {
 
   async function send() {
     const text = input.trim();
-    if (!text || sending) return;
+    if (!text || sending || outOfQuestions) return;
     setInput(""); setError("");
     const userMsg = { role: "user", content: text, id: uid() };
-    const nextMessages = [...(messages || []), userMsg];
+    const before = messages || [];
+    const nextMessages = [...before, userMsg];
     setMessages(nextMessages);
     setSending(true);
-    insertTrainerMessage(userMsg);
     try {
-      const contextText = buildTrainerContext(profile, plan);
+      const contextText = buildTrainerContext(profile, plan, todayLog);
       const reply = await askTrainer(nextMessages.map((m) => ({ role: m.role, content: m.content })), contextText, lang);
       const assistantMsg = { role: "assistant", content: reply, id: uid() };
       setMessages([...nextMessages, assistantMsg]);
+      // Saved only once answered, so unanswered questions don't clutter the history.
+      insertTrainerMessage(userMsg);
       insertTrainerMessage(assistantMsg);
     } catch (e) {
+      if (e && e.chatLimit) { setLimitHit(true); setMessages(before); setInput(text); return; }
       if (e && e.quota) { onClose(); return; }
       setError(`${t.train_chat_error} (${e.message || e})`);
     } finally {
@@ -4278,14 +4515,22 @@ function TrainerChatModal({ profile, plan, lang, onClose }) {
         )}
       </div>
       {error && <div style={{ color: TOKENS.clay, fontSize: 12.5, marginBottom: 8 }}>{error}</div>}
+      {outOfQuestions ? (
+        <div style={{ background: `${TOKENS.saffron}1c`, border: `1px solid ${TOKENS.saffron}55`, borderRadius: 12, padding: "10px 12px", marginBottom: 10, fontSize: 13, color: TOKENS.ink, lineHeight: 1.5 }}>
+          {fill(t.chat_limit_reached, { max: chatLimit, t: planInfo && planInfo.resetAt ? timeUntil(t, planInfo.resetAt, Date.now()) : "" })}
+        </div>
+      ) : chatLeft !== null && (
+        <div style={{ fontSize: 11.5, color: TOKENS.inkSoft, marginBottom: 6 }}>{fill(t.chat_left, { n: chatLeft, max: chatLimit })}</div>
+      )}
       <div style={{ display: "flex", gap: 8 }}>
         <input
+          disabled={outOfQuestions}
           value={input} onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
           placeholder={t.train_chat_placeholder}
           style={{ ...inputStyle, flex: 1, padding: "11px 14px" }}
         />
-        <button onClick={send} disabled={sending || !input.trim()} style={{
+        <button onClick={send} disabled={sending || !input.trim() || outOfQuestions} style={{
           width: 44, height: 44, borderRadius: 12, background: TOKENS.herb, border: "none", flexShrink: 0,
           display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", opacity: (sending || !input.trim()) ? 0.5 : 1,
         }}>
@@ -4388,7 +4633,7 @@ function TrainingView({ profile, plan, onSavePlan, onUpdateWaist, lang, todayLog
         </div>
       )}
 
-      {chatOpen && <TrainerChatModal profile={profile} plan={plan} lang={lang} onClose={() => setChatOpen(false)} />}
+      {chatOpen && <TrainerChatModal profile={profile} plan={plan} lang={lang} todayLog={todayLog} onClose={() => setChatOpen(false)} />}
     </Screen>
   );
 }
@@ -4444,7 +4689,9 @@ function PlanOption({ selected, current, onClick, name, price, features }) {
 function UpgradeModal({ reason, onClose }) {
   const t = useT();
   const { planInfo, refreshPlan, lang } = usePlan();
-  const [tier, setTier] = useState(reason === "trial" || planInfo?.tier === "pro" ? "pro_plus" : "pro");
+  const currentPaid = planInfo && isPaidTier(planInfo.tier) ? planInfo.tier : null;
+  // Pre-select the plan they already have; Pro+ customers never see the cheaper Pro (it would remove training).
+  const [tier, setTier] = useState(reason === "trial" ? "pro_plus" : (currentPaid || "pro"));
   const [step, setStep] = useState(reason === "paid" ? "success" : "choose"); // choose | creating | waiting | manual | success | error
   const [payment, setPayment] = useState(null);
   const [copied, setCopied] = useState("");
@@ -4584,10 +4831,12 @@ function UpgradeModal({ reason, onClose }) {
           {step === "error" && (
             <div style={{ fontSize: 13, color: TOKENS.clay, marginBottom: 12 }}>{t.up_declined}</div>
           )}
-          <PlanOption
-            selected={tier === "pro"} current={planInfo && planInfo.tier === "pro"} onClick={() => setTier("pro")}
-            name={t.plan_pro} price={prices.pro} features={[t.up_pro_f1, t.up_pro_f2, t.up_pro_f3]}
-          />
+          {currentPaid !== "pro_plus" && (
+            <PlanOption
+              selected={tier === "pro"} current={planInfo && planInfo.tier === "pro"} onClick={() => setTier("pro")}
+              name={t.plan_pro} price={prices.pro} features={[t.up_pro_f1, t.up_pro_f2, t.up_pro_f3]}
+            />
+          )}
           <PlanOption
             selected={tier === "pro_plus"} current={planInfo && planInfo.tier === "pro_plus"} onClick={() => setTier("pro_plus")}
             name={t.plan_proplus} price={prices.pro_plus} features={[t.up_plus_f1, t.up_plus_f2, t.up_plus_f3]}
@@ -4745,6 +4994,7 @@ export default function App() {
   const [ready, setReady] = useState(false);
   const [viewedISO, setViewedISO] = useState(todayISO());
   const [trainingPlan, setTrainingPlan] = useState(null);
+  const [weights, setWeights] = useState([]);
   const [langMenuOpen, setLangMenuOpen] = useState(false);
   const [todayDate, setTodayDate] = useState(todayISO());
   const [planInfo, setPlanInfo] = useState(null);
@@ -4790,9 +5040,10 @@ export default function App() {
   useEffect(() => {
     injectFonts();
     (async () => {
-      const [p, l, la, fc, tp] = await Promise.all([
-        loadProfile(), loadLogs(), loadLang(), loadFoodCache(), loadTrainingPlan(),
+      const [p, l, la, fc, tp, w] = await Promise.all([
+        loadProfile(), loadLogs(), loadLang(), loadFoodCache(), loadTrainingPlan(), loadWeights(),
       ]);
+      setWeights(w || []);
       // Targets are fully derived from the profile, so recompute them rather
       // than trust stored values that may predate a formula change.
       if (p) setProfile({ ...p, ...computeTargets(p) });
@@ -4943,6 +5194,19 @@ export default function App() {
     const id = await saveTrainingPlan(plan);
     if (id && id !== plan._id) setTrainingPlan((prev) => (prev ? { ...prev, _id: id } : prev));
   }
+  // Logging a weight also updates the profile, so calorie and protein targets follow the body.
+  async function handleLogWeight(w) {
+    const ok = await saveWeightRow(today, w);
+    if (!ok) { notify("save_failed"); return false; }
+    setWeights((prev) => [...prev.filter((x) => x.date !== today), { date: today, weight: w }].sort((a, b) => (a.date < b.date ? -1 : 1)));
+    if (profile) {
+      const base = { ...profile, weight: w };
+      const next = { ...base, ...computeTargets(base) };
+      setProfile(next);
+      saveProfile(next);
+    }
+    return true;
+  }
   function handleUpdateWaist(waistCm) {
     const next = { ...profile, waist: waistCm };
     setProfile(next);
@@ -5044,7 +5308,7 @@ export default function App() {
                 onCloseDay={handleCloseDay} onOpenSummary={() => setShowSummary(true)}
               />
             )}
-            {view === "reports" && <ReportsView logs={logs} target={profile.calorieTarget} proteinTarget={profile.proteinTarget} />}
+            {view === "reports" && <ReportsView logs={logs} target={profile.calorieTarget} proteinTarget={profile.proteinTarget} weights={weights} profile={profile} onLogWeight={handleLogWeight} />}
             {view === "training" && (
               <TrainingView
                 profile={profile} plan={trainingPlan}

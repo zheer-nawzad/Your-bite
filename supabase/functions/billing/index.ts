@@ -7,7 +7,7 @@
 //   ADMIN_EMAILS                       comma-separated emails allowed to activate plans by hand
 import {
   adminClient, baghdadDay, corsHeaders, FREE_LIMITS, getPlan, getUser, isAdminEmail, json, nextResetISO,
-  PLAN_DAYS, PRICES, TRIAL_DAYS,
+  PLAN_DAYS, PRICES, TRIAL_DAYS, CHAT_DAILY_LIMIT,
 } from "../_shared/plan.ts";
 
 const FIB_BASE = (Deno.env.get("FIB_BASE_URL") || "https://fib.prod.fib.iq").replace(/\/+$/, "");
@@ -50,7 +50,7 @@ async function syncPayment(admin: ReturnType<typeof adminClient>, paymentId: str
 
 async function usageToday(admin: ReturnType<typeof adminClient>, userId: string) {
   const { data } = await admin.from("ai_usage").select("feature, count").eq("user_id", userId).eq("day", baghdadDay());
-  const usage: Record<string, number> = { scan: 0, upload: 0 };
+  const usage: Record<string, number> = { scan: 0, upload: 0, chat: 0 };
   (data || []).forEach((r: any) => { usage[r.feature] = r.count; });
   return usage;
 }
@@ -87,6 +87,7 @@ Deno.serve(async (req) => {
         usage: await usageToday(admin, user.id),
         limits: FREE_LIMITS,
         trialDays: TRIAL_DAYS,
+        chatLimit: CHAT_DAILY_LIMIT,
         resetAt: nextResetISO(),
         prices: PRICES,
         planDays: PLAN_DAYS,

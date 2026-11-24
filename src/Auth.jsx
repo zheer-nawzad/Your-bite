@@ -42,6 +42,7 @@ const T = {
     err_unconfirmed: "Your email isn't verified yet. We sent you a new code.", err_code: "That code is wrong or expired. Tap “Resend code” for a new one.",
     err_wait: "Too many tries. Please wait a minute and try again.", err_network: "No connection. Check your internet and try again.",
     err_generic: "Something went wrong. Please try again.",
+    privacy: "Privacy Policy", terms: "Terms of Service",
   },
   ar: {
     dir: "rtl",
@@ -62,6 +63,7 @@ const T = {
     err_unconfirmed: "لم يتم التحقق من بريدك بعد. أرسلنا لك رمزًا جديدًا.", err_code: "الرمز غير صحيح أو منتهي. اضغط «إعادة إرسال الرمز».",
     err_wait: "محاولات كثيرة. انتظر دقيقة ثم حاول مجددًا.", err_network: "لا يوجد اتصال. تحقق من الإنترنت وحاول مجددًا.",
     err_generic: "حدث خطأ. حاول مرة أخرى.",
+    privacy: "سياسة الخصوصية", terms: "شروط الاستخدام",
   },
   ckb: {
     dir: "rtl",
@@ -82,6 +84,7 @@ const T = {
     err_unconfirmed: "ئیمەیڵەکەت هێشتا پشتڕاست نەکراوەتەوە. کۆدێکی نوێمان بۆ ناردیت.", err_code: "کۆدەکە هەڵەیە یان بەسەرچووە. «ناردنەوەی کۆد» دابگرە.",
     err_wait: "هەوڵی زۆر. خولەکێک چاوەڕێ بکە و دووبارە هەوڵ بدەوە.", err_network: "پەیوەندی نییە. ئینتەرنێتەکەت بپشکنە و دووبارە هەوڵ بدەوە.",
     err_generic: "هەڵەیەک ڕوویدا. تکایە دووبارە هەوڵ بدەوە.",
+    privacy: "سیاسەتی تایبەتمەندی", terms: "مەرجەکانی بەکارهێنان",
   },
 };
 
@@ -381,6 +384,10 @@ export default function Auth() {
               )}
             </form>
           )}
+        </div>
+        <div style={{ display: "flex", justifyContent: "center", gap: 16, marginTop: 16, fontSize: 12 }}>
+          <a href={`/privacy.html#${lang}`} target="_blank" rel="noopener noreferrer" style={{ color: TOKENS.inkSoft }}>{t.privacy}</a>
+          <a href={`/terms.html#${lang}`} target="_blank" rel="noopener noreferrer" style={{ color: TOKENS.inkSoft }}>{t.terms}</a>
         </div>
       </div>
       <style>{`
