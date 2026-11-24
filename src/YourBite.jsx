@@ -1561,12 +1561,14 @@ function trainingProfileNote(profile) {
 }
 
 const INJURY_RULES_EN = {
-  knees: "KNEES: avoid deep loaded squats, lunges, jumping and running; use leg press with a comfortable range, box squats, hip-dominant moves (hip thrust, Romanian deadlift with light-moderate load), hamstring curls and cycling.",
-  lowerBack: "LOWER BACK: avoid heavy barbell deadlifts, bent-over barbell rows, good mornings and heavy back squats; use chest-supported or machine rows, leg press, hip thrusts, and core stability work (bird dog, dead bug, side plank).",
-  shoulders: "SHOULDERS: avoid behind-the-neck presses, upright rows, dips and heavy barbell overhead pressing; use neutral-grip dumbbell or landmine presses, cable work, and add rear-delt / rotator-cuff work (face pulls, external rotations).",
-  wrists: "WRISTS / ELBOWS: prefer dumbbells, cables and machines with a neutral grip over straight barbells; avoid skull crushers and heavy straight-bar curls; do push-ups on handles or fists.",
-  neck: "NECK: avoid heavy shrugs, behind-the-neck movements and anything loading the head or neck; keep a neutral neck on all lifts.",
+  knees: "KNEES — AVOID: deep loaded squats, lunges, jumping, running and fast direction changes. USE INSTEAD: leg press in a short, pain-free range, box squats to a bench, hip-dominant moves (hip thrust, glute bridge, light-moderate Romanian deadlift), hamstring curls; cardio on the bike, elliptical or incline walking. STRENGTHEN (on every leg day, 2-3 of these): light leg extensions with a slow 3-second lowering, wall sits (20-40 s), low step-ups (15-20 cm box), and side-hip work for knee alignment (clamshells, banded side walks, side-lying leg raises) — strong thighs and hips protect the knee. WARM-UP: 5-10 minutes on the bike before leg training.",
+  lowerBack: "LOWER BACK — AVOID: heavy barbell deadlifts, bent-over barbell rows, good mornings, heavy back squats, sit-ups and any loaded twisting. USE INSTEAD: chest-supported or machine rows, leg press, hip thrusts, goblet squat with light load. STRENGTHEN (on 2-3 days a week): core stability that keeps the spine still — bird dog, dead bug, side plank, front plank, Pallof press — plus glute bridges and light back extensions. WARM-UP: cat-cow, hip mobility and 5 minutes of walking.",
+  shoulders: "SHOULDERS — AVOID: behind-the-neck presses or pulldowns, upright rows, dips, heavy barbell overhead pressing and very wide-grip bench press. USE INSTEAD: neutral-grip dumbbell presses, landmine press, cable and machine presses with a comfortable range. STRENGTHEN (on every upper-body day, 2 of these): rotator cuff and upper back — band or cable external rotations, face pulls, rear-delt flyes, scapular retractions, Y-T-W raises with light weight. WARM-UP: arm circles, band pull-aparts and light external rotations.",
+  wrists: "WRISTS / ELBOWS — AVOID: skull crushers, heavy straight-bar curls and presses, push-ups on flat palms, and heavy grip-crushing work. USE INSTEAD: dumbbells, cables and machines with a neutral (palms-facing) grip, push-ups on handles or fists. STRENGTHEN (2-3 days a week, light): wrist curls and reverse wrist curls, slow eccentric wrist extensions, and grip work with light load. WARM-UP: wrist circles and gentle forearm stretches.",
+  neck: "NECK — AVOID: heavy shrugs, behind-the-neck movements, headstands and anything loading the head or neck; no straining with the neck forward. USE INSTEAD: supported exercises (machines, chest-supported rows) and a neutral neck on every lift. STRENGTHEN (2-3 days a week): chin tucks, face pulls, light band rows and posture work for the upper back. WARM-UP: slow neck turns and shoulder rolls.",
 };
+// Shared rules for anyone who reports pain.
+const PAIN_RULES_EN = "PAIN RULES (put a short version of these in the summary): mild discomfort up to about 3 out of 10 is OK; sharp pain, or pain that is worse the next morning, means stop that exercise and use an easier option. Progress the exercises that load the painful area more slowly than the rest of the program (smaller weekly increases, no training to failure on them). Use controlled tempos (about 3 seconds lowering) for those exercises. If pain keeps coming back or gets worse, see a doctor or physiotherapist.";
 const SESSION_RULE_EN = {
   30: "about 30 minutes: 3-4 exercises, use supersets for accessories, short rests",
   45: "about 45 minutes: 4-5 exercises",
@@ -1589,7 +1591,7 @@ async function generateTrainingProgram({ goal, experience, equipment, weekdays, 
     : `\nNO FOCUS AREA (whole body): the program must be BALANCED — give every major muscle group (chest, back, shoulders, arms, legs/glutes, core) roughly equal weekly sets and train each about twice a week where the days allow. Don't favor any one area.\n`;
   const activeInjuries = (injuries || []).filter((i) => INJURY_RULES_EN[i]);
   const injuryNote = activeInjuries.length
-    ? `\nINJURIES / PAIN — this overrides every other instruction:\n- ${activeInjuries.map((i) => INJURY_RULES_EN[i]).join("\n- ")}\nIn the summary, add one short line telling them to stop any exercise that causes pain and see a doctor or physiotherapist if it continues.\n`
+    ? `\nINJURIES / PAIN — this overrides every other instruction. For each area: avoid what hurts it, use the safer options, AND add the strengthening exercises listed (they count as part of the day's exercises):\n- ${activeInjuries.map((i) => INJURY_RULES_EN[i]).join("\n- ")}\n${PAIN_RULES_EN}\nPut the injury warm-up into the \"warmup\" of the days that train that area.\n`
     : "";
   const sessionNote = SESSION_RULE_EN[sessionMinutes]
     ? `\nTIME: every workout must fit in ${SESSION_RULE_EN[sessionMinutes]} (warm-up and rests included). If this conflicts with the exercise count for their experience level, the time limit wins.\n`
@@ -3859,6 +3861,10 @@ function ProteinGuide({ profile, plan }) {
 // names, so every plan — old or new — can show "Chest · Shoulders · Triceps".
 // Rules are checked in order; the first one that matches an exercise wins.
 const MUSCLE_RULES = [
+  [/wrist|grip|forearm|chin tuck|neck/, []],
+  [/clamshell|side walk|lateral walk|band walk|monster walk|side-lying leg raise|hip abduct/, ["glutes"]],
+  [/external rotation|internal rotation|rotator|y-t-w|ytw|scapular|band pull-apart/, ["shoulders"]],
+  [/bird ?dog/, ["core"]],
   [/calf|calves/, ["calves"]],
   [/leg curl|hamstring curl|nordic/, ["legs"]],
   [/leg raise|knee raise|plank|crunch|sit-?up|ab wheel|rollout|russian twist|dead ?bug|mountain climber|\babs?\b|core|v-up|oblique|woodchop|pallof|hollow/, ["core"]],
